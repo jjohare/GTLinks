@@ -165,7 +165,8 @@ export class CameraRig {
     // keep the lens out of foliage: rise over any tree the orbit would pass through
     for (const o of solids) if (Math.hypot(goalPos.x - o.x, goalPos.z - o.z) < o.r + 4.5 && goalPos.y < o.h + 1.5) goalPos.y = o.h + 1.5;
     // during the pull-out the aim eases from the car to a point further down the mountain
-    const aim = new Vector3(centre.x, centre.y - e * 6, centre.z + e * 30);
+    // in the wide shot the aim sits above the wreck so the hovering helicopter is in frame
+    const aim = new Vector3(centre.x, centre.y + (wide ? 4.5 * (1 - e) : 0) - e * 6, centre.z + e * 30);
     const fov = MathUtils.lerp(wide ? 46 : 38, 50, e);
     this.roll = Math.sin(t * 0.6) * 0.012;
     this.shake = 0;

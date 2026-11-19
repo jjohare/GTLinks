@@ -107,7 +107,8 @@ export class FallbackPursuit {
     let target: [number, number, number];
     if (wrecked) {
       h.mode = HeliMode.Orbiting; h.orbit -= (0.35) * dt;
-      target = [car[0] + Math.cos(h.orbit) * 45, car[1] + 40, car[2] + Math.sin(h.orbit) * 45];
+      // low hover round the wreck so the drone camera (which sits low and looks down) can see it
+      target = [car[0] + Math.cos(h.orbit) * 21, car[1] + 15, car[2] + Math.sin(h.orbit) * 21];
       h.aim = [car[0], hAt(car[0], car[2]), car[2]]; h.lock = 1;
     } else {
       h.mode = Math.hypot(car[0] - h.pos[0], car[2] - h.pos[2]) > 120 ? HeliMode.Inbound : HeliMode.Tracking;
@@ -119,7 +120,7 @@ export class FallbackPursuit {
       h.orbit = Math.atan2(h.pos[2] - car[2], h.pos[0] - car[0]);
     }
     const k = Math.min(1, dt * (wrecked ? 1.5 : 0.8));
-    h.pos[0] += (target[0] - h.pos[0]) * k; h.pos[1] += (Math.max(target[1], hAt(h.pos[0], h.pos[2]) + 30) - h.pos[1]) * k; h.pos[2] += (target[2] - h.pos[2]) * k;
+    h.pos[0] += (target[0] - h.pos[0]) * k; h.pos[1] += (Math.max(target[1], hAt(h.pos[0], h.pos[2]) + (wrecked ? 11 : 30)) - h.pos[1]) * k; h.pos[2] += (target[2] - h.pos[2]) * k;
     h.vel = [(h.pos[0] - prev[0]) / Math.max(dt, 1e-3), (h.pos[1] - prev[1]) / Math.max(dt, 1e-3), (h.pos[2] - prev[2]) / Math.max(dt, 1e-3)];
     h.speed = Math.hypot(h.vel[0], h.vel[2]);
     if (h.speed > 1) h.yaw = Math.atan2(h.vel[0], h.vel[2]);
