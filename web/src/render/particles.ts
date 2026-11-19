@@ -47,7 +47,7 @@ export class Particles {
       this.px[i] = pos.x + r() * 0.4; this.py[i] = pos.y + r() * 0.2; this.pz[i] = pos.z + r() * 0.4;
       this.vx[i] = vel.x + r() * spread * 2; this.vy[i] = vel.y + (Math.random() * upBias + 0.2) * spread; this.vz[i] = vel.z + r() * spread * 2;
       this.maxLife[i] = this.life[i] = sp.life[0] + Math.random() * (sp.life[1] - sp.life[0]);
-      this.size[i] = sp.size[0] + Math.random() * (sp.size[1] - sp.size[0]);
+      this.size[i] = (sp.size[0] + Math.random() * (sp.size[1] - sp.size[0])) * 0.55;
       this.grow[i] = sp.grow; this.grav[i] = sp.gravity; this.drag[i] = sp.drag;
       this.mesh.setColorAt(i, this.col.set(sp.colours[Math.floor(Math.random() * sp.colours.length)]));
     }

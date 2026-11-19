@@ -8,8 +8,8 @@
 import {
   BoxGeometry, CylinderGeometry, Group, Mesh, MeshStandardNodeMaterial, ConeGeometry, SphereGeometry,
   TorusGeometry, IcosahedronGeometry, BufferGeometry, BufferAttribute,
-} from 'three';
-import type { Object3D } from 'three';
+} from 'three/webgpu';
+import type { Object3D } from 'three/webgpu';
 import type { CarSpec } from '../sim/types';
 
 const mat = (name: string, color: number, rough = 0.7, metal = 0, emissive = 0x000000, ei = 0) => {
@@ -109,6 +109,25 @@ export function standInModel(path: string, cars: CarSpec[]): Group {
       geo.setIndex(idx);
       geo.computeVertexNormals();
       g.add(new Mesh(geo, mat('ramp', 0x9b7b53, 0.85)));
+      break;
+    }
+    case 'rock': {
+      const geo = new IcosahedronGeometry(1, 1);
+      const p = geo.attributes.position;
+      for (let i = 0; i < p.count; i++) {
+        const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+        const n = 0.82 + 0.28 * Math.abs(Math.sin(x * 3.1 + z * 2.3) * Math.cos(y * 2.7 + x * 1.3));
+        p.setXYZ(i, x * n * 1.15, y * n * 0.7, z * n);
+      }
+      geo.computeVertexNormals();
+      const rm = mat('rock', 0x77736c, 0.95);
+      rm.flatShading = true;
+      g.add(new Mesh(geo, rm).translateY(0.45));
+      break;
+    }
+    case 'sign': {
+      const wood = mat('wood', 0x7a5535, 0.85);
+      g.add(new Mesh(new CylinderGeometry(0.05, 0.05, 1.5, 6), wood).translateY(0.75), box(1.0, 0.5, 0.05, mat('board', 0xf1e8cf, 0.8), 0, 1.35, 0));
       break;
     }
     case 'drone': {

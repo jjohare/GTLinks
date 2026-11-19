@@ -42,6 +42,7 @@ interface Run {
   restartAt: number;
   steam: number;
   surface: number;
+  solids: { x: number; z: number; r: number; h: number }[];
 }
 
 /** Top-level controller: screen flow, per-frame orchestration, lifecycle and disposal. */
@@ -64,12 +65,9 @@ export class App {
   private last = 0;
   private paused = false;
   private ghostOff = false;
-  private renderMs = 0;
-  private sect: Record<string, number> = {};
   private overrideIntent: Intent | null = null;
   private lastIntent: Intent = { steer: 0, throttle: 0, brake: 0, handbrake: false };
   private frameTimes: number[] = [];
-  private jsTimes: number[] = [];
   private seedCounter = (Date.now() >>> 0) % 100000;
   private tmpV = new Vector3();
   private tmpV2 = new Vector3();
@@ -152,7 +150,7 @@ export class App {
       this.run = {
         seed, preview, game: null, course, surf, terrain, props, lodge, blend: 1,
         blendFrom: { p: new Vector3(), q: new Quaternion() }, lastPhase: Phase.Driving, state: null, raw: null,
-        hiccupAt: 0, wreckHandled: false, fadeStarted: false, restartAt: 0, steam: 0, surface: 1,
+        hiccupAt: 0, wreckHandled: false, fadeStarted: false, restartAt: 0, steam: 0, surface: 1, solids: [],
       };
       // the lodge hooks fire during construction before `run` exists; refresh the readouts now
       this.hud.setCount(0, false, 0);
@@ -171,8 +169,8 @@ export class App {
     r.props.dispose();
     r.terrain.dispose();
     this.scene.remove(r.terrain.group, r.props.group, r.lodge.group);
-    r.preview.free?.();
     r.game?.free?.();
+    r.preview.free?.();
     this.run = null;
   }
 
@@ -215,7 +213,6 @@ export class App {
     r.game = this.sim.create(r.seed, carId, steins);
     r.props.setGame(r.game);
     r.lodge.setGame(r.game);
-    r.preview.free?.();
     r.state = null;
     const car = r.lodge.car;
     r.blend = 0;
@@ -236,7 +233,6 @@ export class App {
 
   private frame(time: number): void {
     if (this.paused || !this.run) return;
-    const jsStart = performance.now();
     const now = time / 1000;
     const dt = this.last ? Math.min(0.1, Math.max(0, now - this.last)) : 0.016;
     this.last = now;
@@ -247,30 +243,19 @@ export class App {
     for (const code of this.input.takePressed()) this.onKey(code);
     if (this.input.padStart() && this.screen === 'lodge') this.go();
 
-    const q0 = performance.now();
     switch (this.screen) {
       case 'lodge': this.tickLodge(r, dt); break;
       case 'descent': this.tickDrive(r, dt); break;
       case 'wreck': this.tickWreck(r, dt); break;
       default: break;
     }
-    const q1 = performance.now();
     r.props.update(dt);
-    const q2 = performance.now();
     this.fx.update(dt);
-    const q3 = performance.now();
     const focus = this.screen === 'lodge' ? r.lodge.slotPos[r.lodge.selected] : this.tmpV.set(r.state?.pos[0] ?? 0, r.state?.pos[1] ?? 0, r.state?.pos[2] ?? 0);
     this.sky.update(this.rig.camera, focus, dt);
     this.rig.applyPin();
-    const rs = performance.now();
     this.gpu.renderer.render(this.scene, this.rig.camera);
-    const rs2 = performance.now();
-    this.renderMs = this.renderMs * 0.8 + (rs2 - rs) * 0.2;
     this.drawGhost(r);
-    const q4 = performance.now();
-    this.sect = { tick: q1 - q0, props: q2 - q1, fx: q3 - q2, render: rs2 - q3, tail: q4 - rs2 };
-    this.jsTimes.push(performance.now() - jsStart);
-    if (this.jsTimes.length > 600) this.jsTimes.shift();
   }
 
   private onKey(code: string): void {
@@ -291,7 +276,7 @@ export class App {
   private tickLodge(r: Run, dt: number): void {
     r.lodge.update(dt, 0, false);
     const car = r.lodge.car;
-    this.rig.updateLodge(dt, r.lodge.camHome, r.lodge.slotPos[r.lodge.selected], r.lodge.tablePos, this.tmpV.set(r.course.start.pos[0], r.course.start.pos[1], r.course.start.pos[2]), r.preview);
+    this.rig.updateLodge(dt, r.lodge.camHome, r.lodge.slotPos[r.lodge.selected], r.lodge.tablePos, this.tmpV.set(r.course.start.pos[0], r.course.start.pos[1], r.course.start.pos[2] - 6), r.preview);
     car.setEyes(r.lodge.load.count, this.t, false);
     for (const c of r.lodge.cars) if (c !== car) c.setEyes(0, this.t + 3, false);
   }
@@ -318,7 +303,7 @@ export class App {
     car.setEyes(n, this.t, st.phase === Phase.Wrecked);
     r.lodge.update(dt, st.wobble, true);
     for (const c of r.lodge.cars) if (c !== car) c.tickSprings(dt, 0, 0);
-    for (const e of events) this.onEvent(r, e, st, pos, vel);
+    for (const e of events) this.onEvent(r, e, pos, vel);
 
     if (st.phase !== r.lastPhase) {
       if (st.phase === Phase.FinaleArmed) {
@@ -328,7 +313,6 @@ export class App {
       r.lastPhase = st.phase;
     }
     this.groundFx(r, st, car, dt);
-    const sev = r.lodge.load.severity;
     this.hud.drive({
       mph: st.speed * MPH, hole: Math.min(8, Math.max(0, Math.round(st.hole))),
       par: r.course.holes[Math.min(8, Math.max(0, Math.round(st.hole)))]?.par ?? 4, steins: n,
@@ -338,7 +322,6 @@ export class App {
     this.audio.setSurface(r.surface);
     this.audio.drive(true, st.speed, st.phase === Phase.Driving ? intent.throttle : 0.5, st.wheelsOnGround, Math.abs(st.appliedSteer) * Math.min(1, Math.abs(st.speed) / 30));
     this.rig.updateChase(dt, st, game, n);
-    void sev;
 
     if (st.phase === Phase.Wrecked) this.enterWreck(r, st);
   }
@@ -367,6 +350,7 @@ export class App {
     this.audio.thump(0.6);
     this.hud.clearTransient();
     r.restartAt = 0;
+    r.solids = r.props.solidsNear(st.pos[0], st.pos[2], 220);
   }
 
   private tickWreck(r: Run, dt: number): void {
@@ -384,7 +368,7 @@ export class App {
     car.tickSprings(dt, 0, 0);
     car.setEyes(r.lodge.load.count, this.t, true);
     r.lodge.update(dt, 0, true);
-    for (const e of events) this.onEvent(r, e, st, pos, this.tmpV2.set(0, 0, 0));
+    for (const e of events) this.onEvent(r, e, pos, this.tmpV2.set(0, 0, 0));
     const t = st.wreckedFor;
     if (t > 1.2 && t < WRECK.orbit) this.hud.lowerThird(CARS[r.lodge.selected].name, r.lodge.load.count, st.trick);
     else if (t >= WRECK.orbit) this.hud.hideLower();
@@ -398,11 +382,9 @@ export class App {
       const sp = b ? b.getWorldPosition(this.tmpV2) : this.tmpV2.copy(pos);
       this.fx.emit('steam', sp, 1, new Vector3(0, 0.6, 0), 0.5, 1);
     }
-    this.rig.updateDrone(dt, t, pos, game, WRECK.orbit, WRECK.pull);
+    this.rig.updateDrone(dt, t, pos, game, WRECK.orbit, WRECK.pull, r.solids);
     if (t >= WRECK_TOTAL - 0.4 && !r.fadeStarted) { r.fadeStarted = true; this.hud.fade(true); r.restartAt = this.t + WRECK.fade + WRECK.hold; }
     if (r.fadeStarted && this.t >= r.restartAt) {
-      this.screen = nextScreen(this.screen, { t: 'wreckDone' });
-      this.screen = 'lodge'; // guarded below: restart() takes over
       void this.finishWreck();
     }
   }
@@ -419,7 +401,7 @@ export class App {
 
   // ------------------------------------------------------------------ events and effects
 
-  private onEvent(r: Run, e: SimEvent, st: RenderState, pos: Vector3, vel: Vector3): void {
+  private onEvent(r: Run, e: SimEvent, pos: Vector3, vel: Vector3): void {
     const car = r.lodge.car;
     const at = new Vector3(e.x, e.y, e.z);
     switch (e.kind) {
@@ -483,7 +465,6 @@ export class App {
       }
       default: break;
     }
-    void st;
   }
 
   private surfaceAt(surf: Uint8Array, x: number, z: number): number {
@@ -573,16 +554,15 @@ export class App {
       selected: () => self.run?.lodge.selected ?? -1,
       roofScreen: () => self.run ? self.project(self.run.lodge.car.anchor.getWorldPosition(new Vector3()).add(new Vector3(0, 0.3, 0))) : null,
       info: () => { const i = self.gpu.renderer.info; return { geometries: i.memory.geometries, textures: i.memory.textures, programs: (i as unknown as { programs?: unknown[] }).programs?.length ?? null, calls: i.render.drawCalls, triangles: i.render.triangles }; },
-      renderMs: () => self.renderMs,
-      sect: () => self.sect,
-      jsMs: () => { const a = self.jsTimes.slice(-120); return a.length ? a.reduce((p, c) => p + c, 0) / a.length : null; },
-      toggle: (name: string, on: boolean) => { if (name === 'shadow') self.sky.sun.castShadow = on; if (name === 'terrain' && self.run) self.run.terrain.group.visible = on; if (name === 'props' && self.run) self.run.props.group.visible = on; if (name === 'fx') self.fx.mesh.visible = on; if (name === 'lodge' && self.run) self.run.lodge.group.visible = on; if (name === 'ghost') self.ghostOff = !on; if (name === 'sky') self.sky.group.visible = on; if (name === 'msaa') { /* needs renderer rebuild; not toggled */ } },
+      toggle: (name: string, on: boolean) => { if (name === 'shadow') self.sky.sun.castShadow = on; if (name === 'terrain' && self.run) self.run.terrain.group.visible = on; if (name === 'props' && self.run) self.run.props.group.visible = on; if (name === 'fx') self.fx.mesh.visible = on; if (name === 'lodge' && self.run) self.run.lodge.group.visible = on; if (name === 'ghost') self.ghostOff = !on; if (name === 'sky') self.sky.group.visible = on;  },
       recent: () => { const a = self.frameTimes.slice(-60); return a.reduce((p, c) => p + c, 0) / Math.max(1, a.length); },
       frameStats: () => { const a = [...self.frameTimes].sort((x, y) => x - y); return a.length ? { n: a.length, mean: a.reduce((p, c) => p + c, 0) / a.length, p50: a[Math.floor(a.length * 0.5)], p95: a[Math.floor(a.length * 0.95)], max: a[a.length - 1] } : null; },
       setIntent: (i: Intent | null) => { self.overrideIntent = i; },
       restart: () => self.restart(true),
       go: () => self.go(),
       seed: () => self.run?.seed ?? -1,
+      animatingProps: () => self.run?.props.animating ?? 0,
+      heightAt: (x: number, z: number) => (self.run?.game ?? self.run?.preview)?.height_at(x, z) ?? null,
       pin: (p: number[] | null, l?: number[], fov = 50) => { self.rig.pinned = p && l ? { pos: new Vector3(...p), look: new Vector3(...l), fov } : null; },
       camera: () => { const c = self.rig.camera; const d = c.getWorldDirection(new Vector3()); return { pos: c.position.toArray(), dir: d.toArray(), fov: c.fov, aspect: c.aspect, table: self.run?.lodge.tablePos.toArray(), home: self.run?.lodge.camHome.toArray(), lodge: self.run?.course.lodge.pos, start: self.run?.course.start.pos }; },
       events: () => self.lastIntent,
@@ -598,7 +578,7 @@ export class App {
 
   private async debugStart(carId: number, steins: number, seed: number): Promise<void> {
     while (this.building || this.screen === 'loading') await new Promise((r) => setTimeout(r, 30));
-    if (!this.run || this.run.seed !== seed) {
+    if (!this.run || this.run.seed !== seed || this.screen !== 'lodge' || this.run.game) {
       this.screen = 'fade';
       await this.newRun(seed);
       this.showLodge();

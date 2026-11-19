@@ -6,7 +6,7 @@
  * bumps, a kinematic car, and phases that advance on a timer to Wrecked with the car inverted.
  * It performs no real physics. It is only selected when web/src/wasm/pkg is absent.
  */
-import { Matrix4, Quaternion, Vector3 } from 'three';
+import { Matrix4, Quaternion, Vector3 } from 'three/webgpu';
 import { CELL, NX, NZ, STATE_LEN, S, X0, EventKind, Phase, Surface, PropKind } from './types';
 import type { Course, CourseProp, CourseRamp, Game } from './types';
 
@@ -47,6 +47,7 @@ export class StandInGame implements Game {
   private trick = 0;
   private lastTrick = 0;
   private lastNear = 0;
+  private hitProps = new Set<number>();
   private readonly steins: number;
 
   constructor(seed: number, _carId: number, steins: number) {
@@ -198,6 +199,16 @@ export class StandInGame implements Game {
 
     const hole = Math.max(0, Math.min(8, Math.floor((this.pos.z - hole0Z) / HOLE_LEN)));
     if (hole !== this.lastHole && this.pos.z > hole0Z) { this.lastHole = hole; this.emit(EventKind.HoleEntered, hole, 0); }
+    // knock flags, tee markers and signs the car passes close to
+    if (this.phase < Phase.Settling) {
+      this.course.props.forEach((p, i) => {
+        if ((p.kind === PropKind.Flag || p.kind === PropKind.TeeMarker || p.kind === PropKind.Sign) && !this.hitProps.has(i)
+          && Math.abs(p.pos[2] - this.pos.z) < 5 && Math.abs(p.pos[0] - this.pos.x) < 8) {
+          this.hitProps.add(i);
+          this.emit(EventKind.PropHit, i, p.kind, p.pos[0], p.pos[1], p.pos[2]);
+        }
+      });
+    }
     if (this.phase === Phase.Driving) {
       if (T > this.nextHiccup) { this.emit(EventKind.Hiccup, 0.5, 0); this.nextHiccup = T + 3 + this.rand() * 6; }
       if (this.speed > 18 && T - this.lastTrick > 6) { this.lastTrick = T; this.trick += 150; this.emit(EventKind.Trick, 1, 150); }

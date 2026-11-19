@@ -54,6 +54,7 @@ export class Hud {
     for (const id of ids) this.el[id] = $(root, `#${id}`);
     this.touch = this.el.touch;
     this.isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || new URLSearchParams(location.search).has('touch');
+    document.body.classList.toggle('touch', this.isTouch);
     this.el.prev.onclick = () => h.prev();
     this.el.next.onclick = () => h.next();
     this.el.add.onclick = () => h.add();

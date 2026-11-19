@@ -71,9 +71,9 @@ export class CameraRig {
     this.t += dt;
     // aim half way between the middle of the row and the chosen car, so the car glides into focus
     // while the table (straight ahead, low in frame) stays visible for dragging
-    const goalLook = this.tmp.copy(rowCentre).lerp(carPos, 0.38).add(this.tmp2.set(0, -0.6, 0)).lerp(table, 0.24);
+    const goalLook = this.tmp.copy(rowCentre).lerp(carPos, 0.3).add(this.tmp2.set(0, -0.6, 0)).lerp(table, 0.24);
     const goalPos = this.tmp2.copy(home);
-    goalPos.x += (carPos.x - home.x) * 0.1; goalPos.z += (carPos.z - home.z) * 0.06;
+    goalPos.x += (carPos.x - home.x) * 0.04; goalPos.z += (carPos.z - home.z) * 0.06;
     goalPos.z += 0.5 + Math.sin(this.t * 0.35) * 0.08;
     goalPos.y += Math.sin(this.t * 0.5) * 0.03;
     this.roll = 0;
@@ -125,7 +125,7 @@ export class CameraRig {
    * Wreck-cam drone: a slow panoramic orbit, then a pull-up and away.
    * `t` is the contract's time-since-Wrecked; `orbit` and `pull` are durations in seconds.
    */
-  updateDrone(dt: number, t: number, car: Vector3, game: Game, orbit: number, pull: number): void {
+  updateDrone(dt: number, t: number, car: Vector3, game: Game, orbit: number, pull: number, solids: { x: number; z: number; r: number; h: number }[] = []): void {
     this.t += dt;
     if (this.snap) {
       // start the arc from the side the car faces away from the previous chase heading
@@ -142,6 +142,8 @@ export class CameraRig {
     const goalPos = new Vector3(centre.x + Math.sin(ang) * radius, centre.y + alt, centre.z + Math.cos(ang) * radius);
     const gy = game.height_at(goalPos.x, goalPos.z) + 2.0;
     if (goalPos.y < gy) goalPos.y = gy;
+    // keep the lens out of foliage: rise over any tree the orbit would pass through
+    for (const o of solids) if (Math.hypot(goalPos.x - o.x, goalPos.z - o.z) < o.r + 3.5 && goalPos.y < o.h + 1.5) goalPos.y = o.h + 1.5;
     // during the pull-out the aim eases from the car to a point further down the mountain
     const aim = new Vector3(centre.x, centre.y - e * 6, centre.z + e * 30);
     const fov = MathUtils.lerp(38, 48, e);

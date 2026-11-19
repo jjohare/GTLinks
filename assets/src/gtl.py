@@ -329,14 +329,15 @@ def tri_total(root):
 
 def export_glb(path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    kw = dict(filepath=path, export_format='GLB', export_apply=True, export_yup=True,
+    kw = dict(filepath=path, export_format='GLB', export_apply=True, export_yup=True, export_vertex_color='ACTIVE',
               export_cameras=False, export_lights=False, export_animations=False,
               export_morph=False, export_image_format='NONE',
               export_draco_mesh_compression_enable=False)
     try:
         bpy.ops.export_scene.gltf(**kw)
     except TypeError:
-        kw.pop('export_draco_mesh_compression_enable', None)
+        for k in ('export_vertex_color', 'export_draco_mesh_compression_enable'):
+            kw.pop(k, None)
         bpy.ops.export_scene.gltf(**kw)
     return os.path.getsize(path)
 

@@ -2,6 +2,7 @@ import {
   Group, Object3D, Mesh, Vector3, Quaternion, Box3, MeshStandardNodeMaterial, MeshBasicNodeMaterial, BoxGeometry, CylinderGeometry, Color,
 } from 'three/webgpu';
 import { instantiate } from '../render/assets';
+import { disposeTree } from './dispose';
 import type { CarSpec, Game, RenderState } from '../sim/types';
 import { PART_NAMES } from '../sim/types';
 
@@ -196,6 +197,6 @@ export class CarView {
   dispose(): void {
     this.reset();
     for (const d of this.disposables) d.dispose();
-    this.root.removeFromParent();
+    disposeTree(this.root);
   }
 }

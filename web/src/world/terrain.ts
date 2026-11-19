@@ -132,7 +132,7 @@ export class Terrain {
 
   /**
    * Coarse apron beyond the contract grid so the world never ends in a void. Heights come from the
-   * simulation's analytic height_at; it sits slightly below the fine mesh to hide the seam.
+   * simulation's analytic height_at; it sits a few metres below the fine mesh and overlaps its border by one cell so no seam shows sky.
    */
   private buildSkirt(heightAt: (x: number, z: number) => number): void {
     const step = 80, x0 = -3600, x1 = 3600, z0 = -2000, z1 = 4800;
@@ -142,14 +142,14 @@ export class Terrain {
     for (let j = 0; j < rows; j++) {
       for (let i = 0; i < cols; i++) {
         const k = j * cols + i, x = x0 + i * step, z = z0 + j * step;
-        pos[k * 3] = x; pos[k * 3 + 1] = heightAt(x, z) - 0.6; pos[k * 3 + 2] = z;
+        pos[k * 3] = x; pos[k * 3 + 1] = heightAt(x, z) - 3; pos[k * 3 + 2] = z;
         const dx = (heightAt(x + 20, z) - heightAt(x - 20, z)) / 40, dz = (heightAt(x, z + 20) - heightAt(x, z - 20)) / 40;
         const l = Math.hypot(dx, 1, dz);
         nor[k * 3] = -dx / l; nor[k * 3 + 1] = 1 / l; nor[k * 3 + 2] = -dz / l;
         wA[k * 4] = 1;
       }
     }
-    const inner = (x: number, z: number) => x > X0 - step && x < -X0 + step && z > -step && z < (NZ - 1) * CELL + step;
+    const inner = (x: number, z: number) => x > X0 + step && x < -X0 - step && z > step && z < (NZ - 1) * CELL - step;
     const idx: number[] = [];
     for (let j = 0; j < rows - 1; j++) {
       for (let i = 0; i < cols - 1; i++) {

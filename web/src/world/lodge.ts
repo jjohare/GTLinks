@@ -117,7 +117,8 @@ export class Lodge {
     const S = new Vector3(...course.start.pos);
     for (let i = 0; i < CARS.length; i++) {
       const cv = await CarView.create(CARS[i]);
-      const x = S.x - (i - 1.5) * 6.4, z = S.z + (i % 2 === 0 ? 0 : 1.5);
+      // the row sits just uphill of the spawn point so the car that drives off never meets its neighbours
+      const x = S.x - (i - 1.5) * 5.4, z = S.z - 6 + (i % 2 === 0 ? 0 : 1.2);
       const y = game.height_at(x, z);
       const yaw = Math.atan2(this.camHome.x - x, this.camHome.z - z) + (i % 2 === 0 ? 0.55 : -0.55);
       cv.root.position.set(x, y, z);

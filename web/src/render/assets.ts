@@ -1,9 +1,8 @@
-import { Box3, Group, Mesh, MeshStandardMaterial, MeshStandardNodeMaterial, Vector3 } from 'three';
-import type { Material, Object3D } from 'three';
+import { Box3, Group, Mesh, MeshStandardMaterial, MeshStandardNodeMaterial, Vector3 } from 'three/webgpu';
+import type { Material, Object3D } from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import manifest from 'virtual:asset-manifest';
 import { standInModel } from './standinModels';
-import { proceduralModel } from './procedural';
 import carsJson from '../../../assets/cars.json';
 import type { CarSpec } from '../sim/types';
 
@@ -49,10 +48,6 @@ export function loadTemplate(rel: string): Promise<Group> {
   let p = cache.get(rel);
   if (!p) {
     p = (async () => {
-      if (!present.has(`assets/${rel}`)) {
-        const proc = proceduralModel(rel.split('/').pop()!.replace('.glb', ''));
-        if (proc) { fix(proc); return proc; }
-      }
       if (present.has(`assets/${rel}`)) {
         try {
           const gltf = await loader.loadAsync(`${BASE}assets/${rel}`);

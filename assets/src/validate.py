@@ -274,19 +274,37 @@ def validate_prop(name, path):
     return res
 
 
+def load_extra_rules():
+    """assets/src/rules_*.py may define RULES = {prop_name: {nodes, mats, tris, ...}} (same schema as PROP_RULES)."""
+    import glob, importlib.util
+    for f in sorted(glob.glob(os.path.join(os.path.dirname(__file__), 'rules_*.py'))):
+        spec = importlib.util.spec_from_file_location(os.path.basename(f)[:-3], f)
+        m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+        PROP_RULES.update(getattr(m, 'RULES', {}))
+
+
 def main():
+    load_extra_rules()
     ap = argparse.ArgumentParser()
+    ap.add_argument('--only', default='', help='comma list of car keys / prop names; skips writing the default output unless --out is given')
     ap.add_argument('--out', default=os.path.join(ROOT, 'docs/evidence/assets/validation.json'))
     a = ap.parse_args()
+    only = [x for x in a.only.split(',') if x]
     cars = {c['key']: c for c in json.load(open(os.path.join(ROOT, 'assets/cars.json')))['cars']}
     out = dict(contract='docs/CONTRACT.md s3', cars={}, props={})
     for k, spec in cars.items():
+        if only and k not in only:
+            continue
         p = os.path.join(ROOT, 'web/public/assets/cars', k + '.glb')
         out['cars'][k] = validate_car(k, spec, p) if os.path.exists(p) else dict(ok=False, error='missing file')
     for n in PROP_RULES:
+        if only and n not in only:
+            continue
         p = os.path.join(ROOT, 'web/public/assets/props', n + '.glb')
         out['props'][n] = validate_prop(n, p) if os.path.exists(p) else dict(ok=False, error='missing file')
     out['all_ok'] = all(v['ok'] for v in list(out['cars'].values()) + list(out['props'].values()))
+    if only and a.out == os.path.join(ROOT, 'docs/evidence/assets/validation.json'):
+        a.out = os.path.join(ROOT, 'docs/evidence/assets/validation_partial_%s.json' % '_'.join(only)[:60])
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     json.dump(out, open(a.out, 'w'), indent=1)
     for grp in ('cars', 'props'):

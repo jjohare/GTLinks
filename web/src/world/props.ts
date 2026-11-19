@@ -127,6 +127,21 @@ export class Props {
     }
   }
 
+  /** Number of props currently animating (diving spectators and tumbling knocked props). */
+  get animating(): number { return this.dyn.size; }
+
+  /** Solid obstacles (trees, carts, rocks) within `range` of a point, for camera avoidance. */
+  solidsNear(x: number, z: number, range: number): { x: number; z: number; r: number; h: number }[] {
+    const out: { x: number; z: number; r: number; h: number }[] = [];
+    for (const p of this.course.props) {
+      if (p.kind !== PropKind.Pine && p.kind !== PropKind.Broadleaf && p.kind !== PropKind.Cart && p.kind !== PropKind.Rock) continue;
+      if (Math.hypot(p.pos[0] - x, p.pos[2] - z) > range) continue;
+      const tall = p.kind === PropKind.Pine ? 11 : p.kind === PropKind.Broadleaf ? 8 : 2.5;
+      out.push({ x: p.pos[0], z: p.pos[2], r: (p.kind === PropKind.Pine ? 2.2 : 3) * p.scale, h: p.pos[1] + tall * p.scale });
+    }
+    return out;
+  }
+
   /** React to a simulation event that concerns scenery. */
   onEvent(e: SimEvent, carPos: Vector3, carVel: Vector3): void {
     if (e.kind === 7) this.dive(e.a, carPos);
