@@ -144,6 +144,12 @@ def do_view(name):
     setup((1100, 750)); ground(300)
     objs = load(name)
     lo, hi = bounds(objs)
+    if lo.z < -0.01:      # prop hangs below its origin (e.g. golf_club): lift it clear of the ground plane
+        for o in objs:
+            if o.parent is None:
+                o.location.z += -lo.z
+        bpy.context.view_layer.update()
+        lo, hi = bounds(objs)
     ctr = (lo + hi) / 2
     size = max((hi - lo).length, 0.05)
     for tag, dirv in (('view1', Vector((0.8, -1.0, 0.55))), ('view2', Vector((-0.8, 1.0, 0.55)))):

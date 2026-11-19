@@ -35,13 +35,20 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         if: steps.have.outputs.sim == 'true'
 
+      # The property suite runs 6 seeds here (672 runs, about two minutes). The full
+      # 200-seed matrix (33,600 runs) takes about 90 CPU-minutes and is run locally:
+      #   GTLINKS_SEEDS=200 cargo test --release -p gtlinks-sim
       - name: Simulation tests (includes the inverted-rest property suite)
         if: steps.have.outputs.sim == 'true'
+        env:
+          GTLINKS_SEEDS: 6
         run: cargo test --release -p gtlinks-sim
 
-      - name: Install wasm-pack
+      - name: Install wasm-pack and binaryen
         if: steps.have.outputs.sim == 'true'
-        run: curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+        run: |
+          curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+          sudo apt-get update -qq && sudo apt-get install -y -qq binaryen
 
       - name: Build wasm
         if: steps.have.outputs.sim == 'true'

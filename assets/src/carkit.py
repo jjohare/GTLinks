@@ -434,14 +434,15 @@ def rbox(mb, c, s, m, r=0.02, rot=None):
     return mb.box(c, s, m, bevel=r, rot=rot)
 
 
-def emit_liner(shell, surf, pred, depth, node, mat, mirror=True, step=(1, 1), outward=False):
+def emit_liner(shell, surf, pred, depth, node, mat, mirror=True, step=(1, 1), outward=False, jbreaks=None, irange=None):
     """Inner skin: the cells whose tag passes pred, pushed 'depth' inside and facing inward.
     step = (si, sj) merges blocks of cells (a block is emitted only when every cell in it passes)."""
     mb = shell.mb(node)
     P, N, ni, nj = surf.P, surf.N, surf.ni, surf.nj
     si, sj = step
-    ii = list(range(0, ni - 1, si)) + [ni - 1]
-    jj = list(range(0, nj - 1, sj)) + [nj - 1]
+    lo, hi = irange if irange else (0, ni - 1)
+    ii = list(range(lo, hi, si)) + [hi]
+    jj = list(jbreaks) if jbreaks else list(range(0, nj - 1, sj)) + [nj - 1]
     for sx in ((1, -1) if mirror else (1,)):
         rev = (sx < 0) != surf.flip
         for a0, a1 in zip(ii[:-1], ii[1:]):

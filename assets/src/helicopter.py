@@ -38,9 +38,9 @@ KEYS = [
     (-1.10, 0.90, -0.66, 0.80, 2.6),
     (-1.70, 0.76, -0.55, 0.62, 2.8),
     (-2.40, 0.66, -0.22, 0.40, 3.0),
-    (-3.10, 0.58, 0.05, 0.25, 3.2),
-    (-5.00, 0.56, 0.20, 0.15, 3.4),
-    (-7.00, 0.56, 0.30, 0.08, 3.4),
+    (-3.10, 0.68, -0.04, 0.31, 3.2),
+    (-5.00, 0.66, 0.12, 0.25, 3.4),
+    (-7.00, 0.60, 0.26, 0.10, 3.4),
 ]
 S = [2.20, 2.10, 1.95, 1.75, 1.50, 1.25] + [round(1.0 - 0.25 * k, 3) for k in range(17)] + \
     [-3.5, -4.0, -4.5, -5.0, -5.5, -6.0, -6.5, -7.0]
@@ -202,20 +202,35 @@ def hull(m):
         bar(m, (gx2, -0.38, 1.12), (gx2, 0.05, 1.12), 0.012, "steel")
         for yy in (-0.38, 0.05):
             bar(m, (sx * (surf_x(1.12, yy) - 0.01), yy, 1.12), (gx2, yy, 1.12), 0.010, "steel")
-    # chevrons on the boom: navy arms pointing forward, on both sides
-    for sx in (1, -1):
-        for zc in (-3.6, -4.15, -4.7, -5.25, -5.8):
-            top, bot, w, e = sect(zc)
-            cy, hh = (top + bot) / 2, (top - bot) / 2 * 0.62
-            run, th = 0.34, 0.13
-
+    # chevrons on the boom: bold navy arms pointing forward, on both flanks and on top
+    run, th = 0.40, 0.22
+    zcs = (-3.4, -4.0, -4.6, -5.2)          # last band ends at z = -5.82, forward of the stabiliser root (-5.85)
+    for zc in zcs:
+        top, bot, w, e = sect(zc - run / 2)
+        cy, hh = (top + bot) / 2, (top - bot) / 2 * 0.58
+        for sx in (1, -1):
             def X(z, y):
-                return sx * (surf_x(z, y) + 0.012)
+                return sx * (surf_x(z, y) + 0.014)
             for ss in (1, -1):
                 ya, yb2 = cy, cy + ss * hh
                 za, zb = zc, zc - run
                 decal(m, [(za, ya, X(za, ya)), (zb, yb2, X(zb, yb2)), (zb - th, yb2, X(zb - th, yb2)), (za - th, ya, X(za - th, ya))],
                       "navy", sx)
+        # top chevron following the faceted roof (ring vertices 3, 4, 5 of the stations)
+        def roof(z):
+            i = 0
+            while i < len(S) - 2 and S[i + 1] > z:
+                i += 1
+            t = (S[i] - z) / (S[i] - S[i + 1])
+            r0, r1 = station_ring(i), station_ring(i + 1)
+            return [r0[k] + (r1[k] - r0[k]) * t for k in (3, 4, 5)]
+        for sx in (1, -1):
+            def P(z, side):
+                r = roof(z)
+                v = r[0] if sx > 0 else r[2]
+                return (v.x * side, v.y + 0.012, z) if side else (0.0, r[1].y + 0.012, z)
+            m.face([Vector(P(zc, 0)), Vector(P(zc - run, 1)), Vector(P(zc - run - th, 1)), Vector(P(zc - th, 0))],
+                   "navy", hint=(0, 1, 0))
 
 
 def cowl(m):

@@ -1,47 +1,243 @@
-"""Car sub-assemblies: wheels (tread, rims, brake discs), calipers, underside, interior."""
+"""Car sub-assemblies that hang off the swept body in cars.py: inner structure behind the detachable panels,
+lamps, grille, exterior trim, mirrors, underside, interior, wheels and calipers.
+
+Every function takes the car context `c` (dimensions from cars.json, the tagged grids c.tub / c.G / c.R)
+and the Shell `sh` whose per-node mesh builders it adds to.  Game frame: x left, y up, z forward.
+"""
 import math
 from mathutils import Vector, Matrix
-from gtl import MB, make_mat, bx
+import carkit as K
+from carkit import V, lerp
 
 
-def car_materials(spec):
-    make_mat("paint", spec["paint"], metallic=0.35, rough=0.36)
-    make_mat("glass", (0.45, 0.58, 0.66), metallic=0.0, rough=0.04, alpha=0.30)
-    make_mat("headlight", (1.0, 0.96, 0.82), rough=0.1, emit=(1.0, 0.93, 0.70), emit_strength=1.0)
-    make_mat("taillight", (0.62, 0.04, 0.05), rough=0.25, emit=(0.5, 0.0, 0.0), emit_strength=0.6)
-    make_mat("trim", (0.06, 0.065, 0.07), rough=0.75)
-    make_mat("chrome", (0.80, 0.82, 0.84), metallic=1.0, rough=0.2)
-    make_mat("tyre", (0.045, 0.045, 0.05), rough=0.92)
-    make_mat("rim", (0.70, 0.72, 0.75), metallic=0.9, rough=0.30)
-    make_mat("rimdark", (0.09, 0.09, 0.10), metallic=0.4, rough=0.6)
-    make_mat("plate", (0.9, 0.9, 0.85), rough=0.5)
-    make_mat("underbody", (0.035, 0.035, 0.04), rough=0.9)
-    make_mat("underplate", (0.16, 0.16, 0.17), metallic=0.3, rough=0.7)
-    make_mat("steel", (0.45, 0.46, 0.48), metallic=0.85, rough=0.45)
-    make_mat("exhaust", (0.36, 0.34, 0.32), metallic=0.8, rough=0.5)
-    make_mat("spring", (0.85, 0.55, 0.08), metallic=0.3, rough=0.5)
-    make_mat("disc", (0.52, 0.5, 0.48), metallic=0.9, rough=0.4)
-    make_mat("caliper", (0.78, 0.08, 0.06), metallic=0.2, rough=0.45)
-    make_mat("rubber", (0.03, 0.03, 0.035), rough=0.95)
-    make_mat("seat", (0.17, 0.15, 0.13), rough=0.9)
-    make_mat("seat_trim", (0.45, 0.36, 0.26), rough=0.85)
-    make_mat("dash", (0.09, 0.09, 0.10), rough=0.8)
-    make_mat("doorcard", (0.15, 0.14, 0.13), rough=0.9)
-    make_mat("headliner", (0.60, 0.58, 0.54), rough=0.95)
-    make_mat("carpet", (0.07, 0.07, 0.075), rough=1.0)
-    make_mat("wheel_leather", (0.03, 0.03, 0.035), rough=0.6)
+def mirrored(pts):
+    """Left-half polyline (running outboard -> centre) completed across the centreline."""
+    out = list(pts)
+    for p in reversed(pts[:-1] if abs(pts[-1].x) < 1e-6 else pts):
+        out.append(Vector((-p.x, p.y, p.z)))
+    return out
+
+
+def row_line(c, surf, j, i0, i1, frac=0.0):
+    """Points and normals along row j (+frac toward j+1) for columns i1..i0 (outboard to centre), mirrored."""
+    pts, nrm = [], []
+    for i in range(i1, i0 - 1, -1):
+        p = surf.P[i][j].lerp(surf.P[i][j + 1], frac) if frac else surf.P[i][j].copy()
+        n = surf.N[i][j].copy()
+        pts.append(p)
+        nrm.append(n)
+    full_p = mirrored(pts)
+    full_n = list(nrm)
+    for n in reversed(nrm[:-1] if abs(pts[-1].x) < 1e-6 else nrm):
+        full_n.append(Vector((-n.x, n.y, n.z)))
+    return full_p, full_n
+
+
+# ----------------------------------------------------------------------------- structure behind panels
+def structure(c, sh):
+    """What is left when a bumper or the bonnet comes off: inner panels, crash bars, radiator, firewall."""
+    tub = c.tub
+    isbf = lambda t: t is not None and t.startswith('bf')
+    isbr = lambda t: t is not None and t.startswith('br')
+    K.emit_liner(sh, tub, isbf, 0.10, 'underside', 'trim', outward=True)
+    K.emit_liner(sh, tub, isbr, 0.05, 'body', 'paint', outward=True)
+    un = sh.mb('underside')
+    up = Vector((0, 1, 0))
+    for (j, i_end, d0, d1) in ((3, c.i_side0 - 1, -0.09, -0.04),):
+        pts, nrm = row_line(c, tub, j, 0, i_end)
+        K.bar_along(un, pts, nrm, [up] * len(pts), 0.11, d0, d1, 'steel')
+    pts, nrm = row_line(c, tub, 3, c.i_rc0 + 2, c.M)
+    pts.reverse(); nrm.reverse()
+    K.bar_along(un, pts, nrm, [up] * len(pts), 0.10, -0.045, -0.012, 'steel')
+    # firewall between the engine bay and the cabin, and the bay floor
+    zc = c.cowl[0].z
+    yb = c.yfloor
+    ytop = c.cowl[-1].y - 0.03
+    un.box((0, (yb + ytop) / 2, zc - 0.10), (2 * (c.w - 0.10), ytop - yb, 0.03), 'underplate')
+
+
+# ----------------------------------------------------------------------------- lamps
+def lamps(c, sh):
+    """Headlights: an emissive lens in its own node (the front end animates it as an eye), sitting at the back
+    of a recess cut into the fascia; bucket and bezel stay with the body."""
+    tub, S = c.tub, c.S
+    i0, i1, j0, j1 = c.lamp_cells
+    pts = [tub.P[i][j] for i in range(i0, i1 + 1) for j in range(j0, j1 + 1)]
+    x0, x1 = min(p.x for p in pts), max(p.x for p in pts)
+    y0, y1 = min(p.y for p in pts), max(p.y for p in pts)
+    zmin = min(p.z for p in pts)
+    a, b = (x1 - x0) / 2 - 0.010, (y1 - y0) / 2 - 0.010
+    p_ = S['lamp']['p']
+    for name, sx in (('headlight_l', 1), ('headlight_r', -1)):
+        ctr = Vector((sx * (x0 + x1) / 2, (y0 + y1) / 2, zmin - 0.045))
+        K.superdome(sh.mb(name), ctr, a, b, p_, 0.03, 'headlight')
+        c.origins[name] = tuple(ctr)
+        tr = sh.mb('trim')
+        tr.box(ctr + Vector((0, 0, -0.03)), (2 * a + 0.12, 2 * b + 0.10, 0.03), 'trim')
+        K.super_ring(sh.mb('chrome'), ctr + Vector((0, 0, 0.004)), a + 0.022, b + 0.022, p_, 0.024, 'chrome', depth=0.006)
+    c.lamp_box = (x0, x1, y0, y1, zmin)
+
+
+# ----------------------------------------------------------------------------- grille
+def grille(c, sh):
+    tub, S = c.tub, c.S
+    g = S['grille']
+    i0, i1, j0, j1 = c.grille_cells
+    mb = sh.mb('bumper_front')
+    kind, m = g['kind'], g['mat']
+    up = Vector((0, 1, 0))
+
+    def hbar(j, frac, w, d1=-0.006, mat=m):
+        pts, nrm = row_line(c, tub, j, 0, i1, frac)
+        K.bar_along(mb, pts, nrm, [up] * len(pts), w, -0.045, d1, mat)
+
+    def vbar(i, sx, w, d1=-0.01, mat=m):
+        pts, nrm, ups = [], [], []
+        for j in range(j0, j1 + 1):
+            p, n = tub.P[i][j].copy(), tub.N[i][j].copy()
+            t = (tub.P[min(i + 1, tub.ni - 1)][j] - tub.P[max(i - 1, 0)][j])
+            if abs(p.x) < 1e-6:
+                t = Vector((1, 0, 0))
+            t.normalize()
+            if sx < 0:
+                p.x, n.x, t = -p.x, -n.x, Vector((t.x, -t.y, -t.z))
+            pts.append(p); nrm.append(n); ups.append(t)
+        K.bar_along(mb, pts, nrm, ups, w, -0.045, d1, mat)
+
+    rows = [(j, f) for j in range(j0, j1) for f in (0.0, 0.5)][1:]
+    if g.get('frame', kind in ('eggcrate', 'bars')):
+        hbar(j0, 0.0, 0.035, d1=0.006)
+        hbar(j1 - 1, 0.999, 0.035, d1=0.006)
+        for sx in (1, -1):
+            vbar(i1, sx, 0.035, d1=0.006)
+    if kind == 'eggcrate':
+        for j, f in rows:
+            hbar(j, f, 0.022)
+        for i in range(i0, i1):
+            for sx in ((1, -1) if i > 0 else (1,)):
+                vbar(i, sx, 0.02, d1=-0.012)
+    elif kind == 'bars':
+        for j, f in rows[1::2]:
+            hbar(j, f, 0.045)
+    elif kind == 'slats':
+        for j, f in rows:
+            hbar(j, f, 0.018, d1=-0.012)
+    else:
+        hbar(j0, 0.5 * (j1 - j0) if j1 - j0 < 2 else 0.999, 0.012, d1=-0.02)
+    # number-plate blank (no text)
+    pj = S.get('plate_row', 3)
+    p = tub.P[0][pj].lerp(tub.P[0][pj + 1], 0.5)
+    mb.box((0, p.y, p.z + 0.008), (0.50, 0.11, 0.014), 'plate', bevel=0.004)
+    mb.box((0, p.y, p.z + 0.004), (0.53, 0.14, 0.012), 'trim', bevel=0.004)
+
+
+# ----------------------------------------------------------------------------- exterior trim
+def exterior_details(c, sh):
+    tub, G, R, S = c.tub, c.G, c.R, c.S
+    side_z = lambda i: c.pts[i][1]
+    cols = range(c.i_side0, c.i_rc0 + 1)
+
+    def col_at(z):
+        return min(cols, key=lambda i: abs(side_z(i) - z))
+    # door handles
+    kind = S['handles']
+    for z in (c.zn['Bm'] + 0.17, c.zn['C1'] + 0.17):
+        i = col_at(z)
+        p, n = tub.P[i][7].copy(), tub.N[i][7].copy()
+        for sx in (1, -1):
+            q = Vector((sx * p.x, p.y, p.z))
+            nn = Vector((sx * n.x, n.y, n.z))
+            if kind == 'flush':
+                sh.mb('trim').box(q + nn * 0.001, (0.008, 0.03, 0.17), 'gloss', bevel=0.003)
+            else:
+                node, m = ('chrome', 'chrome') if kind == 'chrome' else ('body', 'paint')
+                sh.mb('trim').box(q + nn * 0.001, (0.012, 0.062, 0.13), 'trim', bevel=0.004)
+                sh.mb(node).box(q + nn * 0.016, (0.026, 0.03, 0.17), m, bevel=0.01)
+    # wipers lying along the windscreen base
+    gW = c.gh_cols['W']
+    pts, nrm, ups = [], [], []
+    for g in range(1, max(3, gW - 2)):
+        p = G.P[g][1].lerp(G.P[g][2], 0.12)
+        u = (G.P[g][2] - G.P[g][1]).normalized()
+        pts.append(p); nrm.append(G.N[g][1]); ups.append(u)
+    for sx in (1, -1):
+        pp = [Vector((sx * p.x, p.y, p.z)) for p in pts]
+        nn = [Vector((sx * n.x, n.y, n.z)) for n in nrm]
+        uu = [Vector((sx * u.x, u.y, u.z)) for u in ups]
+        K.bar_along(sh.mb('trim'), pp, nn, uu, 0.022, 0.006, 0.026, 'trim')
+        sh.mb('trim').box(pp[0] + nn[0] * 0.012 - uu[0] * 0.03, (0.05, 0.03, 0.05), 'trim', bevel=0.01)
+    # roof rails
+    nu, nv = R.ni - 1, R.nj - 1
+    iu = nu - 1
+    v0, v1 = int(nv * 0.14), int(nv * 0.88)
+    node, m = ('chrome', S['rails']) if S['rails'] in ('chrome', 'steel') else ('trim', S['rails'])
+    lift = 0.012 if S['rails'] == 'gloss' else 0.034
+    for sx in (1, -1):
+        pts, nrm, ups = [], [], []
+        for iv in range(v0, v1 + 1):
+            p, n = R.P[iu][iv], R.N[iu][iv]
+            pts.append(Vector((sx * p.x, p.y, p.z)))
+            nrm.append(Vector((sx * n.x, n.y, n.z)))
+            ups.append(Vector((1, 0, 0)))
+        K.bar_along(sh.mb(node), pts, nrm, ups, 0.03, lift - 0.008, lift + 0.01, m)
+        for k in (0, len(pts) // 2, len(pts) - 1):
+            sh.mb(node).box(pts[k] + nrm[k] * (lift / 2), (0.03, lift + 0.012, 0.09), m, bevel=0.006)
+    # aerial fin
+    pf = R.P[0][int(nv * 0.9)]
+    sh.mb('trim').box((0, pf.y + 0.03, pf.z), (0.035, 0.07, 0.16), 'gloss', bevel=0.014)
+    # rear number-plate blank
+    M = c.M
+    p = tub.P[M][6].lerp(tub.P[M][7], 0.4)
+    sh.mb('trim').box((0, p.y, p.z - 0.008), (0.50, 0.11, 0.014), 'plate', bevel=0.004)
+    sh.mb('trim').box((0, p.y, p.z - 0.003), (0.56, 0.15, 0.012), 'trim', bevel=0.004)
+    # exhaust tips
+    tips = S['tips']
+    yb = c.yfloor
+    for k in range(tips):
+        for sx in (1, -1):
+            x = sx * (0.34 + 0.11 * k)
+            sh.mb('chrome').lathe((x, yb - 0.04, c.zR + 0.16), (0, 0, -1),
+                                  [(0.047, -0.08), (0.047, 0.08), (0.036, 0.08), (0.036, -0.08)], 12, 'chrome', closed=True)
+    # running boards
+    if S.get('boards'):
+        za, zb = c.zcF - c.Ra - 0.06, c.zcR + c.Ra + 0.06
+        for sx in (1, -1):
+            sh.mb('chrome').box((sx * (c.w - 0.03), c.ysb - 0.005, (za + zb) / 2), (0.11, 0.04, za - zb), 'chrome', bevel=0.012)
+            sh.mb('trim').box((sx * (c.w - 0.03), c.ysb + 0.017, (za + zb) / 2), (0.085, 0.006, za - zb - 0.06), 'trim')
+    # rear spoiler lip over the rear screen
+    if S.get('spoiler'):
+        gD = c.gh_cols['Dr']
+        pts, nrm = row_line(c, G, G.nj - 2, gD + 1, G.ni - 1)
+        pts.reverse(); nrm.reverse()
+        K.bar_along(sh.mb('trim'), pts, nrm, [Vector((0, 1, 0))] * len(pts), 0.03, 0.0, S['spoiler'], 'gloss')
+
+
+# ----------------------------------------------------------------------------- mirrors
+def mirrors(c, sh):
+    """Door mirrors on a short arm at the base of the A pillar; origin at the mount so they can fold or detach."""
+    tub = c.tub
+    p = tub.P[c.ix['A']][11].copy()
+    xlim = c.hw * 1.027
+    x_in = p.x + 0.005
+    wx = max(0.08, xlim - x_in)
+    for name, sx in (('mirror_l', 1), ('mirror_r', -1)):
+        mb = sh.mb(name)
+        o = Vector((sx * p.x, p.y, p.z))
+        ctr = Vector((sx * (x_in + wx / 2), p.y + 0.115, p.z + 0.03))
+        mb.box(o + Vector((sx * 0.012, 0.03, 0.03)), (0.06, 0.07, 0.07), 'trim', bevel=0.015)
+        mb.box(ctr, (wx, 0.16, 0.10), 'paint', bevel=0.04)
+        mb.box(ctr + Vector((0, -0.004, -0.05)), (wx - 0.03, 0.125, 0.01), 'chrome', bevel=0.004)
+        c.origins[name] = tuple(o)
 
 
 # ----------------------------------------------------------------------------- wheels
-def build_wheel(c, sx, sz, style):
-    """Wheel node geometry in the game frame, centred at the hub; axle along X, outward = sx."""
+def build_wheel(c, mb, sx, sz, style):
+    """Wheel geometry centred at the hub; axle along X, outer face toward sx."""
     R, ww = c.r, c.ww
     hw = ww / 2
-    cx, cy, cz = sx * c.tr / 2, R, sz * c.wb / 2
+    O = (sx * c.tr / 2, R, sz * c.wb / 2)
     rr = R * style.get("rim_frac", 0.62)
-    mb = MB()
     ax = (sx, 0, 0)
-    O = (cx, cy, cz)
     span = R - rr
     prof = [(rr, -0.80 * hw), (rr + 0.22 * span, -0.96 * hw), (rr + 0.62 * span, -hw), (R - 0.035, -0.92 * hw),
             (R - 0.006, -0.78 * hw),
@@ -49,30 +245,30 @@ def build_wheel(c, sx, sz, style):
             (R, 0.17 * hw), (R - 0.013, 0.22 * hw), (R - 0.013, 0.34 * hw), (R, 0.40 * hw), (R, 0.70 * hw),
             (R - 0.006, 0.78 * hw), (R - 0.035, 0.92 * hw), (rr + 0.62 * span, hw), (rr + 0.22 * span, 0.96 * hw),
             (rr, 0.80 * hw)]
-    SEG = 36
+    SEG = style.get('seg', 36)
 
     def mod(pi, i):
-        if 5 <= pi <= 14:
-            lane = 0 if pi <= 8 else (1 if pi <= 11 else 2)
-            return 1.0 - 0.011 * (((i + lane) // 2) % 2) if pi not in (7, 8, 11, 12) else 1.0
+        # tread blocks: alternate segments drop, staggered between the three ribs; groove floors stay round
+        if 4 <= pi <= 15 and pi not in (7, 8, 11, 12):
+            lane = 0 if pi <= 6 else (1 if pi <= 10 else 2)
+            return 1.0 - 0.02 * (((i + lane) // 2) % 2)
         return 1.0
     mb.lathe(O, ax, prof, SEG, "tyre", closed=True, mod=mod)
-    # rim barrel with lips
     mb.lathe(O, ax, [(rr - 0.045, -0.80 * hw), (rr + 0.012, -0.80 * hw), (rr + 0.012, -0.55 * hw),
                      (rr - 0.02, -0.5 * hw), (rr - 0.02, 0.62 * hw), (rr + 0.016, 0.66 * hw), (rr + 0.016, 0.84 * hw),
                      (rr - 0.045, 0.84 * hw)], SEG, "rim", closed=True)
-    # dark dish behind the spokes
-    mb.lathe(O, ax, [(0, 0.05 * hw), (rr - 0.04, 0.05 * hw), (rr - 0.04, 0.0), (0, 0.0)], 32, "rimdark")
+    mb.lathe(O, ax, [(0, 0.05 * hw), (rr - 0.04, 0.05 * hw), (rr - 0.04, 0.0), (0, 0.0)], 24, "rimdark")
     kind = style["wheel"]
     n = style["spokes"]
     hubr = 0.075
+    Ov = Vector(O)
     if kind == "aero":
         mb.lathe(O, ax, [(0, 0.80 * hw), (rr * 0.55, 0.80 * hw), (rr - 0.02, 0.60 * hw), (rr - 0.02, 0.50 * hw),
-                         (0, 0.50 * hw)], 32, "rim")
+                         (0, 0.50 * hw)], 30, "rim")
         for i in range(n):
             a = (i + 0.5) * 2 * math.pi / n
             rad = Vector((0, math.sin(a), math.cos(a)))
-            mb.box(Vector(O) + Vector((sx * 0.81 * hw, 0, 0)) + rad * rr * 0.62, (0.012, 0.045, rr * 0.30), "rimdark",
+            mb.box(Ov + Vector((sx * 0.70 * hw, 0, 0)) + rad * rr * 0.70, (0.03, 0.05, rr * 0.34), "rimdark",
                    rot=Matrix.Rotation(-a, 3, 'X'))
     else:
         for i in range(n):
@@ -80,224 +276,259 @@ def build_wheel(c, sx, sz, style):
             for twin in ((-1, 1) if kind == "twin" else (0,)):
                 a2 = a + twin * 0.11
                 rad = Vector((0, math.sin(a2), math.cos(a2)))
-                sw = 0.055 if kind == "spoke6" else 0.034 if kind == "twin" else 0.05
-                ctr = Vector(O) + Vector((sx * hw * 0.50, 0, 0)) + rad * rr * 0.54
+                sw = 0.06 if kind == "spoke6" else 0.032 if kind == "twin" else 0.036
+                ctr = Ov + Vector((sx * hw * 0.50, 0, 0)) + rad * rr * 0.54
                 rot = Matrix.Rotation(-a2, 3, 'X')
                 if kind == "turbine":
-                    rot = Matrix.Rotation(-a2, 3, 'X') @ Matrix.Rotation(0.35, 3, 'Z')
+                    rot = Matrix.Rotation(-a2 - 0.22 * sx, 3, 'X')
+                    ctr = Ov + Vector((sx * hw * 0.50, 0, 0)) + rad * rr * 0.52
                 mb.box(ctr, (0.06, sw, rr * 0.92), "rim", bevel=0.012, rot=rot)
-        mb.lathe(O, ax, [(0, 0.78 * hw), (hubr, 0.74 * hw), (hubr + 0.02, 0.5 * hw), (0, 0.5 * hw)], 20, "rim")
+        mb.lathe(O, ax, [(0, 0.78 * hw), (hubr, 0.74 * hw), (hubr + 0.02, 0.5 * hw), (0, 0.5 * hw)], 16, "rim")
         for i in range(5):
             a = i * 2 * math.pi / 5 + 0.3
-            p = Vector(O) + Vector((sx * 0.79 * hw, 0, 0)) + Vector((0, math.sin(a), math.cos(a))) * 0.045
+            p = Ov + Vector((sx * 0.79 * hw, 0, 0)) + Vector((0, math.sin(a), math.cos(a))) * 0.045
             mb.lathe(p, ax, [(0.012, -0.01), (0.012, 0.012)], 6, "steel")
-    # brake disc (vented look: ring + radial slots), inboard
+    # brake disc with a hat, inboard of the spokes
     dr = rr * 0.80
-    mb.lathe(O, ax, [(0.10, -0.50 * hw), (dr, -0.50 * hw), (dr, -0.36 * hw), (0.10, -0.36 * hw)], 40, "disc", closed=True)
-    mb.lathe(O, ax, [(0, -0.36 * hw), (0.10, -0.36 * hw), (0.10, -0.62 * hw), (0, -0.62 * hw)], 16, "disc")
-    for i in range(18):
-        a = i * 2 * math.pi / 18
+    mb.lathe(O, ax, [(0.10, -0.50 * hw), (dr, -0.50 * hw), (dr, -0.36 * hw), (0.10, -0.36 * hw)], 32, "steel", closed=True)
+    mb.lathe(O, ax, [(0, -0.36 * hw), (0.10, -0.36 * hw), (0.10, -0.62 * hw), (0, -0.62 * hw)], 14, "steel")
+    for i in range(12):
+        a = i * 2 * math.pi / 12
         rad = Vector((0, math.sin(a), math.cos(a)))
-        mb.box(Vector(O) + Vector((sx * -0.43 * hw, 0, 0)) + rad * (dr * 0.78), (0.005, 0.012, dr * 0.34), "trim",
+        mb.box(Ov + Vector((sx * -0.43 * hw, 0, 0)) + rad * (dr * 0.78), (0.005, 0.012, dr * 0.34), "trim",
                rot=Matrix.Rotation(-a, 3, 'X'))
-    return mb, O
+    return O
 
 
-def build_caliper(c, sx, sz, style):
+def build_caliper(c, mb, sx, sz, style):
     R, ww = c.r, c.ww
     hw = ww / 2
     cx, cy, cz = sx * c.tr / 2, R, sz * c.wb / 2
-    rr = R * style.get("rim_frac", 0.62)
-    dr = rr * 0.80
-    mb = MB()
-    a = math.radians(70)             # rear-upper position
+    dr = R * style.get("rim_frac", 0.62) * 0.80
+    a = math.radians(70)
     rad = Vector((0, math.sin(a), -math.cos(a)))
     ctr = Vector((cx + sx * (-0.43 * hw), cy, cz)) + rad * dr * 0.80
     rot = Matrix.Rotation(a + math.pi / 2, 3, 'X')
     mb.box(ctr, (0.115, 0.075, dr * 0.45), "caliper", bevel=0.012, rot=rot)
     mb.box(ctr + Vector((sx * 0.065, 0, 0)), (0.02, 0.05, 0.05), "steel")
-    # hub carrier and bearing nose behind the disc
-    mb.lathe((cx, cy, cz), (sx, 0, 0), [(0.07, -0.95 * hw), (0.07, -0.60 * hw)], 12, "steel")
-    return mb, (cx, cy, cz)
+    mb.lathe((cx, cy, cz), (sx, 0, 0), [(0.07, -0.95 * hw), (0.07, -0.60 * hw)], 10, "steel")
+    return (cx, cy, cz)
+
+
+def wheels(c, sh):
+    st = c.S['wheel']
+    for name, sx, sz in (("fl", 1, 1), ("fr", -1, 1), ("rl", 1, -1), ("rr", -1, -1)):
+        c.origins['wheel_' + name] = build_wheel(c, sh.mb('wheel_' + name), sx, sz, st)
+        c.origins['caliper_' + name] = build_caliper(c, sh.mb('caliper_' + name), sx, sz, st)
 
 
 # ----------------------------------------------------------------------------- underside
-def helix(mb, centre, r, height, turns, wire, mname, segs_per_turn=10, tilt=(0, 0)):
+def helix(mb, centre, r, height, turns, wire, mname, segs_per_turn=6, tilt=(0, 0)):
+    """Coil spring as one square-section tube."""
     n = int(turns * segs_per_turn)
-    pts = []
+    rings = []
     for i in range(n + 1):
         t = i / n
         a = 2 * math.pi * turns * t
-        p = Vector((centre[0] + r * math.cos(a) + tilt[0] * (t - 0.5) * height,
-                    centre[1] + (t - 0.5) * height,
-                    centre[2] + r * math.sin(a) + tilt[1] * (t - 0.5) * height))
-        pts.append(p)
-    for a, b in zip(pts[:-1], pts[1:]):
-        mb.pipe(a, b, wire, 4, mname)
+        ctr = Vector((centre[0] + r * math.cos(a) + tilt[0] * (t - 0.5) * height,
+                      centre[1] + (t - 0.5) * height,
+                      centre[2] + r * math.sin(a) + tilt[1] * (t - 0.5) * height))
+        out = Vector((math.cos(a), 0, math.sin(a)))
+        upv = Vector((0, 1, 0))
+        rings.append([ctr + out * wire, ctr + upv * wire, ctr - out * wire, ctr - upv * wire])
+    mb.loft(rings, mname)
 
 
-def build_underside(c, cage, st):
-    mb = MB()
-    zf, zr = c.wb / 2, -c.wb / 2
-    f_mid = 0.5
-    yb = cage.yb(f_mid)
-    L = c.L
-    # tunnel and ribs
+def underside(c, sh):
+    """Floor pan with ribs and tunnel, engine and gearbox, prop shafts, differentials, subframes, suspension,
+    steering rack, exhaust with catalysts and silencers, fuel tank, spare wheel, arch liners.  The car spends
+    the finale on its roof, so this is modelled to be looked at."""
+    mb = sh.mb('underside')
+    zf, zr = c.zcF, c.zcR
+    yb = c.yfloor
+    w = c.w
+    Ra = c.Ra
+    xin = c.tr / 2 - c.ww / 2 - 0.13            # clear of the tyres between the wheels
+    # floor pan: full width between the arches, narrower between the wheels
+    za, zb = zf - Ra - 0.02, zr + Ra + 0.02
+    mb.box((0, yb + 0.012, (za + zb) / 2), (2 * (w - 0.075), 0.024, za - zb), 'underplate')
+    mb.box((0, yb + 0.012, (c.zF - 0.30 + za) / 2), (2 * xin, 0.024, c.zF - 0.30 - za), 'underplate')
+    mb.box((0, yb + 0.012, (c.zR + 0.25 + zb) / 2), (2 * xin, 0.024, zb - c.zR - 0.25), 'underplate')
+    # tunnel, longitudinal ribs, cross-members
     zA, zB = c.zF - 0.55, c.zR + 0.35
-    mb.box((0, yb - 0.035, (zA + zB) / 2), (0.34, 0.08, abs(zA - zB)), "underplate", bevel=0.02)
-    for x in (-0.62, -0.38, 0.38, 0.62):
-        mb.box((x, yb - 0.012, (zA + zB) / 2), (0.05, 0.025, abs(zA - zB) - 0.3), "underplate", bevel=0.008)
-    for z in (zf - 0.8, 0.0, zr + 0.6):
-        mb.box((0, yb - 0.012, z), (c.bw * 1.5, 0.03, 0.06), "underplate", bevel=0.008)
-    # engine bay: radiator, engine block, sump, gearbox
-    mb.box((0, 0.74, c.zF - 0.42), (c.bw * 1.2, 0.5, 0.07), "underplate", bevel=0.01)            # radiator
+    mb.box((0, yb - 0.02, (zA + zB) / 2), (0.34, 0.07, abs(zA - zB)), "underplate", bevel=0.02)
+    for x in (-0.66, -0.42, 0.42, 0.66):
+        mb.box((x * w, yb - 0.002, (za + zb) / 2), (0.05, 0.03, za - zb - 0.12), "underplate", bevel=0.008)
+    for z in (za - 0.12, (za + zb) / 2 + 0.25, (za + zb) / 2 - 0.35, zb + 0.12):
+        mb.box((0, yb - 0.004, z), (2 * (w - 0.12), 0.034, 0.07), "underplate", bevel=0.008)
+    # sill jacking rails
+    for sx in (1, -1):
+        mb.box((sx * (w - 0.10), yb - 0.012, (za + zb) / 2), (0.04, 0.045, za - zb - 0.3), "trim", bevel=0.008)
+    # engine bay: radiator, block, cam covers, sump, gearbox, transfer case
+    yrad = c.S['front']['yb'] * c.hs + 0.36
+    mb.box((0, yrad, c.zF - 0.40), (w * 1.15, 0.46, 0.06), "underplate", bevel=0.01)
     for k in range(9):
-        mb.box((-0.55 + k * 0.1375, 0.74, c.zF - 0.455), (0.012, 0.46, 0.02), "steel")
-    mb.box((0, yb + 0.30, zf - 0.30), (0.62, 0.46, 0.78), "underplate", bevel=0.04)             # block
+        mb.box((-0.52 + k * 0.13, yrad, c.zF - 0.365), (0.012, 0.42, 0.02), "steel")
+    mb.box((0, yb + 0.30, zf - 0.30), (0.62, 0.46, 0.78), "underplate", bevel=0.04)
     for k in range(4):
-        mb.box((0, yb + 0.58, zf - 0.55 + k * 0.17), (0.50, 0.09, 0.10), "steel", bevel=0.01)   # cam covers
-    mb.box((0, yb - 0.10, zf - 0.30), (0.46, 0.11, 0.52), "steel", bevel=0.02)                   # sump
-    mb.cyl((0, yb + 0.03, zf - 1.0), (0, 0, 1), 0.17, 0.75, 16, "underplate")                    # gearbox
-    mb.cyl((0, yb - 0.02, zf - 1.55), (0, 0, 1), 0.13, 0.45, 14, "steel")                        # transfer case
-    # driveshafts
-    mb.pipe((0, yb - 0.04, zf - 1.7), (0, yb - 0.04, zr + 0.25), 0.045, 8, "steel")
-    mb.pipe((0, yb - 0.01, zf - 0.55), (0, yb - 0.01, zf - 0.05), 0.04, 8, "steel")
-    for z in (zf - 1.75, zr + 0.28, zf - 0.55):
-        mb.box((0, yb - 0.04, z), (0.09, 0.09, 0.09), "steel", bevel=0.015)
-    # axles, diffs, subframes
+        mb.box((0, yb + 0.56, zf - 0.55 + k * 0.17), (0.50, 0.09, 0.10), "steel", bevel=0.01)
+    mb.box((0.34, yb + 0.44, zf - 0.62), (0.22, 0.20, 0.30), "trim", bevel=0.02)                    # airbox
+    mb.box((-0.50, yb + 0.42, zf - 0.75), (0.26, 0.20, 0.18), "trim", bevel=0.015)                  # battery
+    mb.box((0, yb - 0.085, zf - 0.30), (0.46, 0.11, 0.52), "steel", bevel=0.02)                      # sump
+    mb.cyl((0, yb + 0.03, zf - 1.0), (0, 0, 1), 0.17, 0.75, 14, "underplate")
+    mb.cyl((0, yb - 0.02, zf - 1.55), (0, 0, 1), 0.13, 0.45, 12, "steel")
+    # prop shafts and joints
+    mb.pipe((0, yb - 0.045, zf - 1.7), (0, yb - 0.045, zr + 0.25), 0.045, 8, "steel")
+    mb.pipe((0.11, yb - 0.03, zf - 1.45), (0.07, yb - 0.03, zf + 0.12), 0.032, 8, "steel")
+    for z in (zf - 1.75, zr + 0.28):
+        mb.box((0, yb - 0.045, z), (0.09, 0.09, 0.09), "steel", bevel=0.015)
     ay = c.r - 0.03
     for z in (zf, zr):
         s = 1 if z > 0 else -1
-        mb.lathe((0, ay - 0.04, z), (1, 0, 0), [(0.0, -0.14), (0.12, -0.12), (0.145, 0.0), (0.12, 0.12), (0.0, 0.14)], 16, "underplate")
-        mb.lathe((0, ay - 0.04, z + s * 0.14), (0, 0, 1), [(0.075, -0.03), (0.075, 0.03)], 12, "steel")
+        # differential with a ribbed cover and pinion nose
+        mb.lathe((0, ay - 0.04, z), (1, 0, 0), [(0.0, -0.14), (0.12, -0.12), (0.145, 0.0), (0.12, 0.12), (0.0, 0.14)], 14, "underplate")
+        mb.lathe((0, ay - 0.04, z + s * 0.14), (0, 0, 1), [(0.075, -0.03), (0.075, 0.03)], 10, "steel")
         for sx in (1, -1):
-            mb.pipe((sx * 0.12, ay - 0.04, z), (sx * (c.tr / 2 - c.ww / 2 - 0.02), c.r, z), 0.032, 8, "steel")     # half shaft
-        # subframe: two rails + two cross members
+            mb.pipe((sx * 0.12, ay - 0.04, z), (sx * (c.tr / 2 - c.ww / 2 - 0.02), c.r, z), 0.032, 8, "steel")
+            mb.lathe((sx * 0.20, ay - 0.035, z), (sx, 0.1, 0), [(0.05, -0.05), (0.062, 0), (0.05, 0.05)], 8, "trim")   # CV boot
         for sx in (1, -1):
-            mb.box((sx * 0.38, yb - 0.02, z), (0.06, 0.06, 0.86), "underplate", bevel=0.012)
+            mb.box((sx * 0.38, yb - 0.03, z), (0.06, 0.06, 0.86), "underplate", bevel=0.012)
         for dz in (-0.38, 0.38):
-            mb.box((0, yb - 0.02, z + dz), (0.82, 0.06, 0.07), "underplate", bevel=0.012)
-        # suspension arms, spring, damper, anti-roll bar
+            mb.box((0, yb - 0.03, z + dz), (0.82, 0.06, 0.07), "underplate", bevel=0.012)
         for sx in (1, -1):
             hub = Vector((sx * (c.tr / 2 - c.ww / 2 - 0.045), c.r, z))
             for dz in (-0.30, 0.30):
-                mb.pipe(Vector((sx * 0.36, yb - 0.03, z + dz)), hub + Vector((0, -0.09, dz * 0.12)), 0.022, 6, "steel")
+                mb.pipe(Vector((sx * 0.36, yb - 0.04, z + dz)), hub + Vector((0, -0.09, dz * 0.12)), 0.022, 6, "steel")
             for dz in (-0.2, 0.2):
-                mb.pipe(Vector((sx * 0.46, yb + 0.14, z + dz)), hub + Vector((0, 0.16, dz * 0.1)), 0.016, 6, "steel")
-            mb.box(hub + Vector((0, 0.03, 0)), (0.05, 0.24, 0.10), "steel", bevel=0.01)                              # knuckle
-            sp = Vector((sx * 0.50, yb + 0.12, z + 0.05 * s))
-            helix(mb, sp, 0.045, 0.30, 3.5, 0.011, "spring", segs_per_turn=8, tilt=(sx * 0.05, 0))
-            mb.pipe(sp + Vector((0, -0.18, 0)), sp + Vector((sx * 0.02, 0.18, 0)), 0.018, 8, "underplate")
-            mb.pipe(sp + Vector((0, -0.03, 0)), sp + Vector((sx * 0.02, 0.20, 0)), 0.009, 6, "steel")
-            mb.pipe(Vector((sx * 0.33, yb - 0.01, z - 0.42 * s)), hub + Vector((0, 0.01, -0.42 * s)), 0.012, 6, "steel")  # arb link
-        mb.pipe(Vector((-0.33, yb - 0.01, z - 0.42 * s)), Vector((0.33, yb - 0.01, z - 0.42 * s)), 0.014, 8, "steel")
-    # steering rack and tie rods (front)
-    mb.pipe((-0.42, yb - 0.01, zf - 0.20), (0.42, yb - 0.01, zf - 0.20), 0.025, 8, "steel")
+                mb.pipe(Vector((sx * 0.46, yb + 0.16, z + dz)), hub + Vector((0, 0.16, dz * 0.1)), 0.016, 6, "steel")
+            mb.box(hub + Vector((0, 0.03, 0)), (0.05, 0.24, 0.10), "steel", bevel=0.01)
+            sp = Vector((sx * 0.50, yb + 0.20, z + 0.05 * s))
+            helix(mb, sp, 0.05, 0.30, 3.5, 0.012, "spring", tilt=(sx * 0.05, 0))
+            mb.pipe(sp + Vector((0, -0.20, 0)), sp + Vector((sx * 0.02, 0.18, 0)), 0.02, 8, "underplate")
+            mb.pipe(sp + Vector((0, -0.03, 0)), sp + Vector((sx * 0.02, 0.22, 0)), 0.009, 6, "steel")
+            mb.pipe(Vector((sx * 0.33, yb - 0.02, z - 0.42 * s)), hub + Vector((0, 0.01, -0.42 * s)), 0.012, 6, "steel")
+        mb.pipe(Vector((-0.33, yb - 0.02, z - 0.42 * s)), Vector((0.33, yb - 0.02, z - 0.42 * s)), 0.014, 8, "steel")
+    mb.pipe((-0.42, yb - 0.02, zf - 0.20), (0.42, yb - 0.02, zf - 0.20), 0.025, 8, "steel")       # steering rack
     for sx in (1, -1):
-        mb.pipe((sx * 0.42, yb - 0.01, zf - 0.20), (sx * (c.tr / 2 - c.ww / 2 - 0.05), c.r - 0.02, zf - 0.12), 0.012, 6, "steel")
-    # exhaust (twin) with catalysts, silencers, hangers and tips
+        mb.pipe((sx * 0.42, yb - 0.02, zf - 0.20), (sx * (c.tr / 2 - c.ww / 2 - 0.05), c.r - 0.02, zf - 0.12), 0.012, 6, "steel")
+    # exhaust: twin downpipes, catalysts, centre pipes, silencers with heat shields, tailpipes
     for sx in (1, -1):
         x = sx * 0.27
-        pts = [(sx * 0.18, yb + 0.02, zf - 0.75), (x, yb - 0.03, zf - 1.3), (x, yb - 0.075, zf - 2.0)]
+        pts = [(sx * 0.18, yb + 0.02, zf - 0.75), (x, yb - 0.04, zf - 1.3), (x, yb - 0.075, zf - 2.0)]
         for a, b in zip(pts[:-1], pts[1:]):
             mb.pipe(a, b, 0.032, 8, "exhaust")
-        mb.cyl((x, yb - 0.075, zf - 1.75), (0, 0, 1), 0.065, 0.36, 14, "exhaust")                # catalyst
-        zs = zr + 0.15
+        mb.cyl((x, yb - 0.075, zf - 1.75), (0, 0, 1), 0.065, 0.36, 12, "exhaust")
         mb.pipe((x, yb - 0.075, zf - 1.95), (x, yb - 0.075, zr + 1.05), 0.03, 8, "exhaust")
-        mb.cyl((x, yb - 0.065, zr + 0.65), (0, 0, 1), 0.085, 0.80, 16, "exhaust", scale=(1.0, 0.82))   # silencer
-        mb.pipe((x, yb - 0.075, zr + 0.25), (sx * 0.34, yb - 0.04, c.zR + 0.12), 0.027, 8, "exhaust")
-        for z in (zf - 1.5, zr + 1.0, zr + 0.3):
-            mb.box((x, yb + 0.0, z), (0.02, 0.07, 0.02), "steel")
-        mb.box((x, yb - 0.065, zr + 0.65), (0.30, 0.012, 0.9), "underplate")                      # heat shield
-    # fuel tank, straps, lines
-    zt = zr + 1.35
-    mb.box((0, yb - 0.08, zt), (0.85, 0.17, 0.60), "underplate", bevel=0.03)
-    for dz in (-0.2, 0.2):
-        mb.box((0, yb - 0.17, zt + dz), (0.88, 0.015, 0.04), "steel")
-    mb.pipe((0.45, yb - 0.02, zt), (0.45, yb - 0.02, zf - 1.2), 0.008, 4, "rubber")
-    mb.pipe((0.48, yb - 0.02, zt), (0.48, yb - 0.02, zf - 0.8), 0.008, 4, "steel")
-    # spare wheel well + spare tyre (lowered under the tail)
-    zsw = c.zR + 0.95
-    rs = c.r * 0.92
-    mb.lathe((0, yb - 0.13, zsw), (0, 1, 0), [(rs * 0.62, -0.11), (rs - 0.04, -0.12), (rs, -0.07), (rs, 0.07), (rs - 0.04, 0.12),
-                                                  (rs * 0.62, 0.11)], 36, "tyre", closed=True)
-    mb.lathe((0, yb - 0.13, zsw), (0, 1, 0), [(0, -0.10), (rs * 0.60, -0.10), (rs * 0.60, 0.06), (0, 0.06)], 24, "rim")
-    mb.lathe((0, yb - 0.04, zsw), (0, 1, 0), [(rs + 0.07, -0.05), (rs + 0.07, 0.04), (rs + 0.02, 0.04), (rs + 0.02, -0.05)], 28, "underplate", closed=True)
-    mb.pipe((0, yb - 0.25, zsw), (0, yb - 0.02, zsw), 0.012, 6, "steel")
-    # skid plate and tow hooks
-    mb.box((0, 0.285, c.zF - 0.80), (0.95, 0.025, 0.55), "steel", bevel=0.01)
-    for z, s_ in ((c.zF - 0.12, 1), (c.zR + 0.12, -1)):
-        mb.box((0.40, 0.34, z), (0.05, 0.05, 0.12), "steel", bevel=0.01)
-    return mb
+        mb.pipe((x, yb - 0.075, zr + 1.05), (sx * 0.42, yb - 0.02, zr + 0.45), 0.03, 8, "exhaust")
+        mb.pipe((sx * 0.42, yb - 0.02, zr + 0.45), (sx * 0.42, yb - 0.02, zr - 0.30), 0.03, 8, "exhaust")
+        zs = (zr - 0.30 + c.zR + 0.30) / 2 - 0.05
+        mb.cyl((sx * 0.42, yb - 0.06, zs), (0, 0, 1), 0.085, 0.50, 14, "exhaust", scale=(1.25, 0.8))
+        mb.pipe((sx * 0.42, yb - 0.06, zs - 0.25), (sx * 0.36, yb - 0.04, c.zR + 0.20), 0.027, 8, "exhaust")
+        for z in (zf - 1.5, zr + 1.0):
+            mb.box((x, yb - 0.02, z), (0.02, 0.07, 0.02), "steel")
+        mb.box((x, yb - 0.01, zf - 1.75), (0.22, 0.01, 0.5), "steel")                              # heat shield
+    # fuel tank with straps and lines
+    zt = zr + 0.95
+    mb.box((0.02, yb - 0.075, zt), (0.80, 0.15, 0.56), "trim", bevel=0.035)
+    for dz in (-0.18, 0.18):
+        mb.box((0.02, yb - 0.155, zt + dz), (0.84, 0.014, 0.04), "steel")
+    mb.pipe((0.52, yb - 0.02, zt), (0.52, yb - 0.02, zf - 1.2), 0.008, 4, "trim")
+    mb.pipe((0.55, yb - 0.02, zt), (0.55, yb - 0.02, zf - 0.8), 0.008, 4, "steel")
+    # spare wheel in its well under the boot floor
+    zsw = (zr - Ra + c.zR + 0.30) / 2 - 0.02
+    rs = min(c.r * 0.86, (zr - Ra - c.zR - 0.32) / 2, 0.30)
+    if rs > 0.2:
+        mb.lathe((0, yb - 0.10, zsw), (0, 1, 0), [(rs * 0.62, -0.085), (rs - 0.04, -0.095), (rs, -0.06), (rs, 0.06), (rs - 0.04, 0.095),
+                                                    (rs * 0.62, 0.085)], 24, "tyre", closed=True)
+        mb.lathe((0, yb - 0.10, zsw), (0, 1, 0), [(0, -0.08), (rs * 0.60, -0.08), (rs * 0.60, 0.06), (0, 0.06)], 16, "rimdark")
+        mb.lathe((0, yb - 0.03, zsw), (0, 1, 0), [(rs + 0.06, -0.05), (rs + 0.06, 0.04), (rs + 0.02, 0.04), (rs + 0.02, -0.05)], 24, "underplate", closed=True)
+        mb.box((0, yb - 0.19, zsw), (0.05, 0.02, 2 * rs + 0.1), "steel")
+    # front skid plate and tow eyes
+    mb.box((0, yb - 0.105, c.zF - 0.72), (0.90, 0.022, 0.60), "steel", bevel=0.008)
+    for z in (c.zF - 0.34, c.zR + 0.30):
+        mb.box((0.40, yb - 0.02, z), (0.05, 0.05, 0.12), "steel", bevel=0.01)
+    # arch liners: a tub over each wheel, closed on the inboard side
+    rl = Ra * 1.09 + 0.012
+    x_out = w - 0.03
+    x_inb = c.tr / 2 - c.ww / 2 - 0.10
+    for z in (zf, zr):
+        for sx in (1, -1):
+            xa, xb = sorted((sx * x_inb, sx * x_out))
+            mb.sector((0, c.yc, z), rl, rl + 0.014, math.radians(-8), math.radians(188), xa, xb, 14, "trim")
+            mb.box((sx * (x_inb - 0.008), (yb + c.yc + rl) / 2, z), (0.016, c.yc + rl - yb, 2 * rl), "trim")
 
 
 # ----------------------------------------------------------------------------- interior
-def seat(mb, x, z, y0, width=0.52, depth=0.50, back_h=0.66, rear_facing=False, head=True):
-    """Front-facing seat; cushion + bolsters + backrest + headrest. y0 = cushion bottom."""
+def seat(mb, x, z, y0, width=0.52, depth=0.50, back_h=0.66, head=True):
+    """Front-facing seat: cushion, bolsters, backrest, headrest.  y0 = cushion underside."""
     mb.box((x, y0 + 0.07, z), (width, 0.14, depth), "seat", bevel=0.04)
     for sx in (-1, 1):
         mb.box((x + sx * (width / 2 - 0.03), y0 + 0.14, z), (0.07, 0.07, depth * 0.92), "seat_trim", bevel=0.02)
     a = math.radians(-13)
-    mb.box((x, y0 + 0.14 + back_h / 2, z - depth / 2 + 0.02), (width, back_h, 0.14), "seat", bevel=0.045,
-           rot=Matrix.Rotation(a, 3, 'X'))
+    rot = Matrix.Rotation(a, 3, 'X')
+    mb.box((x, y0 + 0.14 + back_h / 2, z - depth / 2 + 0.02), (width, back_h, 0.14), "seat", bevel=0.045, rot=rot)
     for sx in (-1, 1):
         mb.box((x + sx * (width / 2 - 0.03), y0 + 0.14 + back_h * 0.5, z - depth / 2 + 0.06), (0.07, back_h * 0.8, 0.1), "seat_trim",
-               bevel=0.02, rot=Matrix.Rotation(a, 3, 'X'))
+               bevel=0.02, rot=rot)
     if head:
         yh = y0 + 0.14 + back_h + 0.06
-        mb.box((x, yh, z - depth / 2 - 0.10), (0.27, 0.17, 0.10), "seat", bevel=0.03, rot=Matrix.Rotation(a, 3, 'X'))
-        for sx in (-0.07, 0.07):
-            mb.pipe((x + sx, yh - 0.1, z - depth / 2 - 0.07), (x + sx, yh - 0.02, z - depth / 2 - 0.09), 0.008, 5, "steel")
+        mb.box((x, yh, z - depth / 2 - 0.10), (0.27, 0.17, 0.10), "seat", bevel=0.03, rot=rot)
+        for dx in (-0.07, 0.07):
+            mb.pipe((x + dx, yh - 0.1, z - depth / 2 - 0.07), (x + dx, yh - 0.02, z - depth / 2 - 0.09), 0.008, 5, "steel")
 
 
-def build_interior_parts(c, cage, st, mb):
-    """Seats, dashboard, wheel, console; `mb` already holds the inner shell."""
-    fs = st["seat_rows"]
-    L = c.L
-    yb = cage.yb(0.5)
-    yfl = yb + 0.10
-    zA = c.zF - st["wind"][0] * L
-    zC = c.zF - st["rear_glass"][1] * L
-    # carpet floor
-    x_in = c.bw * 0.93
-    mb.box((0, yfl, (zA + zC) / 2 - 0.1), (2 * x_in, 0.03, abs(zA - zC) - 0.4), "carpet", bevel=0.01)
-    mb.box((0, yfl + 0.07, (zA + zC) / 2 - 0.1), (0.26, 0.14, abs(zA - zC) - 0.9), "carpet", bevel=0.05)   # tunnel
-    for i, f in enumerate(fs):
-        z = c.zF - f * L
-        ys = yfl + 0.22
-        if i == 0:
-            for sx in (1, -1):
-                seat(mb, sx * 0.40, z, ys)
-            # centre console + handbrake
-            mb.box((0, ys + 0.18, z + 0.05), (0.20, 0.28, 0.62), "dash", bevel=0.03)
-            mb.box((0, ys + 0.34, z + 0.20), (0.07, 0.04, 0.16), "steel", bevel=0.01)
-        else:
-            for sx in (-0.58, 0, 0.58):
-                seat(mb, sx, z, ys + 0.02, width=0.54, depth=0.50, back_h=0.64)
+def interior(c, sh):
+    """Seats, dashboard, steering wheel, console, carpet.  The cabin lining itself comes from the body grids."""
+    mb = sh.mb('interior')
+    S = c.S
+    yfl = c.yfloor + 0.04
+    zA = c.cowl[0].z
+    zC = c.zR + 0.40
+    x_in = c.w - 0.11
+    xn = c.tr / 2 - c.ww / 2 - 0.14
+    za, zb = c.zcF - c.Ra - 0.02, c.zcR + c.Ra + 0.02
+    mb.box((0, yfl, (zA - 0.1 + zb) / 2), (2 * x_in, 0.03, zA - 0.1 - zb), "cabin")
+    mb.box((0, yfl + 0.16, (zb + zC) / 2), (2 * x_in, 0.03, zb - zC), "cabin")                 # boot floor over the axle
+    mb.box((0, yfl + 0.08, zb), (2 * x_in, 0.19, 0.03), "cabin")
+    mb.box((0, yfl + 0.07, (zA + zb) / 2 - 0.2), (0.26, 0.14, zA - zb - 0.7), "cabin", bevel=0.05)
+    for sx in (1, -1):                                                                         # wheel-arch boxes in the boot
+        mb.box((sx * (x_in - 0.10), yfl + 0.36, c.zcR), (0.22, 0.42, 2 * c.Ra + 0.1), "cabin", bevel=0.05)
+    ys = yfl + 0.20
+    z1 = c.zn['B1'] - 0.02
+    for sx in (1, -1):
+        seat(mb, sx * 0.40, z1, ys)
+    mb.box((0, ys + 0.16, z1 + 0.10), (0.20, 0.26, 0.66), "cabin", bevel=0.03)                # console
+    mb.box((0, ys + 0.31, z1 + 0.22), (0.07, 0.04, 0.16), "steel", bevel=0.01)
+    z2 = c.zn['C1'] + 0.16
+    for x in (-0.56, 0, 0.56):
+        seat(mb, x, z2, ys + 0.02, width=0.54, depth=0.50, back_h=0.62)
+    if S.get('third_row') and c.zcR - c.Ra - 0.25 > c.zR + 0.75:
+        z3 = c.zcR - c.Ra + 0.10
+        for x in (-0.30, 0.30):
+            seat(mb, x, z3, ys + 0.14, width=0.50, depth=0.42, back_h=0.52)
     # dashboard
-    zd = zA - 0.30
-    yb_ = cage.belt(st["wind"][0]) + 0.02
-    mb.box((0, yb_ - 0.05, zd), (2 * x_in - 0.1, 0.22, 0.40), "dash", bevel=0.06)
-    mb.box((0, yb_ + 0.10, zd - 0.02), (2 * x_in - 0.14, 0.05, 0.32), "dash", bevel=0.02)
-    sx_d = 0.40                                    # driver on the left (+X)
-    mb.box((sx_d, yb_ + 0.12, zd - 0.05), (0.52, 0.16, 0.20), "dash", bevel=0.04)       # instrument hood
-    for dx in (-0.15, 0.0, 0.15):
-        mb.lathe((sx_d + dx, yb_ + 0.07, zd - 0.16), (0, 0.3, -1), [(0.0, 0.0), (0.06, 0.0), (0.06, -0.01), (0.0, -0.01)], 12, "carpet")
-    mb.box((0, yb_ - 0.06, zd - 0.12), (0.26, 0.34, 0.14), "dash", bevel=0.03)         # centre stack
-    for dx in (-0.55, -0.1, 0.1, 0.55):
-        mb.box((dx, yb_ + 0.065, zd - 0.18), (0.12, 0.02, 0.05), "trim")               # vents
-    # steering column and wheel (tilted)
-    mb.pipe((sx_d, yb_ - 0.02, zd - 0.12), (sx_d, yb_ + 0.12, zd - 0.42), 0.035, 8, "dash")
-    ctr = Vector((sx_d, yb_ + 0.14, zd - 0.46))
-    mb.lathe(ctr, (0, 0.35, -1), [(0.185, -0.015), (0.185, 0.015), (0.155, 0.015), (0.155, -0.015)], 24, "wheel_leather", closed=True)
-    mb.lathe(ctr, (0, 0.35, -1), [(0, -0.03), (0.05, -0.03), (0.05, 0.02), (0, 0.02)], 12, "wheel_leather")
+    zd = zA - 0.32
+    yd = c.beltc(c.zA) - 0.03
+    mb.box((0, yd - 0.07, zd), (2 * x_in - 0.06, 0.24, 0.42), "cabin", bevel=0.06)
+    mb.box((0, yd + 0.06, zd + 0.04), (2 * x_in - 0.10, 0.05, 0.34), "cabin", bevel=0.02)
+    xd = 0.40
+    mb.box((xd, yd + 0.085, zd - 0.06), (0.50, 0.12, 0.20), "cabin", bevel=0.04)             # instrument hood
+    for dx in (-0.12, 0.12):
+        mb.lathe((xd + dx, yd + 0.05, zd - 0.17), (0, 0.3, -1), [(0.0, 0.0), (0.06, 0.0), (0.06, -0.01), (0.0, -0.01)], 12, "gloss")
+    mb.box((0, yd + 0.04, zd - 0.19), (0.30, 0.19, 0.02), "gloss", bevel=0.006,
+           rot=Matrix.Rotation(math.radians(-14), 3, 'X'))                                    # centre screen
+    mb.box((0, yd - 0.12, zd - 0.14), (0.26, 0.30, 0.14), "cabin", bevel=0.03)
+    for dx in (-0.58, 0.58):
+        mb.box((dx, yd + 0.02, zd - 0.215), (0.12, 0.05, 0.02), "trim")
+    mb.pipe((xd, yd - 0.04, zd - 0.12), (xd, yd + 0.07, zd - 0.36), 0.035, 8, "cabin")
+    ctr = Vector((xd, yd + 0.085, zd - 0.39))
+    mb.lathe(ctr, (0, 0.35, -1), [(0.185, -0.015), (0.185, 0.015), (0.155, 0.015), (0.155, -0.015)], 20, "trim", closed=True)
+    mb.lathe(ctr, (0, 0.35, -1), [(0, -0.03), (0.05, -0.03), (0.05, 0.02), (0, 0.02)], 10, "trim")
     for ang in (0, 120, 240):
         a = math.radians(ang + 90)
-        mb.pipe(ctr, ctr + Vector((0.16 * math.cos(a), 0.16 * math.sin(a) * 0.94, 0.16 * math.sin(a) * 0.34)), 0.011, 5, "wheel_leather")
-    # pedals
+        mb.pipe(ctr, ctr + Vector((0.16 * math.cos(a), 0.16 * math.sin(a) * 0.94, 0.16 * math.sin(a) * 0.34)), 0.011, 5, "trim")
     for dx in (0.28, 0.40, 0.52):
-        mb.box((dx, yfl + 0.18, zd - 0.12), (0.07, 0.015, 0.05), "steel")
-    # rear-view mirror
-    mb.box((0, cage.T(st["wind"][1]) - 0.30, c.zF - st["wind"][1] * L - 0.06), (0.22, 0.06, 0.04), "dash", bevel=0.01)
-    # parcel shelf / cargo floor
-    mb.box((0, yfl + 0.22, c.zF - (st["rear_glass"][0]) * L + 0.35), (2 * x_in - 0.1, 0.03, 0.7), "carpet")
+        mb.box((dx, yfl + 0.16, zd - 0.10), (0.07, 0.015, 0.05), "steel")
+    # rear-view mirror at the windscreen header
+    ph = c.G.P[0][4]
+    mb.box((0, ph.y - 0.04, ph.z - 0.07), (0.22, 0.06, 0.03), "trim", bevel=0.01)

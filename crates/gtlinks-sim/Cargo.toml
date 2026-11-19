@@ -1,0 +1,24 @@
+[package]
+name = "gtlinks-sim"
+description = "Deterministic simulation core for GTLinks: course generation, vehicle dynamics, stein handling model and finale director."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+libm.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
+
+[[example]]
+name = "run_summary"
+
+[dev-dependencies]
+libm.workspace = true
+serde_json.workspace = true

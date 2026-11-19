@@ -120,31 +120,33 @@ def build_tree_larch():
 
     def tz(y):
         return 0.18 * math.sin(y * 0.37 + 1.0)
-    ys = [0.6, 1.5, 2.6, 3.8, 5.0, 6.2, 7.3, 8.3, 9.0]
-    rad = [0.26, 0.21, 0.18, 0.15, 0.12, 0.095, 0.07, 0.04, 0.006]
-    tube(m, [(0, 0.0, 0), (0, 0.3, 0)] + [(tx(y), y, tz(y)) for y in ys], [0.36, 0.31] + rad, 6, "bark")
-    # whorled branches with a drooping tuft of needles at each tip
+    ys = [0.6, 1.8, 3.2, 4.8, 6.4, 7.8, 8.7, 9.2]
+    rad = [0.26, 0.20, 0.16, 0.125, 0.09, 0.06, 0.03, 0.006]
+    tube(m, [(0, 0.0, 0), (0, 0.3, 0)] + [(tx(y), y, tz(y)) for y in ys], [0.36, 0.31] + rad, 5, "bark")
+    # whorls of slender branches; each carries drooping fans of needle-cluster cones (conical crown)
     k = 0
-    for y, L, nb in ((2.6, 2.0, 3), (3.5, 1.9, 3), (4.4, 1.7, 3), (5.3, 1.45, 2), (6.2, 1.15, 2), (7.1, 0.85, 2), (7.9, 0.55, 1)):
+    for wi, (y, L, nb) in enumerate(((2.6, 2.4, 4), (3.6, 2.2, 4), (4.6, 1.95, 3), (5.5, 1.65, 3), (6.4, 1.35, 3),
+                                     (7.2, 0.95, 2), (7.9, 0.6, 2))):
         a0 = rnd.uniform(0, 6.28)
         for q in range(nb):
-            a = a0 + q * 6.28 / nb + rnd.uniform(-0.3, 0.3)
+            a = a0 + q * 6.28 / nb + rnd.uniform(-0.25, 0.25)
+            o = Vector((math.cos(a), 0, math.sin(a)))
+            s = Vector((-o.z, 0, o.x))
             p0 = Vector((tx(y), y, tz(y)))
-            p1 = p0 + Vector((math.cos(a) * L * 0.78, 0.18 - 0.10 * k % 0.2, math.sin(a) * L * 0.78))
-            limb(m, p0, p1, 0.045, 0.014, 3, "bark")
-            c = (p1.x, p1.y - 0.10, p1.z)
-            R = 0.50 + 0.22 * L
-            dome(m, c, [(0, 0.20), (R, -0.08), (0.5 * R, -0.34), (0, -0.20)], 6,
-                 "needles" if k % 2 == 0 else "needles_tip", jit=0.22, seed=300 + k, sag=0.35, phase=k)
-            k += 1
-    # central tiers hugging the stem
-    for i in range(5):
-        f = i / 4.0
-        y = 3.5 + f * 4.9
-        R = 0.95 * (1 - f) + 0.22
-        dome(m, (tx(y), y, tz(y)), [(0, 0.35), (R, -0.10), (0.5 * R, -0.34), (0, -0.20)], 6,
-             "needles_tip" if i % 2 else "needles", jit=0.2, seed=400 + i, sag=0.3, phase=i * 0.9)
-    dome(m, (tx(9.0), 9.0, tz(9.0)), [(0, 0.45), (0.10, 0.1), (0.14, -0.15), (0, -0.30)], 6, "needles_tip", jit=0.1, seed=5)
+            p1 = p0 + o * L + Vector((0, -0.12 * L, 0))
+            limb(m, p0, p1, 0.040, 0.012, 3, "bark")
+            for t in (0.45, 0.75, 1.0):
+                P = p0 + (p1 - p0) * t
+                lc = (0.65 + 0.55 * L / 2.4) * (1.05 - 0.25 * t)
+                for sg in (-1, 1):
+                    dvec = (o * 0.45 + s * sg * 0.50 + Vector((0, -0.80, 0))).normalized()
+                    limb(m, P, P + dvec * lc, 0.16, 0.0, 3, "needles" if (k + sg) % 2 else "needles_tip")
+                k += 1
+    # leader: a tuft of upright cones
+    top = Vector((tx(9.2), 9.2, tz(9.2)))
+    for sg in range(3):
+        a = sg * 2.09
+        limb(m, top - Vector((0, 0.5, 0)), top + Vector((math.cos(a) * 0.12, 0.25, math.sin(a) * 0.12)), 0.10, 0.0, 3, "needles_tip")
     m.to_object("tree_larch_mesh", parent=root, smooth=None)
 
 
@@ -162,15 +164,14 @@ def build_cow():
     make_mat("udder", (0.92, 0.70, 0.66), rough=0.8)
     root = empty("cow")
     m = MB()
-    # ---- barrel: stations (z, centre y, half-width, half-height)
-    st = [(-0.98, 1.02, 0.10, 0.13), (-0.91, 1.04, 0.22, 0.26), (-0.74, 1.05, 0.31, 0.36), (-0.46, 1.00, 0.335, 0.385),
-          (-0.16, 0.95, 0.35, 0.395), (0.14, 0.95, 0.35, 0.40), (0.42, 0.98, 0.335, 0.405), (0.66, 1.01, 0.295, 0.385),
-          (0.83, 1.04, 0.225, 0.31), (0.94, 1.09, 0.165, 0.235)]
+    # ---- one lofted barrel: pinched at the waist, full at the haunch and at the shoulder, so no separate lumps
+    st = [(-1.00, 1.02, 0.09, 0.12), (-0.94, 1.04, 0.20, 0.25), (-0.80, 1.06, 0.30, 0.35), (-0.62, 1.04, 0.345, 0.385),
+          (-0.38, 0.99, 0.325, 0.385), (-0.14, 0.95, 0.335, 0.395), (0.10, 0.95, 0.340, 0.405), (0.34, 0.98, 0.350, 0.415),
+          (0.56, 1.01, 0.340, 0.405), (0.74, 1.04, 0.285, 0.360), (0.86, 1.07, 0.220, 0.300), (0.95, 1.10, 0.165, 0.235)]
     N = 16
     rings = []
     for z, cy, rx, ry in st:
-        rings.append([(rx * math.cos(2 * math.pi * j / N), cy + ry * math.sin(2 * math.pi * j / N), z) for j in range(N)])
-    # patches in (z, angle) space; angle 90 deg = spine, 270 = belly
+        rings.append([Vector((rx * math.cos(2 * math.pi * j / N), cy + ry * math.sin(2 * math.pi * j / N), z)) for j in range(N)])
     blobs = [(-0.45, 85, 0.36, 75), (0.16, 25, 0.28, 55), (-0.12, 205, 0.30, 62), (0.64, 125, 0.22, 48),
              (-0.86, 335, 0.18, 60), (0.40, 255, 0.20, 50), (-0.70, 150, 0.20, 40)]
     zc = [(st[i][0] + st[i + 1][0]) / 2 for i in range(len(st) - 1)]
@@ -183,14 +184,9 @@ def build_cow():
             if ((z - bz) / rz) ** 2 + (dth / rth) ** 2 < 1.0:
                 return "patch"
         return "hide"
-    loft_mat(m, [[Vector(p) for p in r] for r in rings], mfn)
-    # haunch and shoulder muscle, hip bones, dewlap
-    for sx in (-1, 1):
-        blob(m, (sx * 0.25, 0.86, -0.62), (0.15, 0.30, 0.26), "hide", subdiv=2, seed=sx + 3, jitter=0.02)
-        blob(m, (sx * 0.25, 0.93, 0.56), (0.12, 0.26, 0.22), "hide", subdiv=2, seed=sx + 5, jitter=0.02)
-    blob(m, (0, 0.78, 0.84), (0.10, 0.20, 0.14), "hide", subdiv=2)
+    loft_mat(m, rings, mfn)
 
-    # ---- head: rings in XY planes along +Z
+    # ---- head
     hs = [(0.88, 1.10, 0.15, 0.20), (0.99, 1.12, 0.135, 0.17), (1.10, 1.07, 0.125, 0.155), (1.23, 0.98, 0.100, 0.130),
           (1.36, 0.91, 0.082, 0.100), (1.47, 0.86, 0.078, 0.082), (1.53, 0.845, 0.060, 0.058)]
     NH = 12
@@ -204,44 +200,40 @@ def build_cow():
         if i >= 4:
             return "muzzle"
         if 45 < th < 135 and i >= 1:
-            return "hide"                                  # white blaze down the face
+            return "hide"
         return "patch"
     loft_mat(m, hr, hfn)
+    rot_ear = lambda sx: Matrix.Rotation(sx * math.radians(-18), 3, 'Z') @ Matrix.Rotation(math.radians(-14), 3, 'Y')
     for sx in (-1, 1):
-        m.pipe((sx * 0.04, 0.855, 1.532), (sx * 0.04, 0.855, 1.540), 0.012, 5, "eye")                  # nostrils
-        blob(m, (sx * 0.125, 1.15, 1.04), (0.022, 0.024, 0.022), "eye", subdiv=2)                    # eyes
-        # ears: flattened leaf shapes angled out and back
-        blob(m, (sx * 0.215, 1.17, 0.93), (0.090, 0.020, 0.046), "patch", subdiv=2,
-             rot=Matrix.Rotation(sx * math.radians(-18), 3, 'Z') @ Matrix.Rotation(math.radians(-14), 3, 'Y'))
-        blob(m, (sx * 0.208, 1.17, 0.945), (0.060, 0.010, 0.030), "udder", subdiv=1,
-             rot=Matrix.Rotation(sx * math.radians(-18), 3, 'Z') @ Matrix.Rotation(math.radians(-14), 3, 'Y'))
-        # horns: curve out, then up and slightly forward
+        m.pipe((sx * 0.04, 0.855, 1.532), (sx * 0.04, 0.855, 1.540), 0.012, 5, "eye")
+        blob(m, (sx * 0.125, 1.15, 1.04), (0.022, 0.024, 0.022), "eye", subdiv=1)
+        blob(m, (sx * 0.215, 1.17, 0.93), (0.090, 0.020, 0.046), "patch", subdiv=2, rot=rot_ear(sx))
+        blob(m, (sx * 0.208, 1.17, 0.945), (0.060, 0.010, 0.030), "udder", subdiv=1, rot=rot_ear(sx))
         hp = [(sx * 0.085, 1.235, 0.97), (sx * 0.150, 1.255, 0.96), (sx * 0.215, 1.315, 0.965), (sx * 0.245, 1.405, 0.985),
               (sx * 0.240, 1.490, 1.015)]
         tube(m, hp, [0.030, 0.026, 0.019, 0.012, 0.003], 6, "horn")
         bx(m, sx * 0.085 - 0.04, sx * 0.085 + 0.04, 1.215, 1.235, 0.93, 1.02, "patch")
     # ---- collar and bell
-    cy0, cz0 = 1.04, 0.80
-    m.lathe((0, cy0, cz0), (0, 0, 1), [(1.0, -0.032), (1.0, 0.032), (0.96, 0.032), (0.96, -0.032)], 18, "leather", scale=(0.265, 0.335), closed=True)
-    bell_c = (0, cy0 - 0.335 - 0.115, cz0)
-    m.pipe((0, cy0 - 0.335, cz0), (0, bell_c[1] + 0.085, cz0), 0.020, 6, "leather")
+    cy0, cz0 = 1.05, 0.80
+    m.lathe((0, cy0, cz0), (0, 0, 1), [(1.0, -0.032), (1.0, 0.032), (0.96, 0.032), (0.96, -0.032)], 18, "leather", scale=(0.275, 0.345), closed=True)
+    bell_c = (0, cy0 - 0.345 - 0.115, cz0)
+    m.pipe((0, cy0 - 0.345, cz0), (0, bell_c[1] + 0.085, cz0), 0.020, 6, "leather")
     m.lathe(bell_c, (0, 1, 0), [(0.0, 0.085), (0.042, 0.080), (0.058, 0.040), (0.075, -0.030), (0.092, -0.085), (0.0, -0.085)], 10, "bell",
             scale=(0.80, 1.0))
     m.lathe(bell_c, (0, 1, 0), [(0.0, -0.080), (0.075, -0.080), (0.075, -0.090), (0.0, -0.090)], 10, "eye", scale=(0.78, 1.0))
     m.ico((0, bell_c[1] - 0.092, cz0), 0.018, "bell", subdiv=2)
-    # ---- legs
-    def leg(sx, pts, rads, hoof_y=0.10):
-        for a, b, r0, r1 in zip(pts[:-1], pts[1:], rads[:-1], rads[1:]):
-            limb(m, a, b, r0, r1, 7, "hide")
-        for p, r in zip(pts[1:-1], rads[1:-1]):
-            blob(m, p, (r * 1.06, r * 1.06, r * 1.06), "hide", subdiv=2)
+    # ---- legs: each one continuous tapered loft, starting well inside the barrel (no visible joints) + a hoof
+    def leg(pts, rads):
+        tube(m, pts, rads, 8, "hide", up=(1, 0, 0))
         f = pts[-1]
-        limb(m, (f[0], hoof_y, f[2]), (f[0], 0.0, f[2] + 0.015), 0.040, 0.052, 7, "hoof")
-        limb(m, (f[0], hoof_y + 0.04, f[2]), (f[0], hoof_y, f[2]), 0.034, 0.040, 7, "hide")
+        limb(m, (f[0], 0.105, f[2]), (f[0], 0.0, f[2] + 0.012), 0.052, 0.062, 8, "hoof")
     for sx in (-1, 1):
-        leg(sx, [(sx * 0.22, 0.88, 0.58), (sx * 0.205, 0.48, 0.62), (sx * 0.195, 0.14, 0.60)], [0.125, 0.078, 0.052])
-        leg(sx, [(sx * 0.23, 0.92, -0.62), (sx * 0.250, 0.62, -0.50), (sx * 0.205, 0.40, -0.80), (sx * 0.200, 0.14, -0.74)],
-            [0.145, 0.095, 0.070, 0.052])
+        leg([(sx * 0.19, 1.00, 0.54), (sx * 0.20, 0.78, 0.57), (sx * 0.205, 0.54, 0.615), (sx * 0.20, 0.44, 0.62),
+             (sx * 0.195, 0.28, 0.61), (sx * 0.195, 0.15, 0.60), (sx * 0.195, 0.105, 0.60)],
+            [0.18, 0.14, 0.095, 0.066, 0.050, 0.056, 0.056])
+        leg([(sx * 0.18, 1.00, -0.66), (sx * 0.23, 0.76, -0.60), (sx * 0.235, 0.56, -0.64), (sx * 0.21, 0.42, -0.78),
+             (sx * 0.20, 0.27, -0.77), (sx * 0.20, 0.15, -0.75), (sx * 0.20, 0.105, -0.75)],
+            [0.21, 0.16, 0.105, 0.066, 0.050, 0.055, 0.055])
     # ---- udder with four teats
     blob(m, (0, 0.60, -0.40), (0.125, 0.105, 0.150), "udder", subdiv=2)
     for tx_ in (-0.048, 0.048):
@@ -256,19 +248,17 @@ def build_cow():
 
 # ============================================================================ golfer
 def build_golfer():
-    """Right-handed golfer in the finish of the swing: weight on the lead (+X) foot, rear heel up, chest to the
-    target (+Z), both hands high by the lead shoulder, club wrapped behind the neck. Origin between the feet."""
+    """Right-handed golfer in a high follow-through: weight on the lead (+X) leg, rear heel lifted, chest to the
+    target (+Z), both hands on a full-length driver whose shaft rises up and back past the lead shoulder."""
     make_mat("shirt", (0.88, 0.88, 0.90), rough=0.9)
     make_mat("skin", (0.88, 0.64, 0.50), rough=0.8)
     make_mat("trousers", (0.52, 0.55, 0.40), rough=0.9)
-    make_mat("cuff", (0.38, 0.41, 0.29), rough=0.9)
     make_mat("belt", (0.15, 0.10, 0.07), rough=0.7)
     make_mat("sock", (0.80, 0.18, 0.16), rough=0.9)
     make_mat("cap", (0.12, 0.28, 0.52), rough=0.8)
     make_mat("shoes", (0.82, 0.80, 0.74), rough=0.7)
     make_mat("sole", (0.22, 0.17, 0.12), rough=0.9)
     make_mat("glove", (0.96, 0.96, 0.96), rough=0.8)
-    make_mat("hair", (0.30, 0.20, 0.12), rough=0.95)
     make_mat("eye", (0.05, 0.05, 0.06), rough=0.4)
     make_mat("shaft", (0.62, 0.64, 0.68), metallic=0.9, rough=0.3)
     make_mat("head", (0.10, 0.11, 0.13), metallic=0.55, rough=0.28)
@@ -280,67 +270,60 @@ def build_golfer():
     def Ry(a): return Matrix.Rotation(a, 3, 'Y')
     def Rx(a): return Matrix.Rotation(a, 3, 'X')
 
-    # ---- shoes: local frame has the ball of the foot at the origin, ground at y = 0
     def shoe(ball, yaw, heel):
         R = Ry(yaw) @ Rx(heel)
-        T = V((0, 0, 0.105))                               # the toe stays planted; the heel lifts about it
+        T = V((0, 0, 0.105))
         P = lambda x, y, z: V(ball) + Ry(yaw) @ T + R @ (V((x, y, z)) - T)
         m.box(P(0, 0.011, -0.045), (0.100, 0.022, 0.300), "sole", rot=R)
         m.box(P(0, 0.047, -0.060), (0.090, 0.050, 0.255), "shoes", rot=R)
-        return P(0, 0.090, -0.125)                         # ankle
-    ankle_l = shoe((0.17, 0, 0.12), 0.45, 0.0)
-    ankle_r = shoe((-0.20, 0, -0.14), -0.20, 0.55)
+        return P(0, 0.090, -0.125)
+    ankle_l = shoe((0.24, 0, 0.10), 0.35, 0.0)
+    ankle_r = shoe((-0.24, 0, -0.16), -0.30, 0.55)
 
-    # ---- legs: plus-fours (baggy to just below the knee), socks, shoes
     def leg(hip, ankle):
-        knee = ik2(hip, ankle, 0.445, 0.435, (0.0, 0.1, 1.0))
-        limb(m, hip, knee, 0.090, 0.080, 5, "trousers")
+        hip = V(hip)
+        knee = ik2(hip, ankle, 0.445, 0.435, (0.0, 0.0, 1.0))
         sh = (V(ankle) - knee).normalized()
-        cuff_end = knee + sh * 0.17
-        limb(m, knee - sh * 0.03, cuff_end, 0.088, 0.074, 5, "trousers")
-        limb(m, cuff_end - sh * 0.01, ankle, 0.044, 0.036, 4, "sock")
-        return knee
-    leg((0.100, 0.935, 0.035), ankle_l)
-    leg((-0.075, 0.945, 0.010), ankle_r)
+        below = knee + sh * 0.16
+        limb(m, hip, knee, 0.094, 0.086, 5, "trousers")                           # plus-fours: thigh, then the baggy knee gather
+        limb(m, knee - (knee - hip).normalized() * 0.03, below, 0.092, 0.074, 5, "trousers")
+        limb(m, below - sh * 0.01, ankle, 0.045, 0.036, 4, "sock")
+    leg((0.095, 0.905, 0.03), ankle_l)
+    leg((-0.085, 0.915, 0.0), ankle_r)
 
-    # ---- torso: stations (y, cx, cz, rx, rz, yaw) lofted, trousers -> belt -> shirt
-    ts = [(0.86, 0.02, 0.025, 0.155, 0.105, 0.05), (0.985, 0.02, 0.02, 0.150, 0.100, 0.07),
-          (1.04, 0.015, 0.015, 0.150, 0.100, 0.09),
-          (1.28, 0.0, -0.025, 0.180, 0.118, 0.14), (1.43, -0.01, -0.04, 0.215, 0.118, 0.16),
-          (1.50, -0.01, -0.045, 0.075, 0.075, 0.16)]
+    ts = [(0.86, 0.02, 0.025, 0.158, 0.106, 0.05), (1.00, 0.02, 0.02, 0.152, 0.100, 0.08),
+          (1.05, 0.015, 0.015, 0.152, 0.100, 0.09), (1.38, -0.005, -0.03, 0.205, 0.118, 0.17),
+          (1.50, -0.01, -0.045, 0.075, 0.075, 0.17)]
     rings = [ring_pts((cx, y, cz), rx, rz, 8, yaw=yw, phase=math.pi / 8) for y, cx, cz, rx, rz, yw in ts]
     loft_mat(m, rings, lambda i, j: "trousers" if i == 0 else ("belt" if i == 1 else "shirt"))
-    # neck and polo collar
-    limb(m, (-0.010, 1.490, -0.045), (-0.005, 1.625, -0.047), 0.046, 0.040, 5, "skin")
-    limb(m, (-0.010, 1.470, -0.045), (-0.008, 1.525, -0.046), 0.066, 0.056, 5, "shirt")
+    limb(m, (-0.010, 1.490, -0.045), (-0.005, 1.630, -0.047), 0.047, 0.042, 5, "skin")                  # neck
 
-    # ---- head, face blocks, hair, cap
-    hc = V((-0.005, 1.690, -0.047))
-    bx(m, hc.x - 0.072, hc.x + 0.072, hc.y - 0.050, hc.y + 0.092, hc.z - 0.085, hc.z + 0.082, "skin")
-    bx(m, hc.x - 0.058, hc.x + 0.058, hc.y - 0.098, hc.y - 0.040, hc.z - 0.060, hc.z + 0.080, "skin")   # jaw
-    bx(m, hc.x - 0.016, hc.x + 0.016, hc.y - 0.050, hc.y + 0.012, hc.z + 0.080, hc.z + 0.108, "skin")   # nose
-    for sx in (-1, 1):
-        bx(m, hc.x + sx * 0.038 - 0.010, hc.x + sx * 0.038 + 0.010, hc.y + 0.020, hc.y + 0.040, hc.z + 0.081, hc.z + 0.087, "eye")
-    bx(m, hc.x - 0.068, hc.x + 0.068, hc.y - 0.020, hc.y + 0.060, hc.z - 0.108, hc.z - 0.070, "hair")     # hair under the cap
-    m.lathe((hc.x, hc.y + 0.068, hc.z), (0, 1, 0), [(0.095, 0.0), (0.100, 0.030), (0.080, 0.070), (0, 0.092)], 8, "cap")
-    m.box((hc.x, hc.y + 0.074, hc.z + 0.115), (0.150, 0.010, 0.095), "cap", rot=Rx(0.22))               # peak
+    # ---- round head: ellipsoid, cap with a peak, nose, eyes
+    hc = V((-0.005, 1.710, -0.040))
+    blob(m, hc, (0.084, 0.104, 0.096), "skin", subdiv=2, rot=Ry(0.12))
+    bx(m, hc.x - 0.014, hc.x + 0.014, hc.y - 0.040, hc.y + 0.004, hc.z + 0.088, hc.z + 0.110, "skin")
+    bx(m, hc.x - 0.050, hc.x + 0.050, hc.y + 0.012, hc.y + 0.028, hc.z + 0.086, hc.z + 0.092, "eye")            # eye band under the peak
+    for sx in ():
+        pass
+    m.lathe(hc + V((0, 0.020, 0)), (0, 1, 0), [(0.084, 0.0), (0.090, 0.040), (0.074, 0.085), (0, 0.105)], 6, "cap")
+    m.box(hc + V((0, 0.040, 0.105)), (0.136, 0.010, 0.085), "cap", rot=Rx(0.20))
 
-    # ---- arms: IK from the shoulders to the hands on the grip
-    d = V((-0.78, -0.15, -0.60)).normalized()                  # grip -> club head
-    hand_l = V((0.20, 1.56, 0.04))
-    hand_r = hand_l + d * 0.115
-    sh_l, sh_r = V((0.186, 1.410, -0.072)), V((-0.206, 1.410, -0.008))
+    # ---- arms: IK to both hands on the grip
+    d = V((0.22, 0.60, -0.77)).normalized()                   # grip -> club head: up and back past the lead shoulder
+    hand_l = V((0.13, 1.50, 0.15))
+    hand_r = hand_l + d * 0.13
+    sh_l, sh_r = V((0.190, 1.415, -0.075)), V((-0.205, 1.415, -0.005))
     HB = basis(V((0, 1, 0)).cross(d), d)
 
     def arm(sh, hand, pole, glove):
         el = ik2(sh, hand, 0.290, 0.270, pole)
-        limb(m, sh, el, 0.056, 0.046, 5, "shirt")
-        limb(m, el, hand, 0.040, 0.031, 5, "skin")
-        m.box(hand, (0.072, 0.062, 0.100), "glove" if glove else "skin", rot=HB)
-    arm(sh_l, hand_l, (0.5, -0.8, 0.5), True)
-    arm(sh_r, hand_r, (0.0, -0.5, 1.0), False)
+        limb(m, sh, el, 0.058, 0.046, 5, "shirt")
+        limb(m, el, hand, 0.042, 0.031, 4, "skin")
+        m.box(hand, (0.070, 0.062, 0.095), "glove" if glove else "skin", rot=HB)
+    arm(sh_l, hand_l, (0.6, -0.7, 0.2), True)
+    arm(sh_r, hand_r, (0.0, -0.6, 1.0), False)
 
-    # ---- the driver, wrapped behind the neck
-    G = hand_l - d * 0.075
-    club(m, G, d, 'driver', (0.3, 0.8, 0.6), length=1.10, detail=1)
-    m.to_object("golfer_mesh", parent=root, smooth=None)
+    # ---- full-length driver (1.10 m): grip, shaft, head
+    G = hand_l - d * 0.07
+    club(m, G, d, 'driver', (0.0, 0.2, 1.0), length=1.10, detail=1)
+    m.to_object("golfer_mesh", parent=root, smooth=40)

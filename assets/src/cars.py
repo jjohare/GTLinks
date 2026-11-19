@@ -90,10 +90,10 @@ STYLES = {
         rear=dict(ax=0.30, az=0.28, bow=0.08, p=2.1, yb=0.36, sh_drop=0.10, tail_in=0.08,
                   rows=[(0, .10), (.10, .04), (.2, .008), (.32, 0), (.44, .008), (.5, .03), (.68, .03), (.86, .04), (1, .055)],
                   xbreaks=[0.30, 0.52]),
-        gh=dict(zA=0.60, cowl=(0.28, 0.24, 0.12), cowl_rise=0.04, zh=0.0, hdr=(0.26, 0.22, 0.10), tum=0.19, tum_r=0.07,
+        gh=dict(zA=0.60, cowl=(0.28, 0.24, 0.12), cowl_rise=0.04, zh=0.12, hdr=(0.26, 0.22, 0.10), tum=0.19, tum_r=0.07,
                 rear_run=0.80, rhdr=(0.28, 0.22, 0.08), shear_r='C2', crown=0.05, rc=0.08,
-                roof=[(0.0, 1.655), (-0.45, 1.718), (-1.2, 1.675), (-1.9, 1.555), (-2.4, 1.49)]),
-        zB=(-0.28, -0.39), zC=(-1.02, -1.12), zD=0.78, door_gap=0.10,
+                roof=[(0.12, 1.65), (-0.40, 1.718), (-1.2, 1.675), (-1.9, 1.555), (-2.4, 1.49)]),
+        zB=(-0.34, -0.45), zC=(-1.02, -1.12), zD=0.78, door_gap=0.10,
         bonnet_arc=0.03, bonnet_dome=0.0, clamshell=False,
         pillars='gloss', belt_trim='chrome', sill='trim', cladding=0.06, roofpanel=(0.10, 0.62), rails='gloss', handles='paint',
         grille=dict(x=0.56, rows=(2, 6), kind='slats', mat='gloss'),
@@ -113,9 +113,9 @@ STYLES = {
                   rows=[(0, .08), (.10, .03), (.2, .006), (.32, 0), (.44, 0), (.52, .006), (.7, .008), (.88, .012), (1, .016)],
                   xbreaks=[0.30, 0.60]),
         gh=dict(zA=0.66, cowl=(0.20, 0.18, 0.08), cowl_rise=0.03, zh=0.17, hdr=(0.18, 0.16, 0.06), tum=0.15, tum_r=0.02,
-                rear_run=0.34, rhdr=(0.18, 0.16, 0.05), shear_r='D', crown=0.03, rc=0.045,
+                rear_run=0.26, rhdr=(0.18, 0.16, 0.05), shear_r='D', crown=0.03, rc=0.045,
                 roof=[(0.17, 1.83), (-0.4, 1.868), (-1.5, 1.85), (-2.4, 1.80)]),
-        zB=(-0.24, -0.33), zC=(-1.02, -1.10), zD=0.50, door_gap=0.10,
+        zB=(-0.24, -0.33), zC=(-1.02, -1.10), zD=0.74, door_gap=0.10,
         bonnet_arc=0.016, bonnet_dome=0.0, clamshell=True,
         pillars='gloss', belt_trim='gloss', sill='paint', cladding=None, roofpanel=None, rails='gloss', handles='flush',
         grille=dict(x=0.48, rows=(6, 8), kind='slot', mat='gloss'),
@@ -130,7 +130,7 @@ REF = {"escapade_2009": (5.14, 1.89), "glug_2017": (5.13, 1.85), "genesips_2021"
 
 # ------------------------------------------------------------------ materials
 def car_materials(spec, S):
-    make_mat("paint", spec["paint"], metallic=0.45, rough=0.32)
+    make_mat("paint", spec["paint"], metallic=0.30, rough=0.34)
     make_mat("glass", (0.20, 0.29, 0.35), metallic=0.0, rough=0.04, alpha=0.36)
     make_mat("headlight", (1.0, 0.96, 0.82), rough=0.12, emit=(1.0, 0.93, 0.70), emit_strength=1.0)
     make_mat("taillight", (0.62, 0.03, 0.04), rough=0.22, emit=(0.55, 0.0, 0.0), emit_strength=0.7)
@@ -607,7 +607,7 @@ def tag_tub(c, tub):
     c.i_s, c.i_b = i_s, i_b
     nrow = TOP                     # number of cell rows
     tub.fill('shell')
-    tub.set('sill', i_s, i_b, 0, 1)
+    tub.set('sill', ix['afR'] + 1, ix['arF'] - 1, 0, 1)
     tub.set('door_f', ix['d1'], ix['Bm'], 1, nrow)
     tub.set('door_r', ix['Bm'], ix['C1'], 1, nrow)
     tub.set('flap', ix['flap0'], ix['flap1'], 6, 8)          # left side only, see the tagfn in build_car
@@ -723,13 +723,13 @@ def build_car(key, spec, root):
     sh.emit(R)
     sh.emit(Bn)
     # inner skins: cabin lining behind every non-glass cell, dark backs for the detachable panels
-    K.emit_liner(sh, G, lambda t: t is not None and not t.startswith('glass'), 0.045, 'interior', 'cabin')
-    K.emit_liner(sh, R, lambda t: True, 0.045, 'interior', 'headliner', step=(2, 2))
+    K.emit_liner(sh, G, lambda t: t is not None and not t.startswith('glass'), 0.045, 'interior', 'cabin', jbreaks=[0, 1, 4, G.nj - 1])
+    K.emit_liner(sh, R, lambda t: True, 0.045, 'interior', 'headliner', step=(3, 3))
     body_tags = ('shell', 'door_f', 'door_r', 'flap', 'sill', 'clad', 'tail', 'tailgate', 'tailbar')
-    K.emit_liner(sh, tub, lambda t: t in body_tags, 0.05, 'interior', 'cabin', step=(1, 2))
+    K.emit_liner(sh, tub, lambda t: t in body_tags, 0.05, 'interior', 'cabin', jbreaks=[0, 3, 8, TOP], step=(2, 1), irange=(c.i_s, c.M))
     K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('bf'), 0.006, 'bumper_front', 'trim')
     K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('br'), 0.006, 'bumper_rear', 'trim')
-    K.emit_liner(sh, Bn, lambda t: True, 0.02, 'bonnet', 'trim', step=(2, 2))
+    K.emit_liner(sh, Bn, lambda t: True, 0.02, 'bonnet', 'trim', step=(3, 3))
     if S['clamshell']:
         K.emit_liner(sh, tub, lambda t: t == 'bonnet', 0.006, 'bonnet', 'trim')
 

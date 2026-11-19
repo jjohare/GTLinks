@@ -180,8 +180,11 @@ def club(m, grip, d, kind, face, length=1.1, mats=('shaft', 'head', 'grip'), sho
     if show_grip:
         g0 = grip
         g1 = grip + d * glen
-        m.lathe((g0 + g1) / 2, d, [(0.0105, -glen / 2), (0.0128, -glen / 2 + 0.03), (0.0122, glen / 2 - 0.02),
-                                    (0.0102, glen / 2)], 8 if detail > 1 else 6, gr)
+        if detail > 1:
+            m.lathe((g0 + g1) / 2, d, [(0.0105, -glen / 2), (0.0128, -glen / 2 + 0.03), (0.0122, glen / 2 - 0.02),
+                                        (0.0102, glen / 2)], 8, gr)
+        else:
+            limb(m, g0, g1, 0.0125, 0.0105, 6, gr)
         if detail > 1:
             limb(m, g1, g1 + d * 0.012, 0.0112, 0.0112, 8, sh)   # ferrule
         s0 = g1 + d * 0.012
@@ -202,7 +205,7 @@ def club(m, grip, d, kind, face, length=1.1, mats=('shaft', 'head', 'grip'), sho
         m.lathe(ctr + B @ Vector((-0.060, 0, 0)), B @ Vector((1, 0, 0)), [(0.034, 0.0), (0.034, 0.012)], 10, cover[1])
         blob(m, ctr + B @ Vector((0.080, 0, 0)), (0.020, 0.020, 0.020), cover[1], subdiv=1)
     elif kind == 'driver':
-        blob(m, P(0.052, 0.046, 0.0), (0.066, 0.046, 0.058), hd, subdiv=detail, rot=B, clip_y=-0.040, seed=1)
+        blob(m, P(0.052, 0.046, 0.0), (0.066, 0.046, 0.058), hd, subdiv=max(detail, 2), rot=B, clip_y=-0.040, seed=1)
     elif kind == 'wood':
         blob(m, P(0.050, 0.036, 0.0), (0.058, 0.036, 0.05), hd, subdiv=detail, rot=B, clip_y=-0.030, seed=2)
     elif kind == 'hybrid':
