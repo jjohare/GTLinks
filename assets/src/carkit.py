@@ -434,7 +434,7 @@ def rbox(mb, c, s, m, r=0.02, rot=None):
     return mb.box(c, s, m, bevel=r, rot=rot)
 
 
-def emit_liner(shell, surf, pred, depth, node, mat, mirror=True, step=(1, 1)):
+def emit_liner(shell, surf, pred, depth, node, mat, mirror=True, step=(1, 1), outward=False):
     """Inner skin: the cells whose tag passes pred, pushed 'depth' inside and facing inward.
     step = (si, sj) merges blocks of cells (a block is emitted only when every cell in it passes)."""
     mb = shell.mb(node)
@@ -456,6 +456,29 @@ def emit_liner(shell, surf, pred, depth, node, mat, mirror=True, step=(1, 1)):
                     if sx < 0:
                         p = Vector((-p.x, p.y, p.z))
                     vs.append(mb.vert(('liner', node), p))
-                if not rev:
+                if rev == outward:
                     vs.reverse()
                 mb.quad(vs, mat)
+
+
+def super_ring(mb, c, a, b, p, w, m, segs=24, depth=0.0):
+    """Flat superellipse annulus facing +z (a lamp bezel): outer half-axes a, b, band width w."""
+    c = Vector(c)
+    e = 2.0 / p
+    faces = []
+    outer, inner = [], []
+    for k in range(segs):
+        th = 2 * math.pi * k / segs
+        cx, sy = math.cos(th), math.sin(th)
+        ux, uy = math.copysign(abs(cx) ** e, cx), math.copysign(abs(sy) ** e, sy)
+        outer.append(mb.bm.verts.new(c + Vector((a * ux, b * uy, 0))))
+        inner.append(mb.bm.verts.new(c + Vector(((a - w) * ux, (b - w) * uy, -depth))))
+    for k in range(segs):
+        k2 = (k + 1) % segs
+        f = mb._face([outer[k], outer[k2], inner[k2], inner[k]], m)
+        if f:
+            f.normal_update()
+            if f.normal.z < 0:
+                f.normal_flip()
+            faces.append(f)
+    return faces

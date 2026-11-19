@@ -204,10 +204,10 @@ def hull(m):
             bar(m, (sx * (surf_x(1.12, yy) - 0.01), yy, 1.12), (gx2, yy, 1.12), 0.010, "steel")
     # chevrons on the boom: navy arms pointing forward, on both sides
     for sx in (1, -1):
-        for zc in (-3.5, -3.95, -4.4, -4.85, -5.3, -5.75):
+        for zc in (-3.6, -4.15, -4.7, -5.25, -5.8):
             top, bot, w, e = sect(zc)
-            cy, hh = (top + bot) / 2, (top - bot) / 2 * 0.92
-            run, th = 0.15, 0.17
+            cy, hh = (top + bot) / 2, (top - bot) / 2 * 0.62
+            run, th = 0.34, 0.13
 
             def X(z, y):
                 return sx * (surf_x(z, y) + 0.012)
@@ -392,15 +392,15 @@ def build_rotor_main(root):
     H = Vector(HUB_MAIN)
     m = MB()
     # hub, cuffs, blades, upper swashplate ring, pitch links (3-fold symmetric about the mast axis)
-    m.lathe(H, (0, 1, 0), [(0.0, -0.10), (0.20, -0.10), (0.26, -0.04), (0.26, 0.10), (0.16, 0.17), (0.0, 0.18)], 14, "steel")
-    m.lathe(H, (0, 1, 0), [(0.0, -0.17), (0.22, -0.17), (0.22, -0.10), (0.0, -0.10)], 14, "steel")
-    m.lathe(H, (0, 1, 0), [(0.0, 0.18), (0.07, 0.18), (0.07, 0.24), (0.0, 0.24)], 8, "dark")
+    m.lathe(H, (0, 1, 0), [(0.0, -0.10), (0.20, -0.10), (0.26, -0.04), (0.26, 0.10), (0.16, 0.17), (0.0, 0.18)], 12, "steel")
+    m.lathe(H, (0, 1, 0), [(0.0, -0.17), (0.22, -0.17), (0.22, -0.10), (0.0, -0.10)], 12, "steel")
+    m.lathe(H, (0, 1, 0), [(0.0, 0.18), (0.07, 0.18), (0.07, 0.24), (0.0, 0.24)], 12, "dark")
     us = [0.45, 0.95, 1.9, 3.0, 3.9, 4.5, 4.8]
     chords = [0.26, 0.30, 0.30, 0.30, 0.30, 0.30, 0.22]
     thick = [0.034, 0.030, 0.026, 0.024, 0.022, 0.020, 0.016]
     for k in range(3):
-        ang = k * 2 * math.pi / 3 + math.pi / 2
-        R = Matrix.Rotation(ang, 3, 'Y')
+        # one blade assembly authored at angle 0, then rotated about the mast axis: exact 120 degree symmetry
+        arm = MB()
         rings = []
         for u, c, t in zip(us, chords, thick):
             phi = 0.13 - 0.07 * u / 4.8
@@ -409,17 +409,16 @@ def build_rotor_main(root):
             for zc, yy in ((-0.5, 0.0), (-0.30, 1.0), (0.10, 0.7), (0.5, 0.0), (0.10, -0.7), (-0.30, -1.0)):
                 z, y = zc * c, yy * t
                 z2, y2 = z * math.cos(phi) - y * math.sin(phi), z * math.sin(phi) + y * math.cos(phi)
-                ring_.append(H + Vector((0, 0.04, 0)) + R @ Vector((u, y2 + cone, z2)))
+                ring_.append(H + Vector((u, 0.04 + y2 + cone, z2)))
             rings.append(ring_)
-        loft_mat(m, rings, lambda i, j: 'hivis' if i == 5 else 'blade')
-        # blade grip block
-        p0 = H + R @ Vector((0.18, 0.04, 0.0))
-        p1 = H + R @ Vector((0.52, 0.04, 0.0))
-        limb(m, p0, p1, 0.06, 0.05, 8, "steel")
-        # pitch link from the swashplate ring to the grip
-        a = ang + 0.5
-        bar(m, H + Vector((0.20 * math.cos(a), -0.13, -0.20 * math.sin(a))), H + R @ Vector((0.34, 0.04, 0.03)), 0.011, "steel", segs=4)
-    m.lathe(H, (0, 1, 0), [(0.0, -0.24), (0.27, -0.24), (0.27, -0.20), (0.0, -0.20)], 14, "steel")      # rotating swashplate ring
+        loft_mat(arm, rings, lambda i, j: 'hivis' if i == 5 else 'blade')
+        limb(arm, H + Vector((0.18, 0.04, 0.0)), H + Vector((0.52, 0.04, 0.0)), 0.06, 0.05, 8, "steel")       # blade grip
+        bar(arm, H + Vector((0.20 * math.cos(0.5), -0.13, -0.20 * math.sin(0.5))), H + Vector((0.34, 0.04, 0.03)), 0.011, "steel", segs=4)
+        Rk = Matrix.Rotation(k * 2 * math.pi / 3 + math.pi / 2, 3, 'Y')
+        for v in arm.bm.verts:
+            v.co = H + Rk @ (v.co - H)
+        m.merge(arm)
+    m.lathe(H, (0, 1, 0), [(0.0, -0.24), (0.27, -0.24), (0.27, -0.20), (0.0, -0.20)], 12, "steel")      # rotating swashplate ring
     return m.to_object("rotor_main", origin=tuple(H), parent=root, smooth=50)
 
 

@@ -1502,8 +1502,8 @@
   },
   "helicopter": {
    "file": "props/helicopter.glb",
-   "bytes": 239884,
-   "triangles": 7972,
+   "bytes": 237904,
+   "triangles": 7908,
    "roots": [
     "heli"
    ],
@@ -2268,6 +2268,6 @@
  },
  "totals": {
   "files": 36,
-  "bytes": 10531156
+  "bytes": 10529176
  }
 }
