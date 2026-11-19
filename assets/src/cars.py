@@ -880,5 +880,5 @@ def bake_ao(skip=("glass", "headlight_l", "headlight_r", "taillights", "beacon_l
                 if loc is not None:
                     hit += 1.0 - dist / maxd * 0.5
             ao = 1.0 - hit / samples
-            val = 0.45 + 0.55 * ao ** 0.8
+            val = 0.62 + 0.38 * ao ** 0.8
             col.data[v.index].color = (val, val, val, 1.0)

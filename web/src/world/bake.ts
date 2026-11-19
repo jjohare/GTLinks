@@ -37,7 +37,12 @@ export function bakeStatic(model: Object3D): Group {
   for (const b of buckets.values()) {
     const merged = mergeGeometries(b.geos, false);
     for (const g of b.geos) g.dispose();
-    if (!merged) { return model as Group; }
+    if (!merged) {
+      // cannot merge: keep the model but give it geometry of its own so the caller may dispose it safely
+      model.traverse((o) => { const m = o as Mesh; if (m.isMesh) m.geometry = m.geometry.clone(); });
+      for (const x of buckets.values()) for (const g of x.geos) g.dispose();
+      return model as Group;
+    }
     const mesh = new Mesh(merged, b.mat);
     mesh.castShadow = b.shadow;
     mesh.receiveShadow = true;

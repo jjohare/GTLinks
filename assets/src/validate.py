@@ -115,6 +115,12 @@ def common_checks(js, binlen):
 
 
 def validate_car(key, spec, path):
+    # car checks live in cars_validate.py (reads the vertex data as well as the JSON chunk)
+    import cars_validate
+    return cars_validate.validate_car(key, spec, path)
+
+
+def _validate_car_first_pass(key, spec, path):
     js, binchunk, size = load_glb(path)
     res = dict(file=os.path.relpath(path, ROOT), bytes=size, checks={}, ok=True)
     A = analyse(js)
@@ -297,6 +303,10 @@ def main():
             continue
         p = os.path.join(ROOT, 'web/public/assets/cars', k + '.glb')
         out['cars'][k] = validate_car(k, spec, p) if os.path.exists(p) else dict(ok=False, error='missing file')
+    _pat = json.load(open(os.path.join(ROOT, 'assets/cars.json'))).get('patrol')
+    _pp = os.path.join(ROOT, 'web/public/assets/cars/patrol.glb')
+    if _pat and os.path.exists(_pp) and (not only or 'patrol' in only):
+        out['patrol'] = validate_car('patrol', _pat, _pp)
     for n in PROP_RULES:
         if only and n not in only:
             continue

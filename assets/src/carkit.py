@@ -244,13 +244,47 @@ class CMB(MB):
             self.keys[k] = v
         return v
 
-    def quad(self, vs, m):
+    def quad(self, vs, m, want=None):
+        """Add a quad (or the triangle left after welding).  Zero-area faces are dropped.  When `want` (the
+        intended facing) is given and the quad is twisted enough that one half would face the wrong way, it is
+        split along the diagonal that keeps both halves facing `want`."""
         u = []
         for v in vs:
             if v not in u:
                 u.append(v)
         if len(u) < 3:
             return None
+
+        def tri_n(a, b_, c):
+            return (b_.co - a.co).cross(c.co - a.co)
+        if len(u) == 3:
+            if tri_n(*u).length < 2e-9:
+                return None
+            return self._new(u, m)
+        if want is not None:
+            best = None
+            for d in (0, 1):
+                t1 = (u[d], u[d + 1], u[d + 2])
+                t2 = (u[d + 2], u[(d + 3) % 4], u[d])
+                n1, n2 = tri_n(*t1), tri_n(*t2)
+                score = min(n1.normalized().dot(want) if n1.length > 2e-9 else 1.0,
+                            n2.normalized().dot(want) if n2.length > 2e-9 else 1.0)
+                if best is None or score > best[0]:
+                    best = (score, t1, t2, n1, n2)
+            n1, n2 = tri_n(u[0], u[1], u[2]), tri_n(u[2], u[3], u[0])
+            flat = n1.length > 2e-9 and n2.length > 2e-9 and n1.normalized().dot(n2.normalized()) > 0.6 \
+                and n1.normalized().dot(want) > 0.2 and n2.normalized().dot(want) > 0.2
+            if not flat:
+                out = None
+                for t, n in ((best[1], best[3]), (best[2], best[4])):
+                    if n.length > 2e-9 and n.normalized().dot(want) > 0.0:
+                        out = self._new(list(t), m) or out
+                return out
+        elif tri_n(u[0], u[1], u[2]).length < 2e-9 and tri_n(u[2], u[3], u[0]).length < 2e-9:
+            return None
+        return self._new(u, m)
+
+    def _new(self, u, m):
         try:
             f = self.bm.faces.new(u)
         except ValueError:
@@ -368,7 +402,10 @@ class Shell:
                 vs = [mb.vert(grp, pos(t, a, b)) for a, b in ((i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1))]
                 if rev:
                     vs.reverse()
-                mb.quad(vs, pa.mat)
+                wn = N[i][j] + N[i + 1][j] + N[i + 1][j + 1] + N[i][j + 1]
+                if sx < 0:
+                    wn = Vector((-wn.x, wn.y, wn.z))
+                mb.quad(vs, pa.mat, want=wn.normalized() if wn.length > 1e-9 else None)
                 if (j in surf.sharp_rows) and vs[0] is not vs[1]:
                     a, b = mb.vert(grp, pos(t, i, j)), mb.vert(grp, pos(t, i + 1, j))
                     mb.sharp.add((a, b))
@@ -492,7 +529,12 @@ def emit_liner(shell, surf, pred, depth, node, mat, mirror=True, step=(1, 1), ou
                     vs.append(mb.vert(('liner', node), p))
                 if rev == outward:
                     vs.reverse()
-                mb.quad(vs, mat)
+                wn = N[a0][b0] + N[a1][b0] + N[a1][b1] + N[a0][b1]
+                if sx < 0:
+                    wn = Vector((-wn.x, wn.y, wn.z))
+                if not outward:
+                    wn = -wn
+                mb.quad(vs, mat, want=wn.normalized() if wn.length > 1e-9 else None)
 
 
 def super_ring(mb, c, a, b, p, w, m, segs=24, depth=0.0):

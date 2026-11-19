@@ -67,6 +67,10 @@ def build_one_prop(name):
     print("BUILT", name, report[name])
 
 specs = gtl.load_cars(a.cars)
+with open(a.cars) as _f:            # the patrol car sits beside the player cars in cars.json
+    _patrol = json.load(_f).get('patrol')
+if _patrol:
+    specs[_patrol['key']] = _patrol
 PROPS = all_prop_names()
 want = a.what.split(',')
 todo = []

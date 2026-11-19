@@ -65,6 +65,7 @@ export class App {
   private last = 0;
   private paused = false;
   private ghostOff = false;
+  private eventCounts: Record<string, number> = {};
   private overrideIntent: Intent | null = null;
   private lastIntent: Intent = { steer: 0, throttle: 0, brake: 0, handbrake: false };
   private frameTimes: number[] = [];
@@ -302,7 +303,9 @@ export class App {
     car.tickSprings(dt, n, st.wobble);
     car.setEyes(n, this.t, st.phase === Phase.Wrecked);
     r.lodge.update(dt, st.wobble, true);
-    for (const c of r.lodge.cars) if (c !== car) c.tickSprings(dt, 0, 0);
+    // the parked cars are ~35k triangles each: stop drawing them once the player is well clear of the apron
+    const away = Math.hypot(st.pos[0] - r.course.start.pos[0], st.pos[2] - r.course.start.pos[2]);
+    for (const c of r.lodge.cars) if (c !== car) { c.root.visible = away < 60; if (c.root.visible) c.tickSprings(dt, 0, 0); }
     for (const e of events) this.onEvent(r, e, pos, vel);
 
     if (st.phase !== r.lastPhase) {
@@ -348,6 +351,8 @@ export class App {
     this.hud.screen('wreck');
     this.rig.cut('drone');
     this.audio.thump(0.6);
+    // whatever is still on the roof (the early-rollover path never sees FinaleStart) spills off the upturned car
+    r.lodge.shed(15, new Vector3(), 0.5);
     this.hud.clearTransient();
     r.restartAt = 0;
     r.solids = r.props.solidsNear(st.pos[0], st.pos[2], 220);
@@ -404,6 +409,8 @@ export class App {
   private onEvent(r: Run, e: SimEvent, pos: Vector3, vel: Vector3): void {
     const car = r.lodge.car;
     const at = new Vector3(e.x, e.y, e.z);
+    const evName = EventKind[e.kind] ?? String(e.kind);
+    this.eventCounts[evName] = (this.eventCounts[evName] ?? 0) + 1;
     switch (e.kind) {
       case EventKind.JumpStart:
         this.fx.emit('dust', at, 6, new Vector3(0, 1, 0), 1.2);
@@ -560,6 +567,7 @@ export class App {
       restart: () => self.restart(true),
       go: () => self.go(),
       seed: () => self.run?.seed ?? -1,
+      eventCounts: () => ({ ...self.eventCounts }),
       course: () => { const c = self.run?.course; return c ? { start: c.start, lodge: c.lodge, finale: c.finale, hole0: { tee: c.holes[0].tee, green: c.holes[0].green, cl: c.holes[0].centreline.slice(0, 4) }, props: c.props.length, ramps: c.ramps.slice(0, 2) } : null; },
       animatingProps: () => self.run?.props.animating ?? 0,
       heightAt: (x: number, z: number) => (self.run?.game ?? self.run?.preview)?.height_at(x, z) ?? null,
