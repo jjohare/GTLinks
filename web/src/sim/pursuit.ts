@@ -19,7 +19,6 @@ export class FallbackPursuit {
   private trail: { t: number; x: number; y: number; z: number; yaw: number }[] = [];
   private events: number[] = [];
   private heli = { joined: false, pos: [0, 0, 0] as [number, number, number], aim: [0, 0, 0] as [number, number, number], rotor: 0, yaw: 0, mode: HeliMode.Absent, lock: 0, orbit: 0, speed: 0, vel: [0, 0, 0] as [number, number, number] };
-  private t = 0;
   private wreckT = 0;
   private circling = false;
   private parked = false;
@@ -32,7 +31,7 @@ export class FallbackPursuit {
 
   tick(dt: number): void {
     const s = decodeState(this.inner.state());
-    this.t = s.runTime;
+
     const car = s.pos;
     const yaw = Math.atan2(s.vel[0], s.vel[2]);
     const wrecked = s.phase === Phase.Wrecked;
