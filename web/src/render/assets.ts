@@ -1,20 +1,14 @@
 import { Box3, Group, Mesh, MeshStandardMaterial, MeshStandardNodeMaterial, Vector3 } from 'three/webgpu';
 import type { Material, Object3D } from 'three/webgpu';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import manifest from 'virtual:asset-manifest';
-import { standInModel } from './standinModels';
 import carsJson from '../../../assets/cars.json';
 import type { CarSpec } from '../sim/types';
 
 export const CARS: CarSpec[] = (carsJson as { cars: CarSpec[] }).cars;
 
 const BASE = import.meta.env.BASE_URL;
-const present = new Set(manifest);
 const loader = new GLTFLoader();
 const cache = new Map<string, Promise<Group>>();
-/** Which paths fell back to primitives; surfaced for the report and debugging. */
-export const standInsUsed = new Set<string>();
-
 /** Convert any loaded standard material to its node-material equivalent (TSL-only rule). */
 export function toNodeMaterial(m: Material): Material {
   if (m instanceof MeshStandardNodeMaterial) return m;
@@ -43,25 +37,14 @@ function fix(root: Object3D): void {
   });
 }
 
-/** Load a GLB by path under public/assets (e.g. "props/stein.glb"), or a stand-in if absent. Cached template. */
+/** Load a GLB by path under public/assets (e.g. "props/stein.glb"). The parsed template is cached and shared. */
 export function loadTemplate(rel: string): Promise<Group> {
   let p = cache.get(rel);
   if (!p) {
-    p = (async () => {
-      if (present.has(`assets/${rel}`)) {
-        try {
-          const gltf = await loader.loadAsync(`${BASE}assets/${rel}`);
-          fix(gltf.scene);
-          return gltf.scene;
-        } catch (e) {
-          console.info(`[assets] ${rel} failed to load (${(e as Error).message}); using stand-in`);
-        }
-      }
-      standInsUsed.add(rel);
-      const g = standInModel(rel, CARS);
-      fix(g);
-      return g;
-    })();
+    p = loader.loadAsync(`${BASE}assets/${rel}`).then((gltf) => {
+      fix(gltf.scene);
+      return gltf.scene;
+    }, (e: unknown) => { throw new Error(`could not load model ${rel}: ${(e as Error).message ?? String(e)}`); });
     cache.set(rel, p);
   }
   return p;

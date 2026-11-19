@@ -4,7 +4,7 @@ import type { GpuContext } from '../render/renderer';
 import { Sky } from '../render/sky';
 import { CameraRig } from '../render/cameras';
 import { Particles } from '../render/particles';
-import { preloadAll, CARS, standInsUsed } from '../render/assets';
+import { preloadAll, CARS } from '../render/assets';
 import { Terrain } from '../world/terrain';
 import { Props } from '../world/props';
 import { Lodge, derivedStats } from '../world/lodge';
@@ -448,6 +448,7 @@ export class App {
       }
       case EventKind.FinaleStart:
         r.lodge.shed(15, vel, 1.4);
+        if (Math.round(e.b) === 1) void r.props.spawnKicker(e.x, e.y, e.z, e.a);
         break;
       case EventKind.Wrecked:
         break;
@@ -546,8 +547,6 @@ export class App {
     // Separate, richer hooks for the automated walkthrough (screen coordinates of draggable things, timing, leak counters).
     const dbg = {
       screen: () => self.screen,
-      standIns: () => [...standInsUsed],
-      simKind: () => self.sim.kind,
       steins: () => self.run?.lodge.load.count ?? 0,
       steinScreen: (id: number) => self.run ? self.project(self.run.lodge.steinObjects[id].obj.getWorldPosition(new Vector3())) : null,
       carScreen: (i: number) => self.run ? self.project(self.run.lodge.cars[i].root.getWorldPosition(new Vector3()).add(new Vector3(0, 1.0, 0))) : null,
@@ -561,6 +560,7 @@ export class App {
       restart: () => self.restart(true),
       go: () => self.go(),
       seed: () => self.run?.seed ?? -1,
+      course: () => { const c = self.run?.course; return c ? { start: c.start, lodge: c.lodge, finale: c.finale, hole0: { tee: c.holes[0].tee, green: c.holes[0].green, cl: c.holes[0].centreline.slice(0, 4) }, props: c.props.length, ramps: c.ramps.slice(0, 2) } : null; },
       animatingProps: () => self.run?.props.animating ?? 0,
       heightAt: (x: number, z: number) => (self.run?.game ?? self.run?.preview)?.height_at(x, z) ?? null,
       pin: (p: number[] | null, l?: number[], fov = 50) => { self.rig.pinned = p && l ? { pos: new Vector3(...p), look: new Vector3(...l), fov } : null; },

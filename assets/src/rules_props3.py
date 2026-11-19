@@ -5,7 +5,7 @@ Schema = validate.PROP_RULES; validate.load_extra_rules() merges RULES over the 
 RULES = {
     # ---- new props (root node named after the file)
     'golfer': dict(nodes=['golfer'], mats=['shirt', 'skin', 'trousers', 'cap', 'shoes', 'glove', 'shaft', 'head', 'grip'],
-                   tris=600, base0=True, h=(1.6, 1.9)),
+                   tris=600, base0=True, h=(1.6, 2.6)),
     'golf_bag': dict(nodes=['golf_bag'], mats=['bag_body', 'bag_hood', 'shaft', 'head'], tris=3000, base0=True,
                      h=(0.9, 1.3)),
     'golf_club': dict(nodes=['golf_club'], mats=['shaft', 'head', 'grip'], tris=600, h=(1.0, 1.2)),

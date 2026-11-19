@@ -37,11 +37,11 @@ GT = [0.0, 0.06, 0.36, 0.66, 0.90]   # glasshouse rows as fractions belt -> roof
 STYLES = {
     # 2009: upright, slab-shouldered, chrome-heavy, square-jawed
     "escapade_2009": dict(
-        fo=0.98, flare=0.024, arch_p=2.5, arch_gap=0.07, flare_w=0.10,
+        fo=0.98, flare=0.034, arch_p=2.5, arch_gap=0.07, flare_w=0.14,
         waist=0.60, tuck=0.06, sh_drop=0.10, sh_in=0.014, sh_e=1.4, roll=0.35, belt_in=0.055, wing_in=0.125,
-        belt=[(-9, 1.165), (0.2, 1.165), (1.3, 1.15), (9, 1.115)], sharp_rows=[8], crease=(0.47, 0.012),
+        belt=[(-9, 1.165), (0.2, 1.165), (1.3, 1.15), (9, 1.115)], sharp_rows=[8], crease=(0.50, 0.02),
         front=dict(ax=0.15, az=0.17, bow=0.05, p=2.6, yb=0.34, sh_drop=0.07, nose_in=0.10,
-                   rows=[(0, .11), (.10, .05), (.18, .0), (.29, -.022), (.40, .0), (.46, .04), (.70, .034), (.92, .034), (1, .04)],
+                   rows=[(0, .11), (.10, .05), (.18, .0), (.29, -.022), (.40, .0), (.46, .04), (.70, .045), (.92, .055), (1, .065)],
                    xbreaks=[0.22, 0.50, 0.56]),
         rear=dict(ax=0.15, az=0.15, bow=0.04, p=2.6, yb=0.40, sh_drop=0.10, tail_in=0.05,
                   rows=[(0, .09), (.10, .03), (.2, 0), (.32, -.018), (.43, 0), (.48, .03), (.68, .026), (.88, .026), (1, .03)],
@@ -53,18 +53,18 @@ STYLES = {
         bonnet_arc=0.012, bonnet_dome=0.022, clamshell=False,
         pillars='paint', belt_trim='chrome', sill='chrome', cladding=None, roofpanel=None, rails='chrome', handles='chrome',
         grille=dict(x=0.50, rows=(5, 8), kind='eggcrate', mat='chrome'),
-        lamp=dict(x0=0.56, x1=0.83, rows=(5, 8), p=3.2), intake=dict(x=0.50, rows=(0, 2)),
+        lamp=dict(x0=0.56, x1=0.83, rows=(5, 8), p=4.5), intake=dict(x=0.50, rows=(0, 2)),
         bumper_chrome=True, tail='pillar', wheel=dict(wheel='spoke6', spokes=6, rim_frac=0.66),
-        seat='#b9a888', seat_trim='#8c7a5c', tips=1, boards=True, third_row=True,
+        seat='#b9a888', seat_trim='#8c7a5c', tips=1, boards=True, third_row=False,
     ),
     # 2017: large, rounded and smooth, long glasshouse
     "glug_2017": dict(
         fo=0.93, over=0.012, flare=0.02, arch_p=2.0, arch_gap=0.06, flare_w=0.13,
         waist=0.60, tuck=0.07, sh_drop=0.14, sh_in=0.034, sh_e=2.0, roll=1.0, belt_in=0.06, wing_in=0.12,
         belt=[(-9, 1.13), (-2.2, 1.125), (0.4, 1.085), (1.2, 1.06), (9, 0.97)], sharp_rows=[], crease=None,
-        front=dict(ax=0.40, az=0.36, bow=0.10, p=2.0, yb=0.30, sh_drop=0.09, nose_in=0.13,
-                   rows=[(0, .12), (.09, .05), (.2, .012), (.32, .0), (.44, .006), (.52, .02), (.72, .03), (.9, .045), (1, .06)],
-                   xbreaks=[0.30, 0.40, 0.46]),
+        front=dict(ax=0.30, az=0.32, bow=0.12, p=2.0, yb=0.30, sh_drop=0.10, nose_in=0.24,
+                   rows=[(0, .12), (.09, .05), (.2, .012), (.32, .0), (.44, .008), (.52, .024), (.70, .05), (.88, .085), (1, .12)],
+                   xbreaks=[0.36, 0.40]),
         rear=dict(ax=0.34, az=0.30, bow=0.08, p=2.0, yb=0.36, sh_drop=0.12, tail_in=0.07,
                   rows=[(0, .10), (.10, .04), (.2, .008), (.32, 0), (.44, .008), (.5, .03), (.68, .03), (.86, .045), (1, .06)],
                   xbreaks=[0.30, 0.50]),
@@ -73,20 +73,20 @@ STYLES = {
                 roof=[(0.20, 1.765), (-0.45, 1.848), (-1.5, 1.83), (-2.3, 1.755)]),
         zB=(-0.20, -0.31), zC=(-1.02, -1.11), zD=0.60, door_gap=0.10,
         bonnet_arc=0.03, bonnet_dome=0.0, clamshell=False,
-        pillars='gloss', belt_trim='chrome', sill='paint', cladding=None, roofpanel=(0.12, 0.5), rails='steel', handles='paint',
-        grille=dict(x=0.40, rows=(5, 8), kind='bars', mat='chrome'),
-        lamp=dict(x0=0.46, x1=0.80, rows=(5, 8), p=2.3), intake=dict(x=0.62, rows=(1, 3)),
+        pillars='gloss', dpillar='paint', belt_trim='chrome', sill='paint', cladding=None, roofpanel=(0.12, 0.5), rails='steel', handles='paint',
+        grille=dict(x=0.36, rows=(5, 8), kind='bars', mat='chrome'),
+        lamp=dict(x0=0.40, x1=0.665, rows=(5, 8), p=3.0), intake=dict(x=0.60, rows=(1, 3)),
         bumper_chrome=False, tail='wrap', wheel=dict(wheel='twin', spokes=5, rim_frac=0.68),
-        seat='#2b2d31', seat_trim='#6a6e76', tips=2, boards=False, third_row=True,
+        seat='#2b2d31', seat_trim='#6a6e76', tips=2, boards=False, third_row=False,
     ),
     # 2021: sleeker, falling roofline, wide low grille
     "genesips_2021": dict(
         fo=0.90, flare=0.03, arch_p=2.0, arch_gap=0.055, flare_w=0.12,
         waist=0.58, tuck=0.065, sh_drop=0.11, sh_in=0.03, sh_e=2.0, roll=0.8, belt_in=0.06, wing_in=0.12,
         belt=[(-9, 1.13), (-2.0, 1.115), (-0.3, 1.045), (0.6, 1.025), (1.3, 0.99), (9, 0.92)], sharp_rows=[], crease=(0.52, 0.010),
-        front=dict(ax=0.32, az=0.28, bow=0.09, p=2.2, yb=0.28, sh_drop=0.07, nose_in=0.12,
-                   rows=[(0, .11), (.10, .04), (.22, .006), (.36, .0), (.50, .004), (.62, .012), (.76, .022), (.9, .04), (1, .055)],
-                   xbreaks=[0.44, 0.50, 0.56]),
+        front=dict(ax=0.30, az=0.28, bow=0.10, p=2.2, yb=0.28, sh_drop=0.07, nose_in=0.22,
+                   rows=[(0, .11), (.10, .04), (.20, .006), (.34, .0), (.48, .006), (.60, .02), (.74, .045), (.88, .08), (1, .11)],
+                   xbreaks=[0.36, 0.62]),
         rear=dict(ax=0.30, az=0.28, bow=0.08, p=2.1, yb=0.36, sh_drop=0.10, tail_in=0.08,
                   rows=[(0, .10), (.10, .04), (.2, .008), (.32, 0), (.44, .008), (.5, .03), (.68, .03), (.86, .04), (1, .055)],
                   xbreaks=[0.30, 0.52]),
@@ -95,9 +95,9 @@ STYLES = {
                 roof=[(0.12, 1.65), (-0.40, 1.718), (-1.2, 1.675), (-1.9, 1.555), (-2.4, 1.49)]),
         zB=(-0.34, -0.45), zC=(-1.02, -1.12), zD=0.78, door_gap=0.10,
         bonnet_arc=0.03, bonnet_dome=0.0, clamshell=False,
-        pillars='gloss', belt_trim='chrome', sill='trim', cladding=0.06, roofpanel=(0.10, 0.62), rails='gloss', handles='paint',
-        grille=dict(x=0.56, rows=(2, 6), kind='slats', mat='gloss'),
-        lamp=dict(x0=0.50, x1=0.84, rows=(6, 8), p=2.4), intake=dict(x=0.30, rows=(0, 1)),
+        pillars='gloss', dpillar='paint', belt_trim='chrome', sill='trim', cladding=True, roofpanel=(0.10, 0.62), rails='gloss', handles='paint',
+        grille=dict(x=0.62, rows=(2, 5), kind='slats', mat='chrome'),
+        lamp=dict(x0=0.36, x1=0.655, rows=(5, 8), p=3.6), intake=dict(x=0.30, rows=(0, 1)),
         bumper_chrome=False, tail='bar', wheel=dict(wheel='turbine', spokes=10, rim_frac=0.70),
         seat='#7a3b2e', seat_trim='#2a2222', tips=2, boards=False, third_row=False,
     ),
@@ -106,9 +106,9 @@ STYLES = {
         fo=0.88, flare=0.012, arch_p=2.2, arch_gap=0.07, flare_w=0.09,
         waist=0.66, tuck=0.04, sh_drop=0.065, sh_in=0.008, sh_e=1.3, roll=0.9, belt_in=0.05, wing_in=0.05,
         belt=[(-9, 1.175), (0.3, 1.165), (1.3, 1.15), (9, 1.125)], sharp_rows=[], crease=None,
-        front=dict(ax=0.24, az=0.22, bow=0.06, p=2.7, yb=0.36, sh_drop=0.065, nose_in=0.05,
-                   rows=[(0, .08), (.10, .03), (.22, .006), (.36, 0), (.50, 0), (.64, .004), (.78, .008), (.9, .012), (1, .016)],
-                   xbreaks=[0.48, 0.56]),
+        front=dict(ax=0.24, az=0.24, bow=0.07, p=2.6, yb=0.36, sh_drop=0.065, nose_in=0.05,
+                   rows=[(0, .08), (.10, .03), (.22, .006), (.36, 0), (.50, .004), (.62, .01), (.74, .02), (.88, .034), (1, .045)],
+                   xbreaks=[0.46, 0.50]),
         rear=dict(ax=0.22, az=0.20, bow=0.05, p=2.7, yb=0.40, sh_drop=0.065, tail_in=0.05,
                   rows=[(0, .08), (.10, .03), (.2, .006), (.32, 0), (.44, 0), (.52, .006), (.7, .008), (.88, .012), (1, .016)],
                   xbreaks=[0.30, 0.60]),
@@ -118,8 +118,8 @@ STYLES = {
         zB=(-0.24, -0.33), zC=(-1.02, -1.10), zD=0.74, door_gap=0.10,
         bonnet_arc=0.016, bonnet_dome=0.0, clamshell=True,
         pillars='gloss', belt_trim='gloss', sill='paint', cladding=None, roofpanel=None, rails='gloss', handles='flush',
-        grille=dict(x=0.48, rows=(6, 8), kind='slot', mat='gloss'),
-        lamp=dict(x0=0.56, x1=0.84, rows=(6, 8), p=3.4), intake=dict(x=0.56, rows=(1, 3)),
+        grille=dict(x=0.46, rows=(6, 8), kind='slot', mat='gloss'),
+        lamp=dict(x0=0.50, x1=0.785, rows=(6, 8), p=4.5), intake=dict(x=0.56, rows=(1, 3)),
         bumper_chrome=False, tail='blade', wheel=dict(wheel='aero', spokes=10, rim_frac=0.72),
         seat='#d8d2c4', seat_trim='#8a8478', tips=0, boards=False, third_row=False,
     ),
@@ -168,6 +168,7 @@ def panels(S):
         else Panel('chrome' if sill == 'chrome' else 'trim', sill, group='sill', gap=0.0045, rim=0.02, hole_rim=0.03),
         'clad': Panel('trim', 'trim', group='sill', gap=0.0045, rim=0.02, hole_rim=0.03),
         'pillar': Panel('body', 'paint', group='shell', **body) if pil == 'paint' else Panel('trim', 'gloss', group='pillar'),
+        'pillar_d': Panel('body', 'paint', group='shell', **body) if S.get('dpillar', pil) == 'paint' else Panel('trim', 'gloss', group='pillar'),
         'belt': Panel('chrome' if S['belt_trim'] == 'chrome' else 'trim', S['belt_trim'], group='belt'),
         'cowl': Panel('trim', 'trim', group='cowl'),
         'glass_w': Panel('glass', 'glass', off=-0.012, frame=0.045, group='gw'),
@@ -647,13 +648,10 @@ def tag_tub(c, tub):
         tub.set('tailbar', c.i_rc0 + 1, M, 8, 10)
     elif kind == 'blade':       # slim vertical blades
         tub.set('tail', i_tg - 2, i_tg, 5, nrow)
-    if S['cladding']:
+    if S['cladding']:                # black lip along the sills and round the arches
         for i in range(i_s, i_b):
-            for j in range(0, nrow):
-                if tub.tag[i][j] in ('shell', 'door_f', 'door_r', 'sill'):
-                    pc = (tub.P[i][j] + tub.P[i + 1][j + 1]) / 2
-                    if arch_dist(c, pc.z, pc.y) < S['cladding'] or j == 0:
-                        tub.tag[i][j] = 'clad'
+            if tub.tag[i][0] in ('shell', 'door_f', 'door_r', 'sill'):
+                tub.tag[i][0] = 'clad'
         tub.set('bf_trim', 0, i_s, 0, 2, only='bf')
         tub.set('br_trim', i_b, M, 0, 2)
     tub.border['j0'] = (0.03, 0, 10 ** 6)
@@ -683,7 +681,7 @@ def tag_glasshouse(c, G):
     G.set('glass_s', gB2, gC1, 1, 4)
     G.set('pillar', gC1, gC2, 0, 4)
     G.set('glass_q', gC2, gD, 1, 4)
-    G.set('pillar', gD, gDr, 0, 4)
+    G.set('pillar_d', gD, gDr, 0, 4)
     G.set('tailgate', gDr, ng, 0, 6)
     G.set('glass_r', gDr + 1, ng, 1, 4)
     if S['tail'] == 'pillar':
@@ -727,8 +725,8 @@ def build_car(key, spec, root):
     K.emit_liner(sh, R, lambda t: True, 0.045, 'interior', 'headliner', step=(3, 3))
     body_tags = ('shell', 'door_f', 'door_r', 'flap', 'sill', 'clad', 'tail', 'tailgate', 'tailbar')
     K.emit_liner(sh, tub, lambda t: t in body_tags, 0.05, 'interior', 'cabin', jbreaks=[0, 3, 8, TOP], step=(2, 1), irange=(c.i_s, c.M))
-    K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('bf'), 0.006, 'bumper_front', 'trim')
-    K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('br'), 0.006, 'bumper_rear', 'trim')
+    K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('bf'), 0.006, 'bumper_front', 'trim', step=(2, 2))
+    K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('br'), 0.006, 'bumper_rear', 'trim', step=(2, 1))
     K.emit_liner(sh, Bn, lambda t: True, 0.02, 'bonnet', 'trim', step=(3, 3))
     if S['clamshell']:
         K.emit_liner(sh, tub, lambda t: t == 'bonnet', 0.006, 'bonnet', 'trim')

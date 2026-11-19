@@ -1024,8 +1024,8 @@
   },
   "cow": {
    "file": "props/cow.glb",
-   "bytes": 91896,
-   "triangles": 2954,
+   "bytes": 76488,
+   "triangles": 2130,
    "roots": [
     "cow"
    ],
@@ -1046,18 +1046,18 @@
     "udder"
    ],
    "bbox_min": [
-    -0.3928,
-    -0.0075,
+    -0.3788,
+    -0.007,
     -1.0975
    ],
    "bbox_max": [
-    0.3947,
+    0.3788,
     1.491,
     1.54
    ],
    "size": [
-    0.7875,
-    1.4985,
+    0.7577,
+    1.4981,
     2.6375
    ],
    "origin": "base: origin on the ground (min y = 0)",
@@ -1340,8 +1340,8 @@
   },
   "golfer": {
    "file": "props/golfer.glb",
-   "bytes": 42128,
-   "triangles": 582,
+   "bytes": 34396,
+   "triangles": 598,
    "roots": [
     "golfer"
    ],
@@ -1355,7 +1355,6 @@
     "eye",
     "glove",
     "grip",
-    "hair",
     "head",
     "shaft",
     "shirt",
@@ -1366,19 +1365,19 @@
     "trousers"
    ],
    "bbox_min": [
-    -0.643,
+    -0.3222,
     0.0,
-    -0.5776
+    -0.6591
    ],
    "bbox_max": [
-    0.3691,
-    1.85,
-    0.2363
+    0.3618,
+    2.1583,
+    0.2362
    ],
    "size": [
-    1.0121,
-    1.85,
-    0.8139
+    0.684,
+    2.1583,
+    0.8953
    ],
    "origin": "between the feet on the ground; faces +Z",
    "node_positions": null,
@@ -1502,8 +1501,8 @@
   },
   "helicopter": {
    "file": "props/helicopter.glb",
-   "bytes": 237904,
-   "triangles": 7908,
+   "bytes": 238336,
+   "triangles": 7916,
    "roots": [
     "heli"
    ],
@@ -2159,8 +2158,8 @@
   },
   "tree_larch": {
    "file": "props/tree_larch.glb",
-   "bytes": 52032,
-   "triangles": 784,
+   "bytes": 58160,
+   "triangles": 780,
    "roots": [
     "tree_larch"
    ],
@@ -2174,19 +2173,19 @@
     "needles_tip"
    ],
    "bbox_min": [
-    -2.0231,
+    -2.3547,
     0.0,
-    -2.0207
+    -2.4753
    ],
    "bbox_max": [
-    2.4175,
+    2.9889,
     9.45,
-    2.5904
+    2.9073
    ],
    "size": [
-    4.4406,
+    5.3436,
     9.45,
-    4.6111
+    5.3826
    ],
    "origin": "base: origin on the ground (min y = 0)",
    "node_positions": null,
@@ -2268,6 +2267,6 @@
  },
  "totals": {
   "files": 36,
-  "bytes": 10529176
+  "bytes": 10512596
  }
 }

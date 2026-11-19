@@ -39,7 +39,7 @@ def structure(c, sh):
     tub = c.tub
     isbf = lambda t: t is not None and t.startswith('bf')
     isbr = lambda t: t is not None and t.startswith('br')
-    K.emit_liner(sh, tub, isbf, 0.10, 'underside', 'trim', outward=True)
+    K.emit_liner(sh, tub, isbf, 0.10, 'underside', 'trim', outward=True, step=(2, 2))
     K.emit_liner(sh, tub, isbr, 0.05, 'body', 'paint', outward=True)
     un = sh.mb('underside')
     up = Vector((0, 1, 0))
@@ -58,24 +58,35 @@ def structure(c, sh):
 
 # ----------------------------------------------------------------------------- lamps
 def lamps(c, sh):
-    """Headlights: an emissive lens in its own node (the front end animates it as an eye), sitting at the back
-    of a recess cut into the fascia; bucket and bezel stay with the body."""
+    """Headlights: an emissive lens in its own node (the front end animates it as an eye) set back inside a
+    recess cut into the fascia.  The lens follows the lean and sweep of the opening so it fills it; the dark
+    bucket behind it stays with the body."""
     tub, S = c.tub, c.S
     i0, i1, j0, j1 = c.lamp_cells
-    pts = [tub.P[i][j] for i in range(i0, i1 + 1) for j in range(j0, j1 + 1)]
+    P = tub.P
+    pts = [P[i][j] for i in range(i0, i1 + 1) for j in range(j0, j1 + 1)]
     x0, x1 = min(p.x for p in pts), max(p.x for p in pts)
     y0, y1 = min(p.y for p in pts), max(p.y for p in pts)
-    zmin = min(p.z for p in pts)
-    a, b = (x1 - x0) / 2 - 0.010, (y1 - y0) / 2 - 0.010
+    zc = sum(p.z for p in pts) / len(pts)
+    # plane through the opening: slope across (sweep) and up (lean), limited so the lens stays near flat
+    sx_ = ((P[i1][j0].z + P[i1][j1].z) - (P[i0][j0].z + P[i0][j1].z)) / 2 / max(1e-6, x1 - x0)
+    sy_ = ((P[i0][j1].z + P[i1][j1].z) - (P[i0][j0].z + P[i1][j0].z)) / 2 / max(1e-6, y1 - y0)
+    sx_, sy_ = max(-0.35, min(0.0, sx_)), max(-0.35, min(0.0, sy_))
+    a, b = (x1 - x0) / 2 + 0.004, (y1 - y0) / 2 + 0.004
     p_ = S['lamp']['p']
+    rec = 0.028
     for name, sx in (('headlight_l', 1), ('headlight_r', -1)):
-        ctr = Vector((sx * (x0 + x1) / 2, (y0 + y1) / 2, zmin - 0.045))
-        K.superdome(sh.mb(name), ctr, a, b, p_, 0.03, 'headlight')
+        ctr = Vector((sx * (x0 + x1) / 2, (y0 + y1) / 2, zc - rec - 0.03))
+        mb = sh.mb(name)
+        n0 = len(mb.bm.verts)
+        K.superdome(mb, ctr, a, b, p_, 0.03, 'headlight')
+        mb.bm.verts.ensure_lookup_table()
+        for v in list(mb.bm.verts)[n0:]:
+            v.co.z += sx_ * (v.co.x - ctr.x) * sx + sy_ * (v.co.y - ctr.y)
         c.origins[name] = tuple(ctr)
-        tr = sh.mb('trim')
-        tr.box(ctr + Vector((0, 0, -0.03)), (2 * a + 0.12, 2 * b + 0.10, 0.03), 'trim')
-        K.super_ring(sh.mb('chrome'), ctr + Vector((0, 0, 0.004)), a + 0.022, b + 0.022, p_, 0.024, 'chrome', depth=0.006)
-    c.lamp_box = (x0, x1, y0, y1, zmin)
+        zb = min(p.z for p in pts) - 0.10
+        sh.mb('trim').box((ctr.x, ctr.y, zb), (2 * a + 0.10, 2 * b + 0.08, 0.03), 'trim')
+    c.lamp_box = (x0, x1, y0, y1, zc)
 
 
 # ----------------------------------------------------------------------------- grille
@@ -113,9 +124,7 @@ def grille(c, sh):
     if kind == 'eggcrate':
         for j, f in rows:
             hbar(j, f, 0.022)
-        for i in range(i0, i1):
-            for sx in ((1, -1) if i > 0 else (1,)):
-                vbar(i, sx, 0.02, d1=-0.012)
+        vbar(0, 1, 0.03, d1=-0.004)
     elif kind == 'bars':
         for j, f in rows[1::2]:
             hbar(j, f, 0.045)
@@ -218,15 +227,15 @@ def mirrors(c, sh):
     tub = c.tub
     p = tub.P[c.ix['A']][11].copy()
     xlim = c.hw * 1.027
-    x_in = p.x + 0.005
-    wx = max(0.08, xlim - x_in)
+    x_in = p.x - 0.045
+    wx = max(0.10, xlim - x_in)
     for name, sx in (('mirror_l', 1), ('mirror_r', -1)):
         mb = sh.mb(name)
         o = Vector((sx * p.x, p.y, p.z))
-        ctr = Vector((sx * (x_in + wx / 2), p.y + 0.115, p.z + 0.03))
-        mb.box(o + Vector((sx * 0.012, 0.03, 0.03)), (0.06, 0.07, 0.07), 'trim', bevel=0.015)
-        mb.box(ctr, (wx, 0.16, 0.10), 'paint', bevel=0.04)
-        mb.box(ctr + Vector((0, -0.004, -0.05)), (wx - 0.03, 0.125, 0.01), 'chrome', bevel=0.004)
+        ctr = Vector((sx * (x_in + wx / 2), p.y + 0.085, p.z - 0.01))
+        mb.box(o + Vector((0, 0.012, -0.01)), (0.07, 0.03, 0.09), 'trim', bevel=0.01)
+        mb.box(ctr, (wx, 0.125, 0.085), 'paint', bevel=0.035)
+        mb.box(ctr + Vector((0, -0.003, -0.043)), (wx - 0.035, 0.09, 0.008), 'chrome', bevel=0.003)
         c.origins[name] = tuple(o)
 
 
@@ -245,7 +254,7 @@ def build_wheel(c, mb, sx, sz, style):
             (R, 0.17 * hw), (R - 0.013, 0.22 * hw), (R - 0.013, 0.34 * hw), (R, 0.40 * hw), (R, 0.70 * hw),
             (R - 0.006, 0.78 * hw), (R - 0.035, 0.92 * hw), (rr + 0.62 * span, hw), (rr + 0.22 * span, 0.96 * hw),
             (rr, 0.80 * hw)]
-    SEG = style.get('seg', 36)
+    SEG = style.get('seg', 32)
 
     def mod(pi, i):
         # tread blocks: alternate segments drop, staggered between the three ribs; groove floors stay round
@@ -284,19 +293,10 @@ def build_wheel(c, mb, sx, sz, style):
                     ctr = Ov + Vector((sx * hw * 0.50, 0, 0)) + rad * rr * 0.52
                 mb.box(ctr, (0.06, sw, rr * 0.92), "rim", bevel=0.012, rot=rot)
         mb.lathe(O, ax, [(0, 0.78 * hw), (hubr, 0.74 * hw), (hubr + 0.02, 0.5 * hw), (0, 0.5 * hw)], 16, "rim")
-        for i in range(5):
-            a = i * 2 * math.pi / 5 + 0.3
-            p = Ov + Vector((sx * 0.79 * hw, 0, 0)) + Vector((0, math.sin(a), math.cos(a))) * 0.045
-            mb.lathe(p, ax, [(0.012, -0.01), (0.012, 0.012)], 6, "steel")
     # brake disc with a hat, inboard of the spokes
     dr = rr * 0.80
     mb.lathe(O, ax, [(0.10, -0.50 * hw), (dr, -0.50 * hw), (dr, -0.36 * hw), (0.10, -0.36 * hw)], 32, "steel", closed=True)
     mb.lathe(O, ax, [(0, -0.36 * hw), (0.10, -0.36 * hw), (0.10, -0.62 * hw), (0, -0.62 * hw)], 14, "steel")
-    for i in range(12):
-        a = i * 2 * math.pi / 12
-        rad = Vector((0, math.sin(a), math.cos(a)))
-        mb.box(Ov + Vector((sx * -0.43 * hw, 0, 0)) + rad * (dr * 0.78), (0.005, 0.012, dr * 0.34), "trim",
-               rot=Matrix.Rotation(-a, 3, 'X'))
     return O
 
 
@@ -354,6 +354,9 @@ def underside(c, sh):
     mb.box((0, yb + 0.012, (za + zb) / 2), (2 * (w - 0.075), 0.024, za - zb), 'underplate')
     mb.box((0, yb + 0.012, (c.zF - 0.30 + za) / 2), (2 * xin, 0.024, c.zF - 0.30 - za), 'underplate')
     mb.box((0, yb + 0.012, (c.zR + 0.25 + zb) / 2), (2 * xin, 0.024, zb - c.zR - 0.25), 'underplate')
+    zq = zr - Ra - 0.03                          # boot floor behind the rear arches, full width
+    if zq - (c.zR + 0.25) > 0.1:
+        mb.box((0, yb + 0.014, (zq + c.zR + 0.25) / 2), (2 * (w - 0.09), 0.024, zq - c.zR - 0.25), 'underplate')
     # tunnel, longitudinal ribs, cross-members
     zA, zB = c.zF - 0.55, c.zR + 0.35
     mb.box((0, yb - 0.02, (zA + zB) / 2), (0.34, 0.07, abs(zA - zB)), "underplate", bevel=0.02)

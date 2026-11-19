@@ -93,7 +93,7 @@ export interface Course {
   holes: CourseHole[];
   props: CourseProp[];
   ramps: CourseRamp[];
-  finale: { pos: [number, number, number]; radius: number };
+  finale: { pos: [number, number, number]; radius: number; ramp_index?: number };
 }
 
 /** The wasm Game class, as the front end consumes it. */

@@ -34,6 +34,7 @@ export class Props {
   private tmp = new Matrix4();
   private scaleV = new Vector3();
   private t = 0;
+  private kicker: { group: InstancedGroup; pos: Vector3; yaw: number; t: number } | null = null;
 
   static async create(course: Course, game: Game): Promise<Props> {
     const p = new Props(course, game);
@@ -127,6 +128,27 @@ export class Props {
     }
   }
 
+  /**
+   * The finale kicker: a ramp wedge (11.5 m long, 8 m wide, 2.4 m high, per docs/FINALE.md) that the simulation
+   * raises ahead of the car. It is not in course_json, so it grows out of the ground here over about a second.
+   */
+  async spawnKicker(x: number, y: number, z: number, yaw: number): Promise<void> {
+    if (this.kicker) return;
+    const parts = extractParts(await loadTemplate('props/ramp.glb'));
+    const group = new InstancedGroup(parts, 1, { cull: false });
+    group.addTo(this.group);
+    this.kicker = { group, pos: new Vector3(x, y, z), yaw, t: 0 };
+    this.placeKicker(0);
+  }
+
+  private placeKicker(u: number): void {
+    const k = this.kicker;
+    if (!k) return;
+    const e = u * u * (3 - 2 * u);
+    k.group.set(0, new Matrix4().compose(k.pos, new Quaternion().setFromAxisAngle(Y, k.yaw), new Vector3(8.0, Math.max(0.02, 2.4 * e), 11.5)));
+    k.group.commit();
+  }
+
   /** Number of props currently animating (diving spectators and tumbling knocked props). */
   get animating(): number { return this.dyn.size; }
 
@@ -170,6 +192,7 @@ export class Props {
 
   update(dt: number): void {
     this.t += dt;
+    if (this.kicker && this.kicker.t < 1) { this.kicker.t = Math.min(1, this.kicker.t + dt); this.placeKicker(this.kicker.t); }
     const spectGroup = this.groups.get(PropKind.Spectator);
     if (spectGroup) {
       for (const pi of this.spectators) {
@@ -229,6 +252,8 @@ export class Props {
   dispose(): void {
     for (const g of this.groups.values()) g.dispose();
     this.rampGroup?.dispose();
+    this.kicker?.group.dispose();
+    this.kicker = null;
     for (const g of this.extra) g.dispose();
     for (const d of this.disposables) d.dispose();
     this.group.clear();
