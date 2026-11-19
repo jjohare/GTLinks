@@ -350,6 +350,9 @@ patrol livery (no text or real markings), nodes `heli` (root), `fuselage`, `roto
 - Static site: Vite `base: './'`, every asset by relative URL, no server calls, no analytics.
 - Keyboard (WASD or arrows, space handbrake, R restart), gamepad, and touch (on-screen stick
   and pedals). Drag and drop uses pointer events, so it works with mouse and touch.
+- Picture-in-picture helicopter camera: an inset rendered from the helicopter's camera ball
+  towards the spotlight aim point while the helicopter is tracking or orbiting; `C` toggles it
+  and swaps it with the main view. Rendered at low resolution and half rate to protect frame time.
 - Exposes `window.__gtlinks = { phase, backend, state(), debugStart(carId, steins, seed) }` for
   automated checks.
 
