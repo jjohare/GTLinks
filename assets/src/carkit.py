@@ -205,6 +205,37 @@ class CMB(MB):
             if (a, b) in self.sharp or (b, a) in self.sharp:
                 e.smooth = False
 
+    def box(self, c, s, m, bevel=0.0, rot=None):
+        """Chamfered box as a convex hull, so every face is planar and wound outward (the shared MB.box
+        builds its chamfer from twisted quads, which export with a few back-facing triangles)."""
+        hx, hy, hz = s[0] / 2, s[1] / 2, s[2] / 2
+        b = min(bevel, hx * 0.45, hy * 0.45, hz * 0.45)
+        c = Vector(c)
+        pts = []
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                for sz in (-1, 1):
+                    if b <= 1e-6:
+                        pts.append(Vector((sx * hx, sy * hy, sz * hz)))
+                    else:
+                        pts.append(Vector((sx * (hx - b), sy * hy, sz * hz)))
+                        pts.append(Vector((sx * hx, sy * (hy - b), sz * hz)))
+                        pts.append(Vector((sx * hx, sy * hy, sz * (hz - b))))
+        vs = [self.bm.verts.new(c + ((rot @ p) if rot is not None else p)) for p in pts]
+        ret = bmesh.ops.convex_hull(self.bm, input=vs)
+        faces = [g for g in ret['geom'] if isinstance(g, bmesh.types.BMFace)]
+        mi = self._mi(m)
+        for f in faces:
+            f.material_index = mi
+            f.normal_update()
+            if f.normal.dot(f.calc_center_median() - c) < 0:
+                f.normal_flip()
+        try:
+            bmesh.ops.dissolve_limit(self.bm, angle_limit=0.01, verts=vs, edges=list({e for f in faces for e in f.edges}))
+        except Exception:
+            pass
+        return faces
+
     def vert(self, group, p):
         k = (group, round(p.x, 5), round(p.y, 5), round(p.z, 5))
         v = self.keys.get(k)

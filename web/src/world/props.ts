@@ -159,7 +159,7 @@ export class Props {
       if (p.kind !== PropKind.Pine && p.kind !== PropKind.Broadleaf && p.kind !== PropKind.Cart && p.kind !== PropKind.Rock) continue;
       if (Math.hypot(p.pos[0] - x, p.pos[2] - z) > range) continue;
       const tall = p.kind === PropKind.Pine ? 11 : p.kind === PropKind.Broadleaf ? 8 : 2.5;
-      out.push({ x: p.pos[0], z: p.pos[2], r: (p.kind === PropKind.Pine ? 2.2 : 3) * p.scale, h: p.pos[1] + tall * p.scale });
+      out.push({ x: p.pos[0], z: p.pos[2], r: (p.kind === PropKind.Pine ? 4 : 4.5) * p.scale, h: p.pos[1] + tall * p.scale });
     }
     return out;
   }

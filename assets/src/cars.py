@@ -174,10 +174,10 @@ def car_materials(spec, S):
     make_mat("cabin", (0.08, 0.082, 0.09), rough=0.85)
     make_mat("headliner", (0.55, 0.54, 0.51), rough=0.95)
     make_mat("hiviz", (0.80, 0.86, 0.10), rough=0.5)
-    make_mat("livery_blue", (0.06, 0.20, 0.55), rough=0.45)
+    make_mat("livery_blue", (0.03, 0.34, 0.40), rough=0.45)
     make_mat("livery_red", (0.75, 0.08, 0.06), rough=0.45)
-    make_mat("beacon_blue", (0.10, 0.25, 1.0), rough=0.2, emit=(0.1, 0.3, 1.0), emit_strength=2.0)
-    make_mat("beacon_red", (1.0, 0.08, 0.06), rough=0.2, emit=(1.0, 0.1, 0.05), emit_strength=2.0)
+    make_mat("beacon_blue", (0.10, 0.25, 1.0), rough=0.2, emit=(0.1, 0.3, 1.0), emit_strength=1.0)
+    make_mat("beacon_red", (1.0, 0.08, 0.06), rough=0.2, emit=(1.0, 0.1, 0.05), emit_strength=1.0)
     make_mat("amber", (0.95, 0.45, 0.05), rough=0.3, emit=(0.6, 0.2, 0.0), emit_strength=0.25)
 
 
@@ -261,6 +261,7 @@ def make_ctx(key, spec):
     top = max(y for _, y in gh['roof'])
     c.roofc = Curve([(z * c.ls, y * spec["roof_y"] / top) for z, y in gh['roof']])
     c.origins = {}
+    c.arch_tab = []
     return c
 
 
@@ -278,10 +279,15 @@ def nearest(vals, v):
 
 # ------------------------------------------------------------------ arches
 def arch_bottom(c, z):
-    for zc in (c.zcF, c.zcR):
+    """Height of the arch edge at a station inside an arch (None elsewhere).  Stations are placed by
+    arch_stations, which records the edge height for each, so the lookup is exact."""
+    for zs, y in c.arch_tab:
+        if abs(zs - z) < 1e-6:
+            return y
+    for zc in (c.zcF, c.zcR):                  # a fill-in station between two arch samples
         t = abs(z - zc) / c.Ra
-        if t <= 1.0 + 1e-9:
-            return c.yc + c.Ra * max(0.0, 1 - min(1.0, t) ** c.ap) ** (1 / c.ap)
+        if t < 1.0:
+            return c.yc + c.Ra * (1 - t ** c.ap) ** (1 / c.ap)
     return None
 
 
@@ -297,12 +303,24 @@ def arch_dist(c, z, y):
     return best
 
 
+ARCH_FOOT = 0.035         # the arch edge leans out this much at axle height, then drops to the sill
+
+
 def arch_stations(c, zc, n=12):
-    out = [zc + c.Ra + 0.02]
+    """Stations across one arch, front to rear.  The edge is a superellipse above the axle; below it the
+    edge leans out slightly and meets the sill, so no column has to carry a vertical edge."""
+    out = [zc + c.Ra + 2 * ARCH_FOOT + 0.01]
     for k in range(n + 1):
-        cs = math.cos(math.pi * k / n)
-        out.append(zc + c.Ra * math.copysign(abs(cs) ** (2 / c.ap), cs))
-    out.append(zc - c.Ra - 0.02)
+        th = math.pi * k / n
+        cs, sn = math.cos(th), math.sin(th)
+        z = zc + c.Ra * math.copysign(abs(cs) ** (2 / c.ap), cs)
+        if k == 0:
+            z += ARCH_FOOT
+        elif k == n:
+            z -= ARCH_FOOT
+        c.arch_tab.append((z, c.yc + c.Ra * max(0.0, sn) ** (2 / c.ap)))
+        out.append(z)
+    out.append(zc - c.Ra - 2 * ARCH_FOOT - 0.01)
     return out
 
 
@@ -343,13 +361,13 @@ def build_path(c):
     ths = [c.thJ + (math.pi / 2 - c.thJ) * k / 3 for k in range(4)]
     for name, th in zip(('J', 'J1', 'J2', 'A'), ths):
         zn[name] = cowl_xz(c, th)[1]
-    zn['d1'] = c.zcF - c.Ra - 0.02 - S['door_gap']
+    zn['d1'] = c.zcF - c.Ra - 2 * ARCH_FOOT - 0.01 - S['door_gap']
     zn['B1'], zn['B2'] = (z * c.ls for z in S['zB'])
     zn['Bm'] = (zn['B1'] + zn['B2']) / 2
     zn['C1'], zn['C2'] = (z * c.ls for z in S['zC'])
     zn['D'] = c.zR + S['zD'] * c.ls
-    zn['flap0'] = c.zcR - c.Ra - 0.09
-    zn['flap1'] = c.zcR - c.Ra - 0.27
+    zn['flap0'] = c.zcR - c.Ra - 0.16
+    zn['flap1'] = c.zcR - c.Ra - 0.34
     aF, aR = arch_stations(c, c.zcF, S.get('arch_n', 12)), arch_stations(c, c.zcR, S.get('arch_n', 12))
     st = set(aF + aR)
     for name, z in zn.items():
@@ -386,10 +404,10 @@ def build_path(c):
     side_z = [p[1] for p in pts[c.i_side0:c.i_rc0 + 1]]
     c.ix = {name: c.i_side0 + nearest(side_z, z) for name, z in zn.items()}
     c.zn = {name: pts[i][1] for name, i in c.ix.items()}
-    c.ix['afF'] = c.i_side0 + nearest(side_z, c.zcF + c.Ra)      # front arch, front vertical edge
-    c.ix['afR'] = c.i_side0 + nearest(side_z, c.zcF - c.Ra)
-    c.ix['arF'] = c.i_side0 + nearest(side_z, c.zcR + c.Ra)
-    c.ix['arR'] = c.i_side0 + nearest(side_z, c.zcR - c.Ra)      # rear arch, rear vertical edge
+    c.ix['afF'] = c.i_side0 + nearest(side_z, c.zcF + c.Ra + ARCH_FOOT)      # front arch, front vertical edge
+    c.ix['afR'] = c.i_side0 + nearest(side_z, c.zcF - c.Ra - ARCH_FOOT)
+    c.ix['arF'] = c.i_side0 + nearest(side_z, c.zcR + c.Ra + ARCH_FOOT)
+    c.ix['arR'] = c.i_side0 + nearest(side_z, c.zcR - c.Ra - ARCH_FOOT)      # rear arch, rear vertical edge
     # belt-row inset where the wing top sweeps in to the windscreen corner
     c.bin_tab = {}
     for name, th in zip(('J', 'J1', 'J2', 'A'), ths):
@@ -702,11 +720,15 @@ def tag_tub(c, tub):
             if not (z1 < zc_ < z0):
                 continue
             k = int((z0 - zc_) / blk)
-            for j in range(3, 7):
+            for j in range(3, 7):            # invented scheme: a solid lime band with teal castellations
                 t = tub.tag[i][j]
                 suf = {'shell': '', 'door_f': 'd', 'door_r': 'r'}.get(t)
-                if suf is not None:
-                    tub.tag[i][j] = ('hv_y' if k % 2 == 0 else 'hv_b') + suf
+                if suf is None:
+                    continue
+                if j in (4, 5):
+                    tub.tag[i][j] = 'hv_y' + suf
+                elif k % 2 == 0:
+                    tub.tag[i][j] = 'hv_b' + suf
     tub.border['j0'] = (0.03, 0, 10 ** 6)
     if not S['clamshell']:
         tub.border['j1'] = (0.02, 0, ix['J'])
@@ -818,7 +840,7 @@ def build_car(key, spec, root):
 
 
 # ------------------------------------------------------------------ ambient occlusion into vertex colours
-def bake_ao(skip=("glass", "headlight_l", "headlight_r", "taillights", "beacon_l", "beacon_r"), samples=14, maxd=1.1):
+def bake_ao(skip=("glass", "headlight_l", "headlight_r", "taillights", "beacon_l", "beacon_r", "chrome", "lightbar", "aerial"), samples=24, maxd=1.0):
     """Per-vertex ambient occlusion (cosine-weighted rays against the whole car plus a ground plane)."""
     from mathutils.bvhtree import BVHTree
     scene = bpy.context.scene
@@ -840,7 +862,7 @@ def bake_ao(skip=("glass", "headlight_l", "headlight_r", "taillights", "beacon_l
         a = 2 * math.pi * u2
         dirs.append(Vector((r * math.cos(a), r * math.sin(a), math.sqrt(max(0.0, 1 - u1)))))
     for o in meshes:
-        if o.name in skip:
+        if o.name in skip or o.name.startswith(('wheel_', 'caliper_', 'mirror_')):
             continue
         me = o.data
         rot = o.matrix_world.to_3x3()
@@ -858,5 +880,5 @@ def bake_ao(skip=("glass", "headlight_l", "headlight_r", "taillights", "beacon_l
                 if loc is not None:
                     hit += 1.0 - dist / maxd * 0.5
             ao = 1.0 - hit / samples
-            val = 0.32 + 0.68 * ao ** 0.8
+            val = 0.45 + 0.55 * ao ** 0.8
             col.data[v.index].color = (val, val, val, 1.0)

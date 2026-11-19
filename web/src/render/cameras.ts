@@ -143,7 +143,7 @@ export class CameraRig {
     const gy = game.height_at(goalPos.x, goalPos.z) + 2.0;
     if (goalPos.y < gy) goalPos.y = gy;
     // keep the lens out of foliage: rise over any tree the orbit would pass through
-    for (const o of solids) if (Math.hypot(goalPos.x - o.x, goalPos.z - o.z) < o.r + 3.5 && goalPos.y < o.h + 1.5) goalPos.y = o.h + 1.5;
+    for (const o of solids) if (Math.hypot(goalPos.x - o.x, goalPos.z - o.z) < o.r + 4.5 && goalPos.y < o.h + 1.5) goalPos.y = o.h + 1.5;
     // during the pull-out the aim eases from the car to a point further down the mountain
     const aim = new Vector3(centre.x, centre.y - e * 6, centre.z + e * 30);
     const fov = MathUtils.lerp(38, 48, e);

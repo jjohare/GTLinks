@@ -40,7 +40,7 @@ def structure(c, sh):
     isbf = lambda t: t is not None and t.startswith('bf')
     isbr = lambda t: t is not None and t.startswith('br')
     K.emit_liner(sh, tub, isbf, 0.10, 'underside', 'trim', outward=True, step=(2, 2))
-    K.emit_liner(sh, tub, isbr, 0.05, 'body', 'paint', outward=True)
+    K.emit_liner(sh, tub, isbr, 0.05, 'underside', 'underplate', outward=True)
     un = sh.mb('underside')
     up = Vector((0, 1, 0))
     for (j, i_end, d0, d1) in ((3, c.i_side0 - 1, -0.09, -0.04),):
@@ -345,11 +345,25 @@ def helix(mb, centre, r, height, turns, wire, mname, segs_per_turn=6, tilt=(0, 0
     mb.loft(rings, mname)
 
 
+class _SafePipes:
+    """Proxy that drops zero-length pipes (two stations can coincide for some wheelbases)."""
+
+    def __init__(self, mb):
+        self._mb = mb
+
+    def __getattr__(self, k):
+        return getattr(self._mb, k)
+
+    def pipe(self, p0, p1, r, segs, m):
+        if (Vector(p1) - Vector(p0)).length > 0.02:
+            self._mb.pipe(p0, p1, r, segs, m)
+
+
 def underside(c, sh):
     """Floor pan with ribs and tunnel, engine and gearbox, prop shafts, differentials, subframes, suspension,
     steering rack, exhaust with catalysts and silencers, fuel tank, spare wheel, arch liners.  The car spends
     the finale on its roof, so this is modelled to be looked at."""
-    mb = sh.mb('underside')
+    mb = _SafePipes(sh.mb('underside'))
     zf, zr = c.zcF, c.zcR
     yb = c.yfloor
     w = c.w
@@ -569,7 +583,7 @@ def build_wheel_lite(c, mb, sx, sz, style):
 
 
 def underside_lite(c, sh):
-    mb = sh.mb('underside')
+    mb = _SafePipes(sh.mb('underside'))
     zf, zr, yb, w, Ra = c.zcF, c.zcR, c.yfloor, c.w, c.Ra
     xin = c.tr / 2 - c.ww / 2 - 0.13
     za, zb = zf - Ra - 0.02, zr + Ra + 0.02
@@ -677,7 +691,7 @@ def patrol_kit(c, sh):
     M = c.M
     i0 = c.i_rc0 + 6
     n = M - i0
-    bd = sh.mb('body')
+    bd = sh.mb('livery')
     up = Vector((0, 1, 0))
     for k, m in enumerate(('livery_red', 'hiviz', 'livery_red', 'hiviz', 'livery_red')):
         for sx in (1, -1):
