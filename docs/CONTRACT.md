@@ -1,4 +1,4 @@
-# GTLinks — shared contract (v3, frozen)
+# GTLinks — shared contract (v4, frozen)
 
 Every agent codes against this file. If something here is wrong or missing, report it to the
 coordinator instead of diverging; a silent deviation breaks the other two workstreams.
@@ -92,7 +92,7 @@ end), `drone.glb` (optional).
 ```ts
 // static
 function car_specs_json(): string;         // array of section-3 rows plus tuning the UI may show
-function contract_version(): number;        // 3
+function contract_version(): number;        // 4
 
 class Game {
   constructor(seed: number, car_id: number, steins: number); // steins clamped to 10..=15
@@ -103,6 +103,7 @@ class Game {
   step(dt: number, steer: number, throttle: number, brake: number, handbrake: boolean): void;
   state(): Float32Array;                    // STATE_LEN floats, layout below (copy, not a view)
   police_state(): Float32Array;             // POLICE_COUNT * POLICE_STRIDE floats, section 6b
+  heli_state(): Float32Array;               // HELI_LEN floats, section 6c
   drain_events(): Float32Array;             // flat [kind, a, b, x, y, z] * n since last drain
 }
 ```
@@ -304,6 +305,42 @@ Model: `web/public/assets/cars/patrol.glb`, an original generic patrol SUV in a 
 (high-visibility blocks and chevrons, no text, crest or real force markings), with the car node
 conventions plus `lightbar` and separate emissive `beacon_l` (blue) and `beacon_r` (red or
 blue) nodes. Dimensions in `assets/cars.json` under `"patrol"`.
+
+## 6c. Helicopter and time of day (v4)
+
+A police helicopter with a spotlight follows the chase. The simulation owns its flight,
+deterministically. `heli_state()` returns `HELI_LEN = 16` floats, interpolated like `state()`:
+
+| index | field |
+|---|---|
+| 0–2 | position of the fuselage origin |
+| 3–6 | orientation quaternion x, y, z, w (banks into turns, nose down when accelerating) |
+| 7–9 | spotlight aim point on the terrain (world) |
+| 10 | mode: `0 Absent, 1 Inbound, 2 Tracking, 3 Orbiting wreck, 4 Departing` |
+| 11 | spotlight on (0 or 1) |
+| 12 | main rotor angle (rad, accumulated) |
+| 13 | spotlight lock, 0..1 (1 = centred on the car; it lags, overshoots and re-acquires) |
+| 14 | airspeed (m/s) |
+| 15 | reserved, 0 |
+
+Behaviour: it arrives when the first patrol car joins (`15 HeliJoined`), flying in from down
+the valley. While tracking it holds 35 to 60 m above the terrain, offset to one side and
+slightly behind the car, never below 25 m above any terrain or tree under it, and never in
+front of the chase camera's view of the road ahead. The spotlight aim point chases the car
+with a lag, so it loses the car on sharp turns and jumps and sweeps back onto it. On `Wrecked`
+it orbits the wreck at about 45 m radius and 40 m height, in the opposite sense to the drone
+camera, with the spotlight locked on the wreck. It keeps orbiting until the fade.
+
+**Time of day.** So that the spotlight and beacons read, the light moves from late afternoon at
+the lodge towards dusk at the finale. `state()` index 27 (run time) and the hole index drive
+it in the front end: sun elevation about 28° at the start falling to about 4° by the finale
+arena, with sky, fog, shadow length and exposure following. This is a rendering matter only.
+
+Model: `web/public/assets/props/helicopter.glb`, an original light utility helicopter in the
+patrol livery (no text or real markings), nodes `heli` (root), `fuselage`, `rotor_main`
+(origin at the mast, spins about Y), `rotor_tail` (origin at its hub, spins about X),
+`spotlight` (a nose-mounted pod, origin at its gimbal, emissive lens material `spot_lens`),
+`skids`, `nav_red`, `nav_green`, `strobe`.
 
 ## 7. Front end
 
