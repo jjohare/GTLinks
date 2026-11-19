@@ -73,5 +73,21 @@
       "paint": "#6f6a5e",
       "character": "Long suspension travel. Best off the fairway, and named for how it finishes."
     }
-  ]
+  ],
+  "patrol": {
+    "key": "patrol",
+    "name": "Alpine Patrol",
+    "length": 4.7,
+    "width": 1.9,
+    "height": 1.7,
+    "wheelbase": 2.75,
+    "track": 1.62,
+    "wheel_radius": 0.36,
+    "wheel_width": 0.25,
+    "ground_clearance": 0.2,
+    "mass": 1900,
+    "cog_height": 0.62,
+    "roof_y": 1.7,
+    "paint": "#f2f2ee"
+  }
 }

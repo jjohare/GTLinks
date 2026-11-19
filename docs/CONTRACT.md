@@ -1,4 +1,4 @@
-# GTLinks — shared contract (v2, frozen)
+# GTLinks — shared contract (v3, frozen)
 
 Every agent codes against this file. If something here is wrong or missing, report it to the
 coordinator instead of diverging; a silent deviation breaks the other two workstreams.
@@ -92,7 +92,7 @@ end), `drone.glb` (optional).
 ```ts
 // static
 function car_specs_json(): string;         // array of section-3 rows plus tuning the UI may show
-function contract_version(): number;        // 2
+function contract_version(): number;        // 3
 
 class Game {
   constructor(seed: number, car_id: number, steins: number); // steins clamped to 10..=15
@@ -102,6 +102,7 @@ class Game {
   height_at(x: number, z: number): number;  // analytic terrain incl. ramps
   step(dt: number, steer: number, throttle: number, brake: number, handbrake: boolean): void;
   state(): Float32Array;                    // STATE_LEN floats, layout below (copy, not a view)
+  police_state(): Float32Array;             // POLICE_COUNT * POLICE_STRIDE floats, section 6b
   drain_events(): Float32Array;             // flat [kind, a, b, x, y, z] * n since last drain
 }
 ```
@@ -256,6 +257,53 @@ deterministic, holds 60 fps on a mid-range GPU and works on the WebGL2 fallback.
   water with fresnel and ripples, tyre marks, sand and turf deformation trails, a
   post-processing chain (tone mapping, bloom, motion blur at speed, depth of field for the drone
   shots) built with TSL so it runs on both backends.
+
+## 6b. Police pursuit (v3)
+
+Three patrol cars (`POLICE_COUNT = 3`) chase the car as it loses control, then circle the wreck
+before the camera pulls back. The simulation owns them, deterministically, like everything else.
+
+`police_state()` returns `POLICE_COUNT * POLICE_STRIDE` floats (`POLICE_STRIDE = 16`),
+interpolated like `state()`. Per unit:
+
+| offset | field |
+|---|---|
+| 0–2 | position (body origin, on the terrain) |
+| 3–6 | orientation quaternion x, y, z, w |
+| 7 | speed (m/s) |
+| 8 | steer angle of the front wheels (rad) |
+| 9 | wheel spin angle (rad, accumulated) |
+| 10 | mode: `0 Absent, 1 Pursuing, 2 Circling, 3 Parked` |
+| 11 | lights and siren on (0 or 1) |
+| 12 | body roll (rad, cosmetic lean in corners) |
+| 13 | distance to the player car (m) |
+| 14–15 | reserved, 0 |
+
+Behaviour:
+
+- **Joining.** Unit 0 joins at about 20 s of run time or when the car reaches the third hole,
+  whichever is first; units 1 and 2 join over the following holes. All three are in pursuit no
+  later than the moment the finale arms. A unit enters from out of the player's view (behind,
+  or from a cart path or side track), emitting `12 PoliceJoined(a = unit)`.
+- **Pursuing.** Units follow the trail the car has actually driven, fanned out in a loose
+  formation 15 to 40 m behind, matching its speed, taking ramps and catching air. They stay on
+  the terrain, steer around solid props, and close up when the finale arms. They **never touch
+  the player's car and never touch a spectator, golfer or cow**: this is a chase for show.
+- **Circling.** On `Wrecked` (including an early rollover, in which case absent units join at
+  once and drive in from out of view) the units arrive and circle the wreck nose to tail at a
+  radius of about 14 m, lights on, for at least one and a half laps each; `13 PoliceCircling`
+  fires when the first unit starts its lap.
+- **Parked.** Each unit then stops on the ring facing the wreck, lights still flashing;
+  `14 PoliceParked` fires when the last one has stopped. This happens within 14 s of `Wrecked`
+  in every run.
+
+Front-end timeline after `Wrecked`: drone orbit throughout; the pull-out begins only after
+`14 PoliceParked` (or 16 s, whichever is first), then fade to black and restart.
+
+Model: `web/public/assets/cars/patrol.glb`, an original generic patrol SUV in a made-up livery
+(high-visibility blocks and chevrons, no text, crest or real force markings), with the car node
+conventions plus `lightbar` and separate emissive `beacon_l` (blue) and `beacon_r` (red or
+blue) nodes. Dimensions in `assets/cars.json` under `"patrol"`.
 
 ## 7. Front end
 
