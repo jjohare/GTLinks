@@ -1,4 +1,4 @@
-# GTLinks — shared contract (v1, frozen)
+# GTLinks — shared contract (v2, frozen)
 
 Every agent codes against this file. If something here is wrong or missing, report it to the
 coordinator instead of diverging; a silent deviation breaks the other two workstreams.
@@ -70,8 +70,11 @@ Named nodes, all parented to a root named `car`:
 - Detachable, each its own node with origin at its hinge or mount: `bumper_front`,
   `bumper_rear`, `bonnet`, `mirror_l`, `mirror_r`.
 - `roof_anchor` — an empty at the centre of the roof (steins stack here).
-- No morph targets, no animations, no textures above 1024 px. Target under 12k triangles per
-  car. Materials are plain PBR factors (base colour, metallic, roughness) so they translate to
+- No morph targets, no animations, no textures above 1024 px. Target 25k to 40k
+  triangles per car, including a modelled underside (`underside` node: floor pan, exhaust,
+  axles, differentials, sump, spare wheel well) and a simple interior (`interior` node: seats,
+  dashboard, steering wheel) visible through the glass. Wheels have tyres with tread, spoked
+  rims and brake discs. Materials are plain PBR factors (base colour, metallic, roughness) so they translate to
   node materials on both backends.
 
 ### Other models (`web/public/assets/props/`)
@@ -89,7 +92,7 @@ end), `drone.glb` (optional).
 ```ts
 // static
 function car_specs_json(): string;         // array of section-3 rows plus tuning the UI may show
-function contract_version(): number;        // 1
+function contract_version(): number;        // 2
 
 class Game {
   constructor(seed: number, car_id: number, steins: number); // steins clamped to 10..=15
@@ -121,7 +124,7 @@ on the roof and throws them off as its own cosmetic effect on `Landing`, `Impact
 
 Surface ids: `0 rough, 1 fairway, 2 green, 3 bunker, 4 tee, 5 cart path, 6 rock, 7 water`.
 
-### `state()` layout (`STATE_LEN = 36`)
+### `state()` layout (`STATE_LEN = 46`)
 
 | index | field |
 |---|---|
@@ -141,6 +144,10 @@ Surface ids: `0 rough, 1 fairway, 2 green, 3 bunker, 4 tee, 5 cart path, 6 rock,
 | 33 | wobble, 0..1 (drives screen sway) |
 | 34 | trick score total |
 | 35 | time since Wrecked began (s), 0 before |
+| 36 | engine speed (rev/min) |
+| 37 | gear: −1 reverse, 0 neutral, 1..8 |
+| 38–41 | per wheel FL, FR, RL, RR: combined slip magnitude 0..1 (drives skid marks, smoke, tyre audio) |
+| 42–45 | per wheel: surface id under the contact patch, −1 when airborne |
 
 ### Events (`kind`, then `a`, `b`, then world position)
 
@@ -175,9 +182,15 @@ Trick ids: `0 airtime, 1 barrel roll, 2 front flip, 3 back flip, 4 flat spin, 5 
 }
 ```
 
-Prop kinds: `0 pine (solid), 1 broadleaf (solid), 2 spectator (dodges, NearMiss), 3 flag
-(knocked, PropHit), 4 tee marker (knocked), 5 golf cart (solid, light), 6 sign (knocked),
-7 rock (solid)`. Prop indices in events refer to the `props` array order.
+Prop kinds (v2 adds 8 onwards): `0 pine (solid), 1 broadleaf (solid), 2 spectator (dodges,
+NearMiss), 3 flag (knocked, PropHit), 4 tee marker (knocked), 5 golf cart (solid, light,
+shunted), 6 sign (knocked), 7 rock (solid), 8 grandstand (solid), 9 leaderboard (solid),
+10 bench (knocked), 11 sprinkler (knocked, sprays), 12 yardage post (knocked), 13 out-of-bounds
+stake (knocked), 14 ball washer (knocked), 15 halfway hut (solid), 16 golfer mid-swing (dodges),
+17 golf bag (knocked, scatters clubs), 18 chairlift pylon (solid), 19 cow with bell (dodges),
+20 bunker rake (knocked), 21 parasol (knocked), 22 larch (solid), 23 footbridge (drivable deck)`.
+`holes[]` also carries `"dogleg": -1|0|1`, `"bunkers": [{"pos":[x,y,z],"radius":r}]`,
+`"water": [{"pos":[x,y,z],"radius":r,"level":y}]` and `"cart_path": [[x,y,z], ...]`. Prop indices in events refer to the `props` array order.
 
 ## 5. Stein handling model
 
@@ -219,6 +232,30 @@ ground is driving it.
 
 The front end only reads the phase. On `1` it shows that control is lost; on `4` it cuts to the
 drone camera.
+
+## 6a. Fidelity (v2)
+
+The operator has asked for a lot of technical detail and no corner-cutting. Where a simple
+version and a thorough version are both possible, build the thorough one, provided it stays
+deterministic, holds 60 fps on a mid-range GPU and works on the WebGL2 fallback.
+
+- **Vehicle:** load-sensitive tyre model with combined slip (Pacejka-style curves per surface),
+  longitudinal and lateral load transfer, anti-roll bars, bump stops, per-car spring and damper
+  rates, an engine torque curve with an automatic gearbox and all-wheel drive with a centre
+  split, aerodynamic drag and lift, gyroscopic and inertial behaviour in the air, per-surface
+  rolling resistance and sinkage in sand, water drag in ponds.
+- **Course:** real golf architecture: par 3, 4 and 5 holes with doglegs, tiered tee boxes,
+  fairway bunkers and greenside bunkers with lips, contoured greens with fringe, water hazards,
+  cart paths with a footbridge or two, first cut and deep rough, out-of-bounds lines, tree-lined
+  corridors of mixed species, grandstands and a leaderboard at the last green, a halfway hut,
+  chairlift pylons marching down from the lodge, cows on the high pasture.
+- **Models:** enough geometry to hold up in the close drone orbit, including a modelled
+  underside for each car (it spends the finale on its roof) and a simple interior.
+- **Rendering:** physically based materials, cascaded sun shadows, atmospheric scattering and
+  height fog, animated cloud shadows, wind in trees, flags and grass, near-field instanced grass,
+  water with fresnel and ripples, tyre marks, sand and turf deformation trails, a
+  post-processing chain (tone mapping, bloom, motion blur at speed, depth of field for the drone
+  shots) built with TSL so it runs on both backends.
 
 ## 7. Front end
 
