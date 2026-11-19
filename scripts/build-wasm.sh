@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Builds the GTLinks simulation to WebAssembly for the web target, into web/src/wasm/pkg.
 #
-# Uses wasm-pack with the workspace's `wasm-release` profile (opt-level z, fat LTO,
-# panic = abort). wasm-pack's own wasm-opt step is skipped because it does not enable the
-# features rustc now emits; binaryen's wasm-opt -Oz runs here instead, if installed.
+# Uses cargo and the wasm-bindgen CLI directly (not wasm-pack, whose flags differ between
+# versions) with the workspace's `wasm-release` profile (opt-level z, fat LTO, panic = abort).
+# The wasm-bindgen CLI version must match the crate pinned in Cargo.toml (0.2.129).
+# binaryen's wasm-opt -Oz runs afterwards, if installed.
 # Run from anywhere; paths are resolved from the repository root.
 set -euo pipefail
 
@@ -11,13 +12,12 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 out="$root/web/src/wasm/pkg"
 cd "$root"
 
-wasm-pack build crates/gtlinks-wasm \
-  --target web \
-  --profile wasm-release \
-  --out-dir "$out" \
-  --out-name gtlinks \
-  --no-pack \
-  --no-opt
+cargo build -p gtlinks-wasm --lib --target wasm32-unknown-unknown --profile wasm-release
+
+target_dir="${CARGO_TARGET_DIR:-$root/target}"
+mkdir -p "$out"
+wasm-bindgen --target web --out-dir "$out" --out-name gtlinks \
+  "$target_dir/wasm32-unknown-unknown/wasm-release/gtlinks_wasm.wasm"
 
 wasm="$out/gtlinks_bg.wasm"
 if command -v wasm-opt >/dev/null 2>&1; then

@@ -44,10 +44,19 @@ jobs:
           GTLINKS_SEEDS: 6
         run: cargo test --release -p gtlinks-sim
 
-      - name: Install wasm-pack and binaryen
+      # The CLI version must match the wasm-bindgen crate pinned in Cargo.toml.
+      - name: Install wasm-bindgen CLI and binaryen
         if: steps.have.outputs.sim == 'true'
+        env:
+          WB: 0.2.129
         run: |
-          curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+          url="https://github.com/wasm-bindgen/wasm-bindgen/releases/download/$WB/wasm-bindgen-$WB-x86_64-unknown-linux-musl.tar.gz"
+          if curl -fsSL "$url" | tar xz -C "$RUNNER_TEMP"; then
+            cp "$RUNNER_TEMP/wasm-bindgen-$WB-x86_64-unknown-linux-musl/wasm-bindgen" "$HOME/.cargo/bin/"
+          else
+            cargo install wasm-bindgen-cli --version "$WB" --locked
+          fi
+          wasm-bindgen --version
           sudo apt-get update -qq && sudo apt-get install -y -qq binaryen
 
       - name: Build wasm
