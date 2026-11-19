@@ -11,7 +11,8 @@ import type { BaseGame } from './types';
 
 interface Unit { joined: boolean; pos: [number, number, number]; yaw: number; speed: number; spin: number; mode: PoliceMode; steer: number; ang: number; stopped: boolean }
 
-const JOIN_AT = [20, 27, 34];
+const JOIN_AT = [15, 16.5, 18];
+const TRAIL_BACK = [20, 30, 40];
 
 export class FallbackPursuit {
   private units: Unit[] = Array.from({ length: POLICE_COUNT }, () => ({ joined: false, pos: [0, 0, 0], yaw: 0, speed: 0, spin: 0, mode: PoliceMode.Absent, steer: 0, ang: 0, stopped: false }));
@@ -59,11 +60,20 @@ export class FallbackPursuit {
       if (!u.joined) return;
       const prev: [number, number, number] = [u.pos[0], u.pos[1], u.pos[2]];
       if (!wrecked) {
-        // follow the trail the car actually drove, 1.6 s + 0.9 s per unit behind
-        const want = this.t - (1.6 + i * 0.9);
-        let p = this.trail[0];
-        for (const q of this.trail) { if (q.t <= want) p = q; else break; }
-        if (p) { u.pos[0] += (p.x + (i - 1) * 2.5 - u.pos[0]) * Math.min(1, dt * 4); u.pos[2] += (p.z - u.pos[2]) * Math.min(1, dt * 4); u.yaw = p.yaw; }
+        // follow the recorded trail 20, 30 and 40 m back along the path the car actually drove, fanned sideways
+        let acc = 0, p = this.trail[0];
+        let prevPt = { x: car[0], z: car[2] };
+        for (let k = this.trail.length - 1; k >= 0; k--) {
+          const q = this.trail[k];
+          acc += Math.hypot(q.x - prevPt.x, q.z - prevPt.z);
+          prevPt = q; p = q;
+          if (acc >= TRAIL_BACK[i]) break;
+        }
+        if (p) {
+          const side = (i - 1) * 3;
+          const tx = p.x + Math.cos(p.yaw) * side, tz = p.z - Math.sin(p.yaw) * side;
+          u.pos[0] += (tx - u.pos[0]) * Math.min(1, dt * 4); u.pos[2] += (tz - u.pos[2]) * Math.min(1, dt * 4); u.yaw = p.yaw;
+        }
       } else {
         if (!this.circling) { this.circling = true; this.emit(EventKind.PoliceCircling, 0, car[0], car[1], car[2]); }
         const k = Math.min(1, this.wreckT / 3);
@@ -102,7 +112,8 @@ export class FallbackPursuit {
       h.aim = [car[0], hAt(car[0], car[2]), car[2]]; h.lock = 1;
     } else {
       h.mode = Math.hypot(car[0] - h.pos[0], car[2] - h.pos[2]) > 120 ? HeliMode.Inbound : HeliMode.Tracking;
-      target = [car[0] + 30, car[1] + 45, car[2] - 18];
+      const cy = this.trail.at(-1)?.yaw ?? 0;
+      target = [car[0] - Math.sin(cy) * 25, car[1] + 45, car[2] - Math.cos(cy) * 25];
       h.aim[0] += (car[0] - h.aim[0]) * Math.min(1, dt * 1.6); h.aim[2] += (car[2] - h.aim[2]) * Math.min(1, dt * 1.6);
       h.aim[1] = hAt(h.aim[0], h.aim[2]);
       h.lock = Math.max(0, 1 - Math.hypot(h.aim[0] - car[0], h.aim[2] - car[2]) / 22);

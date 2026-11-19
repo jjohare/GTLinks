@@ -1,0 +1,7477 @@
+{
+ "contract": "docs/CONTRACT.md s3",
+ "cars": {
+  "escapade_2009": {
+   "file": "web/public/assets/cars/escapade_2009.glb",
+   "bytes": 1319836,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "body",
+      "bonnet",
+      "bumper_front",
+      "bumper_rear",
+      "caliper_fl",
+      "caliper_fr",
+      "caliper_rl",
+      "caliper_rr",
+      "car",
+      "chrome",
+      "glass",
+      "headlight_l",
+      "headlight_r",
+      "interior",
+      "mirror_l",
+      "mirror_r",
+      "roof_anchor",
+      "taillights",
+      "trim",
+      "underside",
+      "wheel_fl",
+      "wheel_fr",
+      "wheel_rl",
+      "wheel_rr"
+     ]
+    },
+    "flat_hierarchy_under_car": {
+     "ok": true,
+     "roots": [
+      "car"
+     ],
+     "not_direct_children": [],
+     "duplicate_names": []
+    },
+    "materials_standard_pbr_factors": {
+     "ok": true,
+     "offending": [],
+     "extensions": [],
+     "names": [
+      "paint",
+      "trim",
+      "chrome",
+      "plate",
+      "caliper",
+      "steel",
+      "glass",
+      "headlight",
+      "cabin",
+      "headliner",
+      "seat",
+      "seat_trim",
+      "gloss",
+      "taillight",
+      "underplate",
+      "spring",
+      "exhaust",
+      "tyre",
+      "rimdark",
+      "rim"
+     ]
+    },
+    "node_materials": {
+     "ok": true,
+     "body": [
+      "paint"
+     ],
+     "glass": [
+      "glass"
+     ],
+     "headlight_l": [
+      "headlight"
+     ],
+     "glass_alphaMode": "BLEND",
+     "headlight_emissive": [
+      1,
+      0.848088264465332,
+      0.4479884207248688
+     ],
+     "beacons": null
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 36096,
+     "budget": [
+      25000,
+      40000
+     ]
+    },
+    "bbox_within_3pct": {
+     "ok": true,
+     "measured": {
+      "width": 2.0643,
+      "height": 1.9324,
+      "length": 5.144
+     },
+     "expected": {
+      "width": 2.01,
+      "height": 1.89,
+      "length": 5.14
+     },
+     "rel_error_pct": {
+      "width": 2.7,
+      "height": 2.24,
+      "length": 0.08
+     },
+     "min": [
+      -1.0321,
+      -0.0,
+      -2.685
+     ],
+     "max": [
+      1.0321,
+      1.9324,
+      2.459
+     ],
+     "width_without_mirrors": 2.0083,
+     "note": "whole model including mirrors and roof rails"
+    },
+    "ground_at_y0": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "symmetric_about_x0": {
+     "ok": true,
+     "min_x": -1.0321,
+     "max_x": 1.0321
+    },
+    "wheels_at_formula_1cm_axle_x": {
+     "ok": true,
+     "expected_radius": 0.4,
+     "expected_width": 0.29,
+     "wheels": {
+      "wheel_fl": {
+       "expected": [
+        0.855,
+        0.4,
+        1.475
+       ],
+       "got": [
+        0.855,
+        0.4,
+        1.475
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.29,
+       "ok": true
+      },
+      "wheel_fr": {
+       "expected": [
+        -0.855,
+        0.4,
+        1.475
+       ],
+       "got": [
+        -0.855,
+        0.4,
+        1.475
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.29,
+       "ok": true
+      },
+      "wheel_rl": {
+       "expected": [
+        0.855,
+        0.4,
+        -1.475
+       ],
+       "got": [
+        0.855,
+        0.4,
+        -1.475
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.29,
+       "ok": true
+      },
+      "wheel_rr": {
+       "expected": [
+        -0.855,
+        0.4,
+        -1.475
+       ],
+       "got": [
+        -0.855,
+        0.4,
+        -1.475
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.29,
+       "ok": true
+      }
+     }
+    },
+    "tyres_inside_body_width": {
+     "ok": true,
+     "tyre_outer_x": 1.0,
+     "body_half_width": 1.0041
+    },
+    "forward_plus_z_left_plus_x": {
+     "ok": true,
+     "flags": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "headlight_l": [
+      0.6861985921859741,
+      0.8738503456115723,
+      2.298145055770874
+     ],
+     "roof_anchor": [
+      0,
+      1.8899999856948853,
+      -1.1074999570846558
+     ],
+     "bonnet_hinge": [
+      0,
+      1.19101083278656,
+      0.8500000238418579
+     ],
+     "bumper_front": [
+      0,
+      0.5899999737739563,
+      2.1549999713897705
+     ],
+     "bumper_rear": [
+      0,
+      0.6000000238418579,
+      -2.384999990463257
+     ]
+    },
+    "headlights_as_eyes": {
+     "ok": true,
+     "lamps": {
+      "headlight_l": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.268,
+       "lens_height": 0.403,
+       "mean_normal_z": 0.874,
+       "pupil_radius_front_end": 0.086,
+       "ok": true
+      },
+      "headlight_r": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.268,
+       "lens_height": 0.403,
+       "mean_normal_z": 0.874,
+       "pupil_radius_front_end": 0.086,
+       "ok": true
+      }
+     }
+    },
+    "mesh_health": {
+     "ok": true,
+     "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+     "nodes": {
+      "body": {
+       "triangles": 6040,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 714,
+       "area_m2": 12.53,
+       "ok": true
+      },
+      "bonnet": {
+       "triangles": 1418,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 132,
+       "area_m2": 5.128,
+       "ok": true
+      },
+      "bumper_front": {
+       "triangles": 2024,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 4,
+       "boundary_edges": 284,
+       "area_m2": 5.921,
+       "ok": true
+      },
+      "bumper_rear": {
+       "triangles": 848,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 176,
+       "area_m2": 2.588,
+       "ok": true
+      },
+      "caliper_fl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_fr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_rl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_rr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "chrome": {
+       "triangles": 1732,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 236,
+       "area_m2": 2.763,
+       "ok": true
+      },
+      "glass": {
+       "triangles": 588,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 244,
+       "area_m2": 4.614,
+       "ok": true
+      },
+      "headlight_l": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.11,
+       "ok": true
+      },
+      "headlight_r": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.11,
+       "ok": true
+      },
+      "interior": {
+       "triangles": 3860,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 688,
+       "area_m2": 45.504,
+       "ok": true
+      },
+      "mirror_l": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.135,
+       "ok": true
+      },
+      "mirror_r": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.135,
+       "ok": true
+      },
+      "taillights": {
+       "triangles": 108,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 60,
+       "area_m2": 0.141,
+       "ok": true
+      },
+      "trim": {
+       "triangles": 1708,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 1126,
+       "area_m2": 3.596,
+       "ok": true
+      },
+      "underside": {
+       "triangles": 6690,
+       "degenerate": 0,
+       "nonmanifold_edges": 5,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 192,
+       "area_m2": 59.343,
+       "ok": true
+      },
+      "wheel_fl": {
+       "triangles": 2528,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.685,
+       "ok": true
+      },
+      "wheel_fr": {
+       "triangles": 2528,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.685,
+       "ok": true
+      },
+      "wheel_rl": {
+       "triangles": 2528,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.685,
+       "ok": true
+      },
+      "wheel_rr": {
+       "triangles": 2528,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.685,
+       "ok": true
+      }
+     }
+    },
+    "body_normals_outward": {
+     "ok": true,
+     "outward_area_share": 0.996,
+     "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+    }
+   },
+   "ok": true,
+   "tris": 36096,
+   "tris_per_node": {
+    "body": 6040,
+    "bonnet": 1418,
+    "bumper_front": 2024,
+    "bumper_rear": 848,
+    "caliper_fl": 92,
+    "caliper_fr": 92,
+    "caliper_rl": 92,
+    "caliper_rr": 92,
+    "chrome": 1732,
+    "glass": 588,
+    "headlight_l": 168,
+    "headlight_r": 168,
+    "interior": 3860,
+    "mirror_l": 132,
+    "mirror_r": 132,
+    "taillights": 108,
+    "trim": 1708,
+    "underside": 6690,
+    "wheel_fl": 2528,
+    "wheel_fr": 2528,
+    "wheel_rl": 2528,
+    "wheel_rr": 2528
+   }
+  },
+  "glug_2017": {
+   "file": "web/public/assets/cars/glug_2017.glb",
+   "bytes": 1291212,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "body",
+      "bonnet",
+      "bumper_front",
+      "bumper_rear",
+      "caliper_fl",
+      "caliper_fr",
+      "caliper_rl",
+      "caliper_rr",
+      "car",
+      "chrome",
+      "glass",
+      "headlight_l",
+      "headlight_r",
+      "interior",
+      "mirror_l",
+      "mirror_r",
+      "roof_anchor",
+      "taillights",
+      "trim",
+      "underside",
+      "wheel_fl",
+      "wheel_fr",
+      "wheel_rl",
+      "wheel_rr"
+     ]
+    },
+    "flat_hierarchy_under_car": {
+     "ok": true,
+     "roots": [
+      "car"
+     ],
+     "not_direct_children": [],
+     "duplicate_names": []
+    },
+    "materials_standard_pbr_factors": {
+     "ok": true,
+     "offending": [],
+     "extensions": [],
+     "names": [
+      "paint",
+      "trim",
+      "chrome",
+      "plate",
+      "caliper",
+      "steel",
+      "glass",
+      "headlight",
+      "cabin",
+      "headliner",
+      "seat",
+      "seat_trim",
+      "gloss",
+      "taillight",
+      "underplate",
+      "spring",
+      "exhaust",
+      "tyre",
+      "rim",
+      "rimdark"
+     ]
+    },
+    "node_materials": {
+     "ok": true,
+     "body": [
+      "paint"
+     ],
+     "glass": [
+      "glass"
+     ],
+     "headlight_l": [
+      "headlight"
+     ],
+     "glass_alphaMode": "BLEND",
+     "headlight_emissive": [
+      1,
+      0.848088264465332,
+      0.4479884207248688
+     ],
+     "beacons": null
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 34890,
+     "budget": [
+      25000,
+      40000
+     ]
+    },
+    "bbox_within_3pct": {
+     "ok": true,
+     "measured": {
+      "width": 1.9821,
+      "height": 1.8648,
+      "length": 5.141
+     },
+     "expected": {
+      "width": 1.93,
+      "height": 1.85,
+      "length": 5.13
+     },
+     "rel_error_pct": {
+      "width": 2.7,
+      "height": 0.8,
+      "length": 0.21
+     },
+     "min": [
+      -0.9911,
+      0.0,
+      -2.66
+     ],
+     "max": [
+      0.9911,
+      1.8648,
+      2.481
+     ],
+     "width_without_mirrors": 1.9539,
+     "note": "whole model including mirrors and roof rails"
+    },
+    "ground_at_y0": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "symmetric_about_x0": {
+     "ok": true,
+     "min_x": -0.9911,
+     "max_x": 0.9911
+    },
+    "wheels_at_formula_1cm_axle_x": {
+     "ok": true,
+     "expected_radius": 0.39,
+     "expected_width": 0.28,
+     "wheels": {
+      "wheel_fl": {
+       "expected": [
+        0.83,
+        0.39,
+        1.54
+       ],
+       "got": [
+        0.83,
+        0.39,
+        1.54
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      },
+      "wheel_fr": {
+       "expected": [
+        -0.83,
+        0.39,
+        1.54
+       ],
+       "got": [
+        -0.83,
+        0.39,
+        1.54
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      },
+      "wheel_rl": {
+       "expected": [
+        0.83,
+        0.39,
+        -1.54
+       ],
+       "got": [
+        0.83,
+        0.39,
+        -1.54
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      },
+      "wheel_rr": {
+       "expected": [
+        -0.83,
+        0.39,
+        -1.54
+       ],
+       "got": [
+        -0.83,
+        0.39,
+        -1.54
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      }
+     }
+    },
+    "tyres_inside_body_width": {
+     "ok": true,
+     "tyre_outer_x": 0.97,
+     "body_half_width": 0.9769
+    },
+    "forward_plus_z_left_plus_x": {
+     "ok": true,
+     "flags": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "headlight_l": [
+      0.5191215872764587,
+      0.7842865586280823,
+      2.3054006099700928
+     ],
+     "roof_anchor": [
+      0,
+      1.8474102020263672,
+      -1
+     ],
+     "bonnet_hinge": [
+      0,
+      1.1194478273391724,
+      1.100000023841858
+     ],
+     "bumper_front": [
+      0,
+      0.550000011920929,
+      2.1700000762939453
+     ],
+     "bumper_rear": [
+      0,
+      0.5600000023841858,
+      -2.359999895095825
+     ]
+    },
+    "headlights_as_eyes": {
+     "ok": true,
+     "lamps": {
+      "headlight_l": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.273,
+       "lens_height": 0.314,
+       "mean_normal_z": 0.826,
+       "pupil_radius_front_end": 0.087,
+       "ok": true
+      },
+      "headlight_r": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.273,
+       "lens_height": 0.314,
+       "mean_normal_z": 0.826,
+       "pupil_radius_front_end": 0.087,
+       "ok": true
+      }
+     }
+    },
+    "mesh_health": {
+     "ok": true,
+     "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+     "nodes": {
+      "body": {
+       "triangles": 5480,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 838,
+       "area_m2": 10.205,
+       "ok": true
+      },
+      "bonnet": {
+       "triangles": 1112,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 108,
+       "area_m2": 3.876,
+       "ok": true
+      },
+      "bumper_front": {
+       "triangles": 1460,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 270,
+       "area_m2": 4.695,
+       "ok": true
+      },
+      "bumper_rear": {
+       "triangles": 704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 132,
+       "area_m2": 2.178,
+       "ok": true
+      },
+      "caliper_fl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_fr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_rl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_rr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "chrome": {
+       "triangles": 1384,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 140,
+       "area_m2": 1.2,
+       "ok": true
+      },
+      "glass": {
+       "triangles": 564,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 236,
+       "area_m2": 4.331,
+       "ok": true
+      },
+      "headlight_l": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.086,
+       "ok": true
+      },
+      "headlight_r": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.086,
+       "ok": true
+      },
+      "interior": {
+       "triangles": 3830,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 662,
+       "area_m2": 45.353,
+       "ok": true
+      },
+      "mirror_l": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.122,
+       "ok": true
+      },
+      "mirror_r": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.122,
+       "ok": true
+      },
+      "taillights": {
+       "triangles": 84,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 40,
+       "area_m2": 0.199,
+       "ok": true
+      },
+      "trim": {
+       "triangles": 2476,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 1410,
+       "area_m2": 4.45,
+       "ok": true
+      },
+      "underside": {
+       "triangles": 6012,
+       "degenerate": 0,
+       "nonmanifold_edges": 5,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 138,
+       "area_m2": 56.45,
+       "ok": true
+      },
+      "wheel_fl": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.669,
+       "ok": true
+      },
+      "wheel_fr": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.669,
+       "ok": true
+      },
+      "wheel_rl": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.669,
+       "ok": true
+      },
+      "wheel_rr": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.669,
+       "ok": true
+      }
+     }
+    },
+    "body_normals_outward": {
+     "ok": true,
+     "outward_area_share": 0.992,
+     "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+    }
+   },
+   "ok": true,
+   "tris": 34890,
+   "tris_per_node": {
+    "body": 5480,
+    "bonnet": 1112,
+    "bumper_front": 1460,
+    "bumper_rear": 704,
+    "caliper_fl": 92,
+    "caliper_fr": 92,
+    "caliper_rl": 92,
+    "caliper_rr": 92,
+    "chrome": 1384,
+    "glass": 564,
+    "headlight_l": 168,
+    "headlight_r": 168,
+    "interior": 3830,
+    "mirror_l": 132,
+    "mirror_r": 132,
+    "taillights": 84,
+    "trim": 2476,
+    "underside": 6012,
+    "wheel_fl": 2704,
+    "wheel_fr": 2704,
+    "wheel_rl": 2704,
+    "wheel_rr": 2704
+   }
+  },
+  "genesips_2021": {
+   "file": "web/public/assets/cars/genesips_2021.glb",
+   "bytes": 1314068,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "body",
+      "bonnet",
+      "bumper_front",
+      "bumper_rear",
+      "caliper_fl",
+      "caliper_fr",
+      "caliper_rl",
+      "caliper_rr",
+      "car",
+      "chrome",
+      "glass",
+      "headlight_l",
+      "headlight_r",
+      "interior",
+      "mirror_l",
+      "mirror_r",
+      "roof_anchor",
+      "taillights",
+      "trim",
+      "underside",
+      "wheel_fl",
+      "wheel_fr",
+      "wheel_rl",
+      "wheel_rr"
+     ]
+    },
+    "flat_hierarchy_under_car": {
+     "ok": true,
+     "roots": [
+      "car"
+     ],
+     "not_direct_children": [],
+     "duplicate_names": []
+    },
+    "materials_standard_pbr_factors": {
+     "ok": true,
+     "offending": [],
+     "extensions": [],
+     "names": [
+      "paint",
+      "trim",
+      "chrome",
+      "plate",
+      "caliper",
+      "steel",
+      "glass",
+      "headlight",
+      "cabin",
+      "headliner",
+      "seat",
+      "seat_trim",
+      "gloss",
+      "taillight",
+      "underplate",
+      "spring",
+      "exhaust",
+      "tyre",
+      "rim",
+      "rimdark"
+     ]
+    },
+    "node_materials": {
+     "ok": true,
+     "body": [
+      "paint"
+     ],
+     "glass": [
+      "glass"
+     ],
+     "headlight_l": [
+      "headlight"
+     ],
+     "glass_alphaMode": "BLEND",
+     "headlight_emissive": [
+      1,
+      0.848088264465332,
+      0.4479884207248688
+     ],
+     "beacons": null
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 35228,
+     "budget": [
+      25000,
+      40000
+     ]
+    },
+    "bbox_within_3pct": {
+     "ok": true,
+     "measured": {
+      "width": 2.0335,
+      "height": 1.7156,
+      "length": 4.962
+     },
+     "expected": {
+      "width": 1.98,
+      "height": 1.72,
+      "length": 4.95
+     },
+     "rel_error_pct": {
+      "width": 2.7,
+      "height": 0.26,
+      "length": 0.24
+     },
+     "min": [
+      -1.0167,
+      0.0,
+      -2.57
+     ],
+     "max": [
+      1.0167,
+      1.7156,
+      2.392
+     ],
+     "width_without_mirrors": 1.9796,
+     "note": "whole model including mirrors and roof rails"
+    },
+    "ground_at_y0": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "symmetric_about_x0": {
+     "ok": true,
+     "min_x": -1.0167,
+     "max_x": 1.0167
+    },
+    "wheels_at_formula_1cm_axle_x": {
+     "ok": true,
+     "expected_radius": 0.39,
+     "expected_width": 0.27,
+     "wheels": {
+      "wheel_fl": {
+       "expected": [
+        0.84,
+        0.39,
+        1.48
+       ],
+       "got": [
+        0.84,
+        0.39,
+        1.48
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.27,
+       "ok": true
+      },
+      "wheel_fr": {
+       "expected": [
+        -0.84,
+        0.39,
+        1.48
+       ],
+       "got": [
+        -0.84,
+        0.39,
+        1.48
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.27,
+       "ok": true
+      },
+      "wheel_rl": {
+       "expected": [
+        0.84,
+        0.39,
+        -1.48
+       ],
+       "got": [
+        0.84,
+        0.39,
+        -1.48
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.27,
+       "ok": true
+      },
+      "wheel_rr": {
+       "expected": [
+        -0.84,
+        0.39,
+        -1.48
+       ],
+       "got": [
+        -0.84,
+        0.39,
+        -1.48
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.39,
+       "tyre_width_along_x": 0.27,
+       "ok": true
+      }
+     }
+    },
+    "tyres_inside_body_width": {
+     "ok": true,
+     "tyre_outer_x": 0.975,
+     "body_half_width": 0.9898
+    },
+    "forward_plus_z_left_plus_x": {
+     "ok": true,
+     "flags": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "headlight_l": [
+      0.5036242008209229,
+      0.7736608982086182,
+      2.227735757827759
+     ],
+     "roof_anchor": [
+      0,
+      1.708389401435852,
+      -0.8250000476837158
+     ],
+     "bonnet_hinge": [
+      0,
+      1.065000057220459,
+      0.9599999785423279
+     ],
+     "bumper_front": [
+      0,
+      0.5299999713897705,
+      2.0799999237060547
+     ],
+     "bumper_rear": [
+      0,
+      0.5600000023841858,
+      -2.2699999809265137
+     ]
+    },
+    "headlights_as_eyes": {
+     "ok": true,
+     "lamps": {
+      "headlight_l": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.312,
+       "lens_height": 0.255,
+       "mean_normal_z": 0.818,
+       "pupil_radius_front_end": 0.082,
+       "ok": true
+      },
+      "headlight_r": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.312,
+       "lens_height": 0.255,
+       "mean_normal_z": 0.818,
+       "pupil_radius_front_end": 0.082,
+       "ok": true
+      }
+     }
+    },
+    "mesh_health": {
+     "ok": true,
+     "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+     "nodes": {
+      "body": {
+       "triangles": 4820,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 738,
+       "area_m2": 8.271,
+       "ok": true
+      },
+      "bonnet": {
+       "triangles": 1204,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 124,
+       "area_m2": 4.154,
+       "ok": true
+      },
+      "bumper_front": {
+       "triangles": 1704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 260,
+       "area_m2": 4.404,
+       "ok": true
+      },
+      "bumper_rear": {
+       "triangles": 696,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 136,
+       "area_m2": 2.211,
+       "ok": true
+      },
+      "caliper_fl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_fr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_rl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "caliper_rr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.112,
+       "ok": true
+      },
+      "chrome": {
+       "triangles": 568,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 116,
+       "area_m2": 0.688,
+       "ok": true
+      },
+      "glass": {
+       "triangles": 492,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 212,
+       "area_m2": 3.572,
+       "ok": true
+      },
+      "headlight_l": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.084,
+       "ok": true
+      },
+      "headlight_r": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.084,
+       "ok": true
+      },
+      "interior": {
+       "triangles": 3808,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 626,
+       "area_m2": 43.061,
+       "ok": true
+      },
+      "mirror_l": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.136,
+       "ok": true
+      },
+      "mirror_r": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.136,
+       "ok": true
+      },
+      "taillights": {
+       "triangles": 104,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 56,
+       "area_m2": 0.165,
+       "ok": true
+      },
+      "trim": {
+       "triangles": 4036,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 1708,
+       "area_m2": 5.428,
+       "ok": true
+      },
+      "underside": {
+       "triangles": 6012,
+       "degenerate": 0,
+       "nonmanifold_edges": 5,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 138,
+       "area_m2": 55.246,
+       "ok": true
+      },
+      "wheel_fl": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.704,
+       "ok": true
+      },
+      "wheel_fr": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.704,
+       "ok": true
+      },
+      "wheel_rl": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.704,
+       "ok": true
+      },
+      "wheel_rr": {
+       "triangles": 2704,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 3.704,
+       "ok": true
+      }
+     }
+    },
+    "body_normals_outward": {
+     "ok": true,
+     "outward_area_share": 0.99,
+     "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+    }
+   },
+   "ok": true,
+   "tris": 35228,
+   "tris_per_node": {
+    "body": 4820,
+    "bonnet": 1204,
+    "bumper_front": 1704,
+    "bumper_rear": 696,
+    "caliper_fl": 92,
+    "caliper_fr": 92,
+    "caliper_rl": 92,
+    "caliper_rr": 92,
+    "chrome": 568,
+    "glass": 492,
+    "headlight_l": 168,
+    "headlight_r": 168,
+    "interior": 3808,
+    "mirror_l": 132,
+    "mirror_r": 132,
+    "taillights": 104,
+    "trim": 4036,
+    "underside": 6012,
+    "wheel_fl": 2704,
+    "wheel_fr": 2704,
+    "wheel_rl": 2704,
+    "wheel_rr": 2704
+   }
+  },
+  "rangeroller_2026": {
+   "file": "web/public/assets/cars/rangeroller_2026.glb",
+   "bytes": 1222360,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "body",
+      "bonnet",
+      "bumper_front",
+      "bumper_rear",
+      "caliper_fl",
+      "caliper_fr",
+      "caliper_rl",
+      "caliper_rr",
+      "car",
+      "glass",
+      "headlight_l",
+      "headlight_r",
+      "interior",
+      "mirror_l",
+      "mirror_r",
+      "roof_anchor",
+      "taillights",
+      "trim",
+      "underside",
+      "wheel_fl",
+      "wheel_fr",
+      "wheel_rl",
+      "wheel_rr"
+     ]
+    },
+    "flat_hierarchy_under_car": {
+     "ok": true,
+     "roots": [
+      "car"
+     ],
+     "not_direct_children": [],
+     "duplicate_names": []
+    },
+    "materials_standard_pbr_factors": {
+     "ok": true,
+     "offending": [],
+     "extensions": [],
+     "names": [
+      "paint",
+      "trim",
+      "gloss",
+      "plate",
+      "caliper",
+      "steel",
+      "glass",
+      "headlight",
+      "cabin",
+      "headliner",
+      "seat",
+      "seat_trim",
+      "chrome",
+      "taillight",
+      "underplate",
+      "spring",
+      "exhaust",
+      "tyre",
+      "rim",
+      "rimdark"
+     ]
+    },
+    "node_materials": {
+     "ok": true,
+     "body": [
+      "paint"
+     ],
+     "glass": [
+      "glass"
+     ],
+     "headlight_l": [
+      "headlight"
+     ],
+     "glass_alphaMode": "BLEND",
+     "headlight_emissive": [
+      1,
+      0.848088264465332,
+      0.4479884207248688
+     ],
+     "beacons": null
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 34016,
+     "budget": [
+      25000,
+      40000
+     ]
+    },
+    "bbox_within_3pct": {
+     "ok": true,
+     "measured": {
+      "width": 2.1054,
+      "height": 1.8819,
+      "length": 5.0684
+     },
+     "expected": {
+      "width": 2.05,
+      "height": 1.87,
+      "length": 5.05
+     },
+     "rel_error_pct": {
+      "width": 2.7,
+      "height": 0.64,
+      "length": 0.36
+     },
+     "min": [
+      -1.0527,
+      -0.0,
+      -2.6754
+     ],
+     "max": [
+      1.0527,
+      1.8819,
+      2.393
+     ],
+     "width_without_mirrors": 2.0499,
+     "note": "whole model including mirrors and roof rails"
+    },
+    "ground_at_y0": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "symmetric_about_x0": {
+     "ok": true,
+     "min_x": -1.0527,
+     "max_x": 1.0527
+    },
+    "wheels_at_formula_1cm_axle_x": {
+     "ok": true,
+     "expected_radius": 0.4,
+     "expected_width": 0.28,
+     "wheels": {
+      "wheel_fl": {
+       "expected": [
+        0.85,
+        0.4,
+        1.5
+       ],
+       "got": [
+        0.85,
+        0.4,
+        1.5
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      },
+      "wheel_fr": {
+       "expected": [
+        -0.85,
+        0.4,
+        1.5
+       ],
+       "got": [
+        -0.85,
+        0.4,
+        1.5
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      },
+      "wheel_rl": {
+       "expected": [
+        0.85,
+        0.4,
+        -1.5
+       ],
+       "got": [
+        0.85,
+        0.4,
+        -1.5
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      },
+      "wheel_rr": {
+       "expected": [
+        -0.85,
+        0.4,
+        -1.5
+       ],
+       "got": [
+        -0.85,
+        0.4,
+        -1.5
+       ],
+       "max_abs_err_m": 0.0,
+       "identity_rotation": true,
+       "tyre_radius": 0.4,
+       "tyre_width_along_x": 0.28,
+       "ok": true
+      }
+     }
+    },
+    "tyres_inside_body_width": {
+     "ok": true,
+     "tyre_outer_x": 0.99,
+     "body_half_width": 1.025
+    },
+    "forward_plus_z_left_plus_x": {
+     "ok": true,
+     "flags": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "headlight_l": [
+      0.6334956288337708,
+      0.9837836027145386,
+      2.260824680328369
+     ],
+     "roof_anchor": [
+      0,
+      1.862806797027588,
+      -1.1200000047683716
+     ],
+     "bonnet_hinge": [
+      0,
+      1.1908529996871948,
+      0.9200000166893005
+     ],
+     "bumper_front": [
+      0,
+      0.6100000143051147,
+      2.0799999237060547
+     ],
+     "bumper_rear": [
+      0,
+      0.6000000238418579,
+      -2.369999885559082
+     ]
+    },
+    "headlights_as_eyes": {
+     "ok": true,
+     "lamps": {
+      "headlight_l": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.281,
+       "lens_height": 0.195,
+       "mean_normal_z": 0.816,
+       "pupil_radius_front_end": 0.062,
+       "ok": true
+      },
+      "headlight_r": {
+       "centre_offset_xy_m": 0.0,
+       "lens_width": 0.281,
+       "lens_height": 0.195,
+       "mean_normal_z": 0.816,
+       "pupil_radius_front_end": 0.062,
+       "ok": true
+      }
+     }
+    },
+    "mesh_health": {
+     "ok": true,
+     "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+     "nodes": {
+      "body": {
+       "triangles": 5644,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 752,
+       "area_m2": 11.172,
+       "ok": true
+      },
+      "bonnet": {
+       "triangles": 2104,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 276,
+       "area_m2": 6.3,
+       "ok": true
+      },
+      "bumper_front": {
+       "triangles": 1028,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 240,
+       "area_m2": 4.071,
+       "ok": true
+      },
+      "bumper_rear": {
+       "triangles": 780,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 152,
+       "area_m2": 2.696,
+       "ok": true
+      },
+      "caliper_fl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.115,
+       "ok": true
+      },
+      "caliper_fr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.115,
+       "ok": true
+      },
+      "caliper_rl": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.115,
+       "ok": true
+      },
+      "caliper_rr": {
+       "triangles": 92,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.115,
+       "ok": true
+      },
+      "glass": {
+       "triangles": 552,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 232,
+       "area_m2": 4.458,
+       "ok": true
+      },
+      "headlight_l": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.059,
+       "ok": true
+      },
+      "headlight_r": {
+       "triangles": 168,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 24,
+       "area_m2": 0.059,
+       "ok": true
+      },
+      "interior": {
+       "triangles": 3828,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 668,
+       "area_m2": 45.984,
+       "ok": true
+      },
+      "mirror_l": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.119,
+       "ok": true
+      },
+      "mirror_r": {
+       "triangles": 132,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 0.119,
+       "ok": true
+      },
+      "taillights": {
+       "triangles": 48,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 32,
+       "area_m2": 0.077,
+       "ok": true
+      },
+      "trim": {
+       "triangles": 3068,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 1326,
+       "area_m2": 4.72,
+       "ok": true
+      },
+      "underside": {
+       "triangles": 5996,
+       "degenerate": 0,
+       "nonmanifold_edges": 5,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 134,
+       "area_m2": 58.731,
+       "ok": true
+      },
+      "wheel_fl": {
+       "triangles": 2500,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 4.022,
+       "ok": true
+      },
+      "wheel_fr": {
+       "triangles": 2500,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 4.022,
+       "ok": true
+      },
+      "wheel_rl": {
+       "triangles": 2500,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 4.022,
+       "ok": true
+      },
+      "wheel_rr": {
+       "triangles": 2500,
+       "degenerate": 0,
+       "nonmanifold_edges": 0,
+       "inconsistent_winding_edges": 0,
+       "normal_disagreements": 0,
+       "sliver_disagreements_under_2cm2": 0,
+       "boundary_edges": 0,
+       "area_m2": 4.022,
+       "ok": true
+      }
+     }
+    },
+    "body_normals_outward": {
+     "ok": true,
+     "outward_area_share": 1.0,
+     "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+    }
+   },
+   "ok": true,
+   "tris": 34016,
+   "tris_per_node": {
+    "body": 5644,
+    "bonnet": 2104,
+    "bumper_front": 1028,
+    "bumper_rear": 780,
+    "caliper_fl": 92,
+    "caliper_fr": 92,
+    "caliper_rl": 92,
+    "caliper_rr": 92,
+    "glass": 552,
+    "headlight_l": 168,
+    "headlight_r": 168,
+    "interior": 3828,
+    "mirror_l": 132,
+    "mirror_r": 132,
+    "taillights": 48,
+    "trim": 3068,
+    "underside": 5996,
+    "wheel_fl": 2500,
+    "wheel_fr": 2500,
+    "wheel_rl": 2500,
+    "wheel_rr": 2500
+   }
+  }
+ },
+ "props": {
+  "stein": {
+   "file": "web/public/assets/props/stein.glb",
+   "bytes": 26076,
+   "tris": 1020,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "foam",
+      "glass",
+      "lager"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 1020,
+     "budget": 2000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 0.2,
+     "expected": [
+      0.18,
+      0.22
+     ]
+    },
+    "stein_height": {
+     "ok": true,
+     "height": 0.2
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.053,
+     -0.0,
+     -0.052
+    ],
+    "max": [
+     0.11,
+     0.2,
+     0.053
+    ],
+    "size_xyz": [
+     0.163,
+     0.2,
+     0.105
+    ]
+   }
+  },
+  "lodge": {
+   "file": "web/public/assets/props/lodge.glb",
+   "bytes": 2261320,
+   "tris": 39909,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "chair_paint",
+      "chair_seat",
+      "clay",
+      "concrete",
+      "deck_a",
+      "deck_b",
+      "deck_c",
+      "geranium",
+      "geranium_b",
+      "glass",
+      "interior",
+      "iron",
+      "lantern_glass",
+      "leaf",
+      "leaf_b",
+      "log_bark",
+      "log_end",
+      "parasol_a",
+      "parasol_b",
+      "pennant_a",
+      "pennant_b",
+      "pennant_c",
+      "pennant_d",
+      "pink",
+      "rubber",
+      "safety_yellow",
+      "shingle_a",
+      "shingle_b",
+      "shingle_c",
+      "shingle_dark",
+      "shutter",
+      "shutter_b",
+      "sign_board",
+      "soil",
+      "steel",
+      "steel_dark",
+      "stone_a",
+      "stone_b",
+      "stone_c",
+      "white_flower",
+      "wood_dark",
+      "wood_light",
+      "wood_mid",
+      "wood_mid2",
+      "wood_mid3"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 39909,
+     "budget": 40000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "terrace_origin": {
+     "ok": true,
+     "terrace_top_y": 0.0,
+     "terrace_x": [
+      -12.1197,
+      12.119
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -14.18,
+     -3.2,
+     -27.65
+    ],
+    "max": [
+     23.4,
+     11.94,
+     30.0
+    ],
+    "size_xyz": [
+     37.58,
+     15.14,
+     57.65
+    ]
+   }
+  },
+  "table": {
+   "file": "web/public/assets/props/table.glb",
+   "bytes": 78956,
+   "tris": 1492,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bolt",
+      "wood_dark",
+      "wood_mid",
+      "wood_top"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 1492,
+     "budget": 3000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0035
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -2.1,
+     -0.003,
+     -0.98
+    ],
+    "max": [
+     2.1,
+     0.923,
+     0.98
+    ],
+    "size_xyz": [
+     4.2,
+     0.926,
+     1.96
+    ]
+   }
+  },
+  "tree_pine": {
+   "file": "web/public/assets/props/tree_pine.glb",
+   "bytes": 39804,
+   "tris": 632,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bark",
+      "needles"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 632,
+     "budget": 800
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0018
+    },
+    "height": {
+     "ok": true,
+     "height": 8.152,
+     "expected": [
+      8.0,
+      8.8
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -2.911,
+     -0.002,
+     -2.568
+    ],
+    "max": [
+     2.926,
+     8.15,
+     2.911
+    ],
+    "size_xyz": [
+     5.838,
+     8.152,
+     5.479
+    ]
+   }
+  },
+  "tree_broadleaf": {
+   "file": "web/public/assets/props/tree_broadleaf.glb",
+   "bytes": 58036,
+   "tris": 756,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bark",
+      "leaves"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 756,
+     "budget": 800
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.02
+    },
+    "height": {
+     "ok": true,
+     "height": 6.87,
+     "expected": [
+      6.5,
+      7.5
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -2.681,
+     -0.02,
+     -2.633
+    ],
+    "max": [
+     2.822,
+     6.85,
+     2.933
+    ],
+    "size_xyz": [
+     5.502,
+     6.87,
+     5.567
+    ]
+   }
+  },
+  "spectator": {
+   "file": "web/public/assets/props/spectator.glb",
+   "bytes": 35292,
+   "tris": 534,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "belt",
+      "cap",
+      "eye",
+      "hair",
+      "shirt",
+      "shoes",
+      "skin",
+      "sole",
+      "trousers"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 534,
+     "budget": 600
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 1.85,
+     "expected": [
+      1.7,
+      1.9
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.286,
+     0.0,
+     -0.111
+    ],
+    "max": [
+     0.293,
+     1.85,
+     0.196
+    ],
+    "size_xyz": [
+     0.578,
+     1.85,
+     0.306
+    ]
+   }
+  },
+  "flag": {
+   "file": "web/public/assets/props/flag.glb",
+   "bytes": 40088,
+   "tris": 662,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "band",
+      "cup",
+      "flag",
+      "flag_stripe",
+      "hole",
+      "metal",
+      "pole"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 662,
+     "budget": 800
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 2.231,
+     "expected": [
+      2.1,
+      2.4
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.06,
+     -0.0,
+     -0.06
+    ],
+    "max": [
+     0.606,
+     2.231,
+     0.063
+    ],
+    "size_xyz": [
+     0.666,
+     2.231,
+     0.123
+    ]
+   }
+  },
+  "tee_marker": {
+   "file": "web/public/assets/props/tee_marker.glb",
+   "bytes": 15084,
+   "tris": 576,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "marker",
+      "marker_band",
+      "peg"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 576,
+     "budget": 900
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.078,
+     -0.08,
+     -0.078
+    ],
+    "max": [
+     0.078,
+     0.225,
+     0.078
+    ],
+    "size_xyz": [
+     0.156,
+     0.305,
+     0.156
+    ]
+   }
+  },
+  "golf_cart": {
+   "file": "web/public/assets/props/golf_cart.glb",
+   "bytes": 258168,
+   "tris": 4972,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bag",
+      "cart_body",
+      "cart_trim",
+      "chrome",
+      "club",
+      "glass",
+      "lamp",
+      "rim",
+      "seat",
+      "taillamp",
+      "tyre"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 4972,
+     "budget": 5000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0042
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.702,
+     0.004,
+     -1.25
+    ],
+    "max": [
+     0.702,
+     1.875,
+     1.27
+    ],
+    "size_xyz": [
+     1.404,
+     1.871,
+     2.52
+    ]
+   }
+  },
+  "ramp": {
+   "file": "web/public/assets/props/ramp.glb",
+   "bytes": 4364,
+   "tris": 34,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "ramp_chevron",
+      "ramp_plank",
+      "ramp_side"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 34,
+     "budget": 200
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "unit_wedge_exact": {
+     "ok": true,
+     "min": [
+      -0.5,
+      0.0,
+      0.0
+     ],
+     "max": [
+      0.5,
+      1.0,
+      1.0
+     ],
+     "expected_min": [
+      -0.5,
+      0,
+      0
+     ],
+     "expected_max": [
+      0.5,
+      1,
+      1
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.5,
+     0.0,
+     0.0
+    ],
+    "max": [
+     0.5,
+     1.0,
+     1.0
+    ],
+    "size_xyz": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "sign": {
+   "file": "web/public/assets/props/sign.glb",
+   "bytes": 39992,
+   "tris": 744,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "board",
+      "bolt",
+      "frame"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 744,
+     "budget": 1500
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -1.6,
+     0.0,
+     -0.535
+    ],
+    "max": [
+     1.6,
+     1.95,
+     0.075
+    ],
+    "size_xyz": [
+     3.2,
+     1.95,
+     0.61
+    ]
+   }
+  },
+  "rock": {
+   "file": "web/public/assets/props/rock.glb",
+   "bytes": 67912,
+   "tris": 880,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "moss",
+      "rock"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 880,
+     "budget": 1500
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -1.52,
+     0.0,
+     -1.361
+    ],
+    "max": [
+     1.646,
+     1.369,
+     1.097
+    ],
+    "size_xyz": [
+     3.166,
+     1.369,
+     2.459
+    ]
+   }
+  },
+  "drone": {
+   "file": "web/public/assets/props/drone.glb",
+   "bytes": 97196,
+   "tris": 1736,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "drone_body",
+      "drone_trim",
+      "led_green",
+      "led_red",
+      "lens",
+      "rotor"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 1736,
+     "budget": 2500
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.303,
+     -0.093,
+     -0.198
+    ],
+    "max": [
+     0.303,
+     0.081,
+     0.198
+    ],
+    "size_xyz": [
+     0.606,
+     0.174,
+     0.396
+    ]
+   }
+  },
+  "helicopter": {
+   "file": "web/public/assets/props/helicopter.glb",
+   "bytes": 237904,
+   "tris": 7908,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "blade",
+      "boots",
+      "cam_lens",
+      "crew_suit",
+      "dark",
+      "door_line",
+      "exhaust",
+      "glass",
+      "helmet",
+      "hivis",
+      "nav_green",
+      "nav_red",
+      "navy",
+      "panel",
+      "seat",
+      "skid",
+      "spot_lens",
+      "steel",
+      "strobe",
+      "vest",
+      "visor"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 7908,
+     "budget": 10500
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -4.212,
+     -1.005,
+     -7.14
+    ],
+    "max": [
+     4.212,
+     2.19,
+     2.4
+    ],
+    "size_xyz": [
+     8.424,
+     3.195,
+     9.54
+    ]
+   }
+  },
+  "chairlift_pylon": {
+   "file": "web/public/assets/props/chairlift_pylon.glb",
+   "bytes": 182624,
+   "tris": 3308,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "concrete",
+      "rubber",
+      "steel",
+      "steel_dark"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 3308,
+     "budget": 6000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 11.123,
+     "expected": [
+      10.5,
+      11.6
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -3.75,
+     0.0,
+     -4.0
+    ],
+    "max": [
+     3.75,
+     11.123,
+     4.0
+    ],
+    "size_xyz": [
+     7.5,
+     11.123,
+     8.0
+    ]
+   }
+  },
+  "chair": {
+   "file": "web/public/assets/props/chair.glb",
+   "bytes": 24504,
+   "tris": 408,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "chair_paint",
+      "chair_seat",
+      "steel",
+      "steel_dark"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 408,
+     "budget": 2500
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.969,
+     -2.921,
+     -0.15
+    ],
+    "max": [
+     0.974,
+     0.07,
+     0.699
+    ],
+    "size_xyz": [
+     1.943,
+     2.991,
+     0.849
+    ]
+   }
+  },
+  "grandstand": {
+   "file": "web/public/assets/props/grandstand.glb",
+   "bytes": 665108,
+   "tris": 12393,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "banner_panel_a",
+      "banner_panel_b",
+      "canopy_a",
+      "canopy_b",
+      "concrete",
+      "deck_timber",
+      "pennant_a",
+      "pennant_b",
+      "pennant_c",
+      "pennant_d",
+      "riser_paint",
+      "rope",
+      "seat_blue",
+      "seat_red",
+      "seat_slat",
+      "seat_white",
+      "seat_yellow",
+      "steel_frame",
+      "steel_rail"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 12393,
+     "budget": 13000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 7.138,
+     "expected": [
+      4.8,
+      7.6
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -7.6,
+     0.0,
+     -3.9
+    ],
+    "max": [
+     7.6,
+     7.138,
+     3.9
+    ],
+    "size_xyz": [
+     15.2,
+     7.138,
+     7.8
+    ]
+   }
+  },
+  "leaderboard": {
+   "file": "web/public/assets/props/leaderboard.glb",
+   "bytes": 142476,
+   "tris": 2034,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "backing",
+      "bolt",
+      "frame_dark",
+      "lamp_glow",
+      "medal_bronze",
+      "medal_gold",
+      "medal_silver",
+      "panel_1",
+      "panel_2",
+      "panel_3",
+      "panel_4",
+      "panel_5",
+      "panel_6",
+      "panel_title",
+      "steel_dark",
+      "trim_gold"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 2034,
+     "budget": 3000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 3.02,
+     "expected": [
+      2.9,
+      3.2
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -2.5,
+     0.0,
+     -1.35
+    ],
+    "max": [
+     2.5,
+     3.02,
+     0.32
+    ],
+    "size_xyz": [
+     5.0,
+     3.02,
+     1.67
+    ]
+   }
+  },
+  "bench": {
+   "file": "web/public/assets/props/bench.glb",
+   "bytes": 86484,
+   "tris": 2216,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bench_slat",
+      "bolt",
+      "cast_iron"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 2216,
+     "budget": 3000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0046
+    },
+    "height": {
+     "ok": true,
+     "height": 0.957,
+     "expected": [
+      0.8,
+      0.98
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.89,
+     -0.005,
+     -0.409
+    ],
+    "max": [
+     0.89,
+     0.952,
+     0.32
+    ],
+    "size_xyz": [
+     1.78,
+     0.957,
+     0.729
+    ]
+   }
+  },
+  "sprinkler": {
+   "file": "web/public/assets/props/sprinkler.glb",
+   "bytes": 36572,
+   "tris": 1036,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "arc_ring",
+      "cap_rubber",
+      "nozzle_brass",
+      "riser_ring",
+      "riser_steel",
+      "turf_blade",
+      "turf_cap"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 1036,
+     "budget": 1500
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 0.285,
+     "expected": [
+      0.27,
+      0.33
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.217,
+     -0.0,
+     -0.227
+    ],
+    "max": [
+     0.22,
+     0.285,
+     0.233
+    ],
+    "size_xyz": [
+     0.437,
+     0.285,
+     0.459
+    ]
+   }
+  },
+  "yardage_post": {
+   "file": "web/public/assets/props/yardage_post.glb",
+   "bytes": 19804,
+   "tris": 376,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bolt",
+      "collar",
+      "marker",
+      "plate",
+      "plate_rim",
+      "post_paint",
+      "post_wood"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 376,
+     "budget": 600
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 0.903,
+     "expected": [
+      0.85,
+      0.95
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.14,
+     -0.0,
+     -0.133
+    ],
+    "max": [
+     0.14,
+     0.903,
+     0.133
+    ],
+    "size_xyz": [
+     0.28,
+     0.903,
+     0.266
+    ]
+   }
+  },
+  "ob_stake": {
+   "file": "web/public/assets/props/ob_stake.glb",
+   "bytes": 12428,
+   "tris": 310,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "stake_band",
+      "stake_ground",
+      "stake_scuff",
+      "stake_white"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 310,
+     "budget": 500
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 1.2,
+     "expected": [
+      1.15,
+      1.25
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.1,
+     -0.0,
+     -0.1
+    ],
+    "max": [
+     0.1,
+     1.2,
+     0.1
+    ],
+    "size_xyz": [
+     0.2,
+     1.2,
+     0.2
+    ]
+   }
+  },
+  "ball_washer": {
+   "file": "web/public/assets/props/ball_washer.glb",
+   "bytes": 53636,
+   "tris": 1378,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bolt",
+      "chrome",
+      "grip_wood",
+      "plate",
+      "plate_rim",
+      "towel",
+      "towel_stripe",
+      "washer_dark",
+      "washer_green"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 1378,
+     "budget": 2000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 1.098,
+     "expected": [
+      1.05,
+      1.15
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.182,
+     -0.0,
+     -0.114
+    ],
+    "max": [
+     0.273,
+     1.098,
+     0.114
+    ],
+    "size_xyz": [
+     0.455,
+     1.098,
+     0.228
+    ]
+   }
+  },
+  "halfway_hut": {
+   "file": "web/public/assets/props/halfway_hut.glb",
+   "bytes": 494220,
+   "tris": 10880,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "awning_a",
+      "awning_b",
+      "bottle_b",
+      "bottle_g",
+      "can_red",
+      "chain",
+      "chalkboard",
+      "crate",
+      "floor_plank",
+      "gable_board",
+      "geranium",
+      "glass",
+      "iron",
+      "jar_glass",
+      "jar_lid",
+      "lantern_glow",
+      "lantern_metal",
+      "leaf",
+      "log_a",
+      "log_b",
+      "planter",
+      "roof_deck",
+      "shingle_a",
+      "shingle_b",
+      "shutter",
+      "sign_board",
+      "steel",
+      "stone_a",
+      "stone_b",
+      "wood_dark",
+      "wood_light"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 10880,
+     "budget": 12000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0021
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -3.66,
+     -0.002,
+     -2.781
+    ],
+    "max": [
+     3.95,
+     4.26,
+     3.4
+    ],
+    "size_xyz": [
+     7.61,
+     4.262,
+     6.181
+    ]
+   }
+  },
+  "bunker_rake": {
+   "file": "web/public/assets/props/bunker_rake.glb",
+   "bytes": 22376,
+   "tris": 392,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "rake_grip",
+      "rake_handle",
+      "rake_head",
+      "tine_steel"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 392,
+     "budget": 800
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.265,
+     -0.0,
+     -1.011
+    ],
+    "max": [
+     0.265,
+     0.137,
+     0.656
+    ],
+    "size_xyz": [
+     0.53,
+     0.137,
+     1.667
+    ]
+   }
+  },
+  "parasol": {
+   "file": "web/public/assets/props/parasol.glb",
+   "bytes": 88996,
+   "tris": 2012,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "base_steel",
+      "base_stone",
+      "crank_housing",
+      "grip_wood",
+      "parasol_a",
+      "parasol_b",
+      "pole_steel",
+      "rib_wood"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 2012,
+     "budget": 3000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 2.56,
+     "expected": [
+      2.4,
+      2.6
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -1.5,
+     0.0,
+     -1.5
+    ],
+    "max": [
+     1.5,
+     2.56,
+     1.5
+    ],
+    "size_xyz": [
+     3.0,
+     2.56,
+     3.0
+    ]
+   }
+  },
+  "footbridge": {
+   "file": "web/public/assets/props/footbridge.glb",
+   "bytes": 60100,
+   "tris": 1040,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "nail",
+      "pier_stone",
+      "plank",
+      "plank_b",
+      "post_wood",
+      "rail_wood",
+      "stringer"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 1040,
+     "budget": 1600
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.6,
+     -1.05,
+     -0.14
+    ],
+    "max": [
+     0.6,
+     1.105,
+     1.14
+    ],
+    "size_xyz": [
+     1.2,
+     2.155,
+     1.28
+    ]
+   }
+  },
+  "golfer": {
+   "file": "web/public/assets/props/golfer.glb",
+   "bytes": 42128,
+   "tris": 582,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "belt",
+      "cap",
+      "eye",
+      "glove",
+      "grip",
+      "hair",
+      "head",
+      "shaft",
+      "shirt",
+      "shoes",
+      "skin",
+      "sock",
+      "sole",
+      "trousers"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 582,
+     "budget": 600
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 1.85,
+     "expected": [
+      1.6,
+      1.9
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.643,
+     0.0,
+     -0.578
+    ],
+    "max": [
+     0.369,
+     1.85,
+     0.236
+    ],
+    "size_xyz": [
+     1.012,
+     1.85,
+     0.814
+    ]
+   }
+  },
+  "golf_bag": {
+   "file": "web/public/assets/props/golf_bag.glb",
+   "bytes": 99792,
+   "tris": 2826,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bag_accent",
+      "bag_body",
+      "bag_hood",
+      "bag_inner",
+      "bag_trim",
+      "cover",
+      "cover_b",
+      "head",
+      "shaft",
+      "towel",
+      "towel_b",
+      "umbrella",
+      "zip"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 2826,
+     "budget": 3000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 1.232,
+     "expected": [
+      0.9,
+      1.3
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.252,
+     -0.0,
+     -0.215
+    ],
+    "max": [
+     0.178,
+     1.232,
+     0.202
+    ],
+    "size_xyz": [
+     0.43,
+     1.232,
+     0.417
+    ]
+   }
+  },
+  "golf_club": {
+   "file": "web/public/assets/props/golf_club.glb",
+   "bytes": 13064,
+   "tris": 448,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "grip",
+      "head",
+      "shaft"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 448,
+     "budget": 600
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "height": {
+     "ok": true,
+     "height": 1.114,
+     "expected": [
+      1.0,
+      1.2
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.014,
+     -1.114,
+     -0.058
+    ],
+    "max": [
+     0.118,
+     0.0,
+     0.058
+    ],
+    "size_xyz": [
+     0.132,
+     1.114,
+     0.116
+    ]
+   }
+  },
+  "cow": {
+   "file": "web/public/assets/props/cow.glb",
+   "bytes": 91896,
+   "tris": 2954,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bell",
+      "eye",
+      "hide",
+      "hoof",
+      "horn",
+      "leather",
+      "muzzle",
+      "patch",
+      "tuft",
+      "udder"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 2954,
+     "budget": 3000
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": -0.0075
+    },
+    "height": {
+     "ok": true,
+     "height": 1.499,
+     "expected": [
+      1.2,
+      1.6
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -0.393,
+     -0.008,
+     -1.097
+    ],
+    "max": [
+     0.395,
+     1.491,
+     1.54
+    ],
+    "size_xyz": [
+     0.787,
+     1.499,
+     2.637
+    ]
+   }
+  },
+  "tree_larch": {
+   "file": "web/public/assets/props/tree_larch.glb",
+   "bytes": 52032,
+   "tris": 784,
+   "checks": {
+    "required_nodes": {
+     "ok": true,
+     "missing": []
+    },
+    "materials": {
+     "ok": true,
+     "missing": [],
+     "present": [
+      "bark",
+      "needles",
+      "needles_tip"
+     ]
+    },
+    "triangle_budget": {
+     "ok": true,
+     "tris": 784,
+     "budget": 800
+    },
+    "no_compression_or_textures": {
+     "ok": true,
+     "issues": []
+    },
+    "origin_at_base": {
+     "ok": true,
+     "min_y": 0.0
+    },
+    "height": {
+     "ok": true,
+     "height": 9.45,
+     "expected": [
+      8.5,
+      9.5
+     ]
+    }
+   },
+   "ok": true,
+   "bbox": {
+    "min": [
+     -2.023,
+     0.0,
+     -2.021
+    ],
+    "max": [
+     2.417,
+     9.45,
+     2.59
+    ],
+    "size_xyz": [
+     4.441,
+     9.45,
+     4.611
+    ]
+   }
+  }
+ },
+ "all_ok": true,
+ "patrol": {
+  "file": "web/public/assets/cars/patrol.glb",
+  "bytes": 569364,
+  "checks": {
+   "required_nodes": {
+    "ok": true,
+    "missing": [],
+    "present": [
+     "aerial",
+     "beacon_l",
+     "beacon_r",
+     "body",
+     "car",
+     "chrome",
+     "glass",
+     "headlight_l",
+     "headlight_r",
+     "interior",
+     "lightbar",
+     "livery",
+     "roof_anchor",
+     "taillights",
+     "trim",
+     "underside",
+     "wheel_fl",
+     "wheel_fr",
+     "wheel_rl",
+     "wheel_rr"
+    ]
+   },
+   "flat_hierarchy_under_car": {
+    "ok": true,
+    "roots": [
+     "car"
+    ],
+    "not_direct_children": [],
+    "duplicate_names": []
+   },
+   "materials_standard_pbr_factors": {
+    "ok": true,
+    "offending": [],
+    "extensions": [],
+    "names": [
+     "trim",
+     "beacon_blue",
+     "beacon_red",
+     "paint",
+     "livery_blue",
+     "hiviz",
+     "chrome",
+     "glass",
+     "headlight",
+     "cabin",
+     "headliner",
+     "seat",
+     "steel",
+     "livery_red",
+     "taillight",
+     "gloss",
+     "plate",
+     "underplate",
+     "spring",
+     "exhaust",
+     "tyre",
+     "rim",
+     "rimdark"
+    ]
+   },
+   "node_materials": {
+    "ok": true,
+    "body": [
+     "chrome",
+     "hiviz",
+     "livery_blue",
+     "paint",
+     "trim"
+    ],
+    "glass": [
+     "glass"
+    ],
+    "headlight_l": [
+     "headlight"
+    ],
+    "glass_alphaMode": "BLEND",
+    "headlight_emissive": [
+     1,
+     0.848088264465332,
+     0.4479884207248688
+    ],
+    "beacons": [
+     [
+      "beacon_blue"
+     ],
+     [
+      "beacon_red"
+     ]
+    ]
+   },
+   "triangle_budget": {
+    "ok": true,
+    "tris": 15168,
+    "budget": [
+     12000,
+     18000
+    ]
+   },
+   "bbox_within_3pct": {
+    "ok": true,
+    "measured": {
+     "width": 1.9513,
+     "height": 1.7,
+     "length": 4.7
+    },
+    "expected": {
+     "width": 1.9,
+     "height": 1.7,
+     "length": 4.7
+    },
+    "rel_error_pct": {
+     "width": 2.7,
+     "height": 0.0,
+     "length": 0.0
+    },
+    "min": [
+     -0.9757,
+     0.0,
+     -2.465
+    ],
+    "max": [
+     0.9757,
+     2.1708,
+     2.235
+    ],
+    "width_without_mirrors": 1.9513,
+    "note": "height excludes the roof lightbar, beacons and aerial; overall top y = 2.171"
+   },
+   "ground_at_y0": {
+    "ok": true,
+    "min_y": 0.0
+   },
+   "symmetric_about_x0": {
+    "ok": true,
+    "min_x": -0.9757,
+    "max_x": 0.9757
+   },
+   "wheels_at_formula_1cm_axle_x": {
+    "ok": true,
+    "expected_radius": 0.36,
+    "expected_width": 0.25,
+    "wheels": {
+     "wheel_fl": {
+      "expected": [
+       0.81,
+       0.36,
+       1.375
+      ],
+      "got": [
+       0.81,
+       0.36,
+       1.375
+      ],
+      "max_abs_err_m": 0.0,
+      "identity_rotation": true,
+      "tyre_radius": 0.36,
+      "tyre_width_along_x": 0.25,
+      "ok": true
+     },
+     "wheel_fr": {
+      "expected": [
+       -0.81,
+       0.36,
+       1.375
+      ],
+      "got": [
+       -0.81,
+       0.36,
+       1.375
+      ],
+      "max_abs_err_m": 0.0,
+      "identity_rotation": true,
+      "tyre_radius": 0.36,
+      "tyre_width_along_x": 0.25,
+      "ok": true
+     },
+     "wheel_rl": {
+      "expected": [
+       0.81,
+       0.36,
+       -1.375
+      ],
+      "got": [
+       0.81,
+       0.36,
+       -1.375
+      ],
+      "max_abs_err_m": 0.0,
+      "identity_rotation": true,
+      "tyre_radius": 0.36,
+      "tyre_width_along_x": 0.25,
+      "ok": true
+     },
+     "wheel_rr": {
+      "expected": [
+       -0.81,
+       0.36,
+       -1.375
+      ],
+      "got": [
+       -0.81,
+       0.36,
+       -1.375
+      ],
+      "max_abs_err_m": 0.0,
+      "identity_rotation": true,
+      "tyre_radius": 0.36,
+      "tyre_width_along_x": 0.25,
+      "ok": true
+     }
+    }
+   },
+   "tyres_inside_body_width": {
+    "ok": true,
+    "tyre_outer_x": 0.935,
+    "body_half_width": 0.9757
+   },
+   "forward_plus_z_left_plus_x": {
+    "ok": true,
+    "flags": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "headlight_l": [
+     0.5148311257362366,
+     0.7844892740249634,
+     2.0068187713623047
+    ],
+    "roof_anchor": [
+     0,
+     1.696847915649414,
+     -1.0124999284744263
+    ],
+    "bonnet_hinge": null,
+    "bumper_front": null,
+    "bumper_rear": null
+   },
+   "headlights_as_eyes": {
+    "ok": true,
+    "lamps": {
+     "headlight_l": {
+      "centre_offset_xy_m": 0.0,
+      "lens_width": 0.292,
+      "lens_height": 0.251,
+      "mean_normal_z": 0.821,
+      "pupil_radius_front_end": 0.08,
+      "ok": true
+     },
+     "headlight_r": {
+      "centre_offset_xy_m": 0.0,
+      "lens_width": 0.292,
+      "lens_height": 0.251,
+      "mean_normal_z": 0.821,
+      "pupil_radius_front_end": 0.08,
+      "ok": true
+     }
+    }
+   },
+   "mesh_health": {
+    "ok": true,
+    "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+    "nodes": {
+     "aerial": {
+      "triangles": 44,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 0,
+      "area_m2": 0.019,
+      "ok": true
+     },
+     "beacon_l": {
+      "triangles": 44,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 0,
+      "area_m2": 0.299,
+      "ok": true
+     },
+     "beacon_r": {
+      "triangles": 44,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 0,
+      "area_m2": 0.299,
+      "ok": true
+     },
+     "body": {
+      "triangles": 5060,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 814,
+      "area_m2": 13.891,
+      "ok": true
+     },
+     "chrome": {
+      "triangles": 192,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 0,
+      "area_m2": 0.176,
+      "ok": true
+     },
+     "glass": {
+      "triangles": 300,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 148,
+      "area_m2": 3.486,
+      "ok": true
+     },
+     "headlight_l": {
+      "triangles": 168,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 24,
+      "area_m2": 0.076,
+      "ok": true
+     },
+     "headlight_r": {
+      "triangles": 168,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 24,
+      "area_m2": 0.076,
+      "ok": true
+     },
+     "interior": {
+      "triangles": 1252,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 434,
+      "area_m2": 31.148,
+      "ok": true
+     },
+     "lightbar": {
+      "triangles": 112,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 0,
+      "area_m2": 0.997,
+      "ok": true
+     },
+     "livery": {
+      "triangles": 440,
+      "degenerate": 0,
+      "nonmanifold_edges": 25,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 0,
+      "area_m2": 1.214,
+      "ok": true
+     },
+     "taillights": {
+      "triangles": 84,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 40,
+      "area_m2": 0.177,
+      "ok": true
+     },
+     "trim": {
+      "triangles": 2632,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 1412,
+      "area_m2": 5.566,
+      "ok": true
+     },
+     "underside": {
+      "triangles": 1060,
+      "degenerate": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 0,
+      "area_m2": 33.892,
+      "ok": true
+     },
+     "wheel_fl": {
+      "triangles": 892,
+      "degenerate": 0,
+      "nonmanifold_edges": 20,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 20,
+      "area_m2": 2.471,
+      "ok": true
+     },
+     "wheel_fr": {
+      "triangles": 892,
+      "degenerate": 0,
+      "nonmanifold_edges": 20,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 20,
+      "area_m2": 2.471,
+      "ok": true
+     },
+     "wheel_rl": {
+      "triangles": 892,
+      "degenerate": 0,
+      "nonmanifold_edges": 20,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 20,
+      "area_m2": 2.471,
+      "ok": true
+     },
+     "wheel_rr": {
+      "triangles": 892,
+      "degenerate": 0,
+      "nonmanifold_edges": 20,
+      "inconsistent_winding_edges": 0,
+      "normal_disagreements": 0,
+      "sliver_disagreements_under_2cm2": 0,
+      "boundary_edges": 20,
+      "area_m2": 2.471,
+      "ok": true
+     }
+    }
+   },
+   "body_normals_outward": {
+    "ok": true,
+    "outward_area_share": 0.99,
+    "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+   }
+  },
+  "ok": true,
+  "tris": 15168,
+  "tris_per_node": {
+   "aerial": 44,
+   "beacon_l": 44,
+   "beacon_r": 44,
+   "body": 5060,
+   "chrome": 192,
+   "glass": 300,
+   "headlight_l": 168,
+   "headlight_r": 168,
+   "interior": 1252,
+   "lightbar": 112,
+   "livery": 440,
+   "taillights": 84,
+   "trim": 2632,
+   "underside": 1060,
+   "wheel_fl": 892,
+   "wheel_fr": 892,
+   "wheel_rl": 892,
+   "wheel_rr": 892
+  }
+ },
+ "follow_file": {
+  "note": "All five cars rebuilt from a copy of cars.json with length, width, height, wheelbase, track, wheel radius, wheel width and ground clearance altered by 1 to 8 percent (specs below), then validated against the altered numbers. Passing shows the models are driven by the file.",
+  "specs": {
+   "escapade_2009": {
+    "length": 5.36,
+    "width": 1.96,
+    "height": 1.95,
+    "wheelbase": 3.1,
+    "track": 1.67,
+    "wheel_radius": 0.42,
+    "wheel_width": 0.27,
+    "ground_clearance": 0.26,
+    "roof_y": 1.95
+   },
+   "glug_2017": {
+    "length": 4.93,
+    "width": 1.99,
+    "height": 1.78,
+    "wheelbase": 2.96,
+    "track": 1.71,
+    "wheel_radius": 0.37,
+    "wheel_width": 0.3,
+    "ground_clearance": 0.2,
+    "roof_y": 1.78
+   },
+   "genesips_2021": {
+    "length": 5.13,
+    "width": 2.02,
+    "height": 1.8,
+    "wheelbase": 3.06,
+    "track": 1.72,
+    "wheel_radius": 0.405,
+    "wheel_width": 0.28,
+    "ground_clearance": 0.23,
+    "roof_y": 1.8
+   },
+   "rangeroller_2026": {
+    "length": 4.9,
+    "width": 1.99,
+    "height": 1.82,
+    "wheelbase": 2.9,
+    "track": 1.65,
+    "wheel_radius": 0.385,
+    "wheel_width": 0.27,
+    "ground_clearance": 0.23,
+    "roof_y": 1.82
+   },
+   "patrol": {
+    "length": 4.85,
+    "width": 1.95,
+    "height": 1.75,
+    "wheelbase": 2.85,
+    "track": 1.66,
+    "wheel_radius": 0.375,
+    "wheel_width": 0.26,
+    "ground_clearance": 0.22,
+    "roof_y": 1.75
+   }
+  },
+  "cars": {
+   "escapade_2009": {
+    "file": "/home/devuser/workspace/.tmp/claude-1000/-home-devuser-workspace-GTLinks/f3d8d8eb-2598-4356-be7f-3c9f0b89f1a6/scratchpad/alt/escapade_2009.glb",
+    "bytes": 1334216,
+    "checks": {
+     "required_nodes": {
+      "ok": true,
+      "missing": [],
+      "present": [
+       "body",
+       "bonnet",
+       "bumper_front",
+       "bumper_rear",
+       "caliper_fl",
+       "caliper_fr",
+       "caliper_rl",
+       "caliper_rr",
+       "car",
+       "chrome",
+       "glass",
+       "headlight_l",
+       "headlight_r",
+       "interior",
+       "mirror_l",
+       "mirror_r",
+       "roof_anchor",
+       "taillights",
+       "trim",
+       "underside",
+       "wheel_fl",
+       "wheel_fr",
+       "wheel_rl",
+       "wheel_rr"
+      ]
+     },
+     "flat_hierarchy_under_car": {
+      "ok": true,
+      "roots": [
+       "car"
+      ],
+      "not_direct_children": [],
+      "duplicate_names": []
+     },
+     "materials_standard_pbr_factors": {
+      "ok": true,
+      "offending": [],
+      "extensions": [],
+      "names": [
+       "paint",
+       "trim",
+       "chrome",
+       "plate",
+       "caliper",
+       "steel",
+       "glass",
+       "headlight",
+       "cabin",
+       "headliner",
+       "seat",
+       "seat_trim",
+       "gloss",
+       "taillight",
+       "underplate",
+       "spring",
+       "exhaust",
+       "tyre",
+       "rimdark",
+       "rim"
+      ]
+     },
+     "node_materials": {
+      "ok": true,
+      "body": [
+       "paint"
+      ],
+      "glass": [
+       "glass"
+      ],
+      "headlight_l": [
+       "headlight"
+      ],
+      "glass_alphaMode": "BLEND",
+      "headlight_emissive": [
+       1,
+       0.848088264465332,
+       0.4479884207248688
+      ],
+      "beacons": null
+     },
+     "triangle_budget": {
+      "ok": true,
+      "tris": 36668,
+      "budget": [
+       25000,
+       40000
+      ]
+     },
+     "bbox_within_3pct": {
+      "ok": true,
+      "measured": {
+       "width": 2.0129,
+       "height": 1.9919,
+       "length": 5.364
+      },
+      "expected": {
+       "width": 1.96,
+       "height": 1.95,
+       "length": 5.36
+      },
+      "rel_error_pct": {
+       "width": 2.7,
+       "height": 2.15,
+       "length": 0.07
+      },
+      "min": [
+       -1.0065,
+       -0.0,
+       -2.7881
+      ],
+      "max": [
+       1.0065,
+       1.9919,
+       2.5759
+      ],
+      "width_without_mirrors": 1.9588,
+      "note": "whole model including mirrors and roof rails"
+     },
+     "ground_at_y0": {
+      "ok": true,
+      "min_y": -0.0
+     },
+     "symmetric_about_x0": {
+      "ok": true,
+      "min_x": -1.0065,
+      "max_x": 1.0065
+     },
+     "wheels_at_formula_1cm_axle_x": {
+      "ok": true,
+      "expected_radius": 0.42,
+      "expected_width": 0.27,
+      "wheels": {
+       "wheel_fl": {
+        "expected": [
+         0.835,
+         0.42,
+         1.55
+        ],
+        "got": [
+         0.835,
+         0.42,
+         1.55
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.42,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       },
+       "wheel_fr": {
+        "expected": [
+         -0.835,
+         0.42,
+         1.55
+        ],
+        "got": [
+         -0.835,
+         0.42,
+         1.55
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.42,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       },
+       "wheel_rl": {
+        "expected": [
+         0.835,
+         0.42,
+         -1.55
+        ],
+        "got": [
+         0.835,
+         0.42,
+         -1.55
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.42,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       },
+       "wheel_rr": {
+        "expected": [
+         -0.835,
+         0.42,
+         -1.55
+        ],
+        "got": [
+         -0.835,
+         0.42,
+         -1.55
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.42,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       }
+      }
+     },
+     "tyres_inside_body_width": {
+      "ok": true,
+      "tyre_outer_x": 0.97,
+      "body_half_width": 0.9794
+     },
+     "forward_plus_z_left_plus_x": {
+      "ok": true,
+      "flags": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "headlight_l": [
+       0.6967999935150146,
+       0.9015228748321533,
+       2.411472797393799
+      ],
+      "roof_anchor": [
+       0,
+       1.9500000476837158,
+       -1.1489688158035278
+      ],
+      "bonnet_hinge": [
+       0,
+       1.2288206815719604,
+       0.8765369653701782
+      ],
+      "bumper_front": [
+       0,
+       0.608730137348175,
+       2.2719454765319824
+      ],
+      "bumper_rear": [
+       0,
+       0.6190476417541504,
+       -2.4880545139312744
+      ]
+     },
+     "headlights_as_eyes": {
+      "ok": true,
+      "lamps": {
+       "headlight_l": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.29,
+        "lens_height": 0.415,
+        "mean_normal_z": 0.882,
+        "pupil_radius_front_end": 0.093,
+        "ok": true
+       },
+       "headlight_r": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.29,
+        "lens_height": 0.415,
+        "mean_normal_z": 0.882,
+        "pupil_radius_front_end": 0.093,
+        "ok": true
+       }
+      }
+     },
+     "mesh_health": {
+      "ok": true,
+      "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+      "nodes": {
+       "body": {
+        "triangles": 6360,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 734,
+        "area_m2": 12.958,
+        "ok": true
+       },
+       "bonnet": {
+        "triangles": 1538,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 134,
+        "area_m2": 5.276,
+        "ok": true
+       },
+       "bumper_front": {
+        "triangles": 2020,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 4,
+        "boundary_edges": 288,
+        "area_m2": 6.017,
+        "ok": true
+       },
+       "bumper_rear": {
+        "triangles": 848,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 176,
+        "area_m2": 2.605,
+        "ok": true
+       },
+       "caliper_fl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "caliper_fr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "caliper_rl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "caliper_rr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "chrome": {
+        "triangles": 1780,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 244,
+        "area_m2": 2.895,
+        "ok": true
+       },
+       "glass": {
+        "triangles": 612,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 252,
+        "area_m2": 4.805,
+        "ok": true
+       },
+       "headlight_l": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.122,
+        "ok": true
+       },
+       "headlight_r": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.122,
+        "ok": true
+       },
+       "interior": {
+        "triangles": 3916,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 714,
+        "area_m2": 46.095,
+        "ok": true
+       },
+       "mirror_l": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.135,
+        "ok": true
+       },
+       "mirror_r": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.135,
+        "ok": true
+       },
+       "taillights": {
+        "triangles": 108,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 60,
+        "area_m2": 0.145,
+        "ok": true
+       },
+       "trim": {
+        "triangles": 1716,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 1134,
+        "area_m2": 3.715,
+        "ok": true
+       },
+       "underside": {
+        "triangles": 6690,
+        "degenerate": 0,
+        "nonmanifold_edges": 5,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 196,
+        "area_m2": 60.233,
+        "ok": true
+       },
+       "wheel_fl": {
+        "triangles": 2528,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.796,
+        "ok": true
+       },
+       "wheel_fr": {
+        "triangles": 2528,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.796,
+        "ok": true
+       },
+       "wheel_rl": {
+        "triangles": 2528,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.796,
+        "ok": true
+       },
+       "wheel_rr": {
+        "triangles": 2528,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.796,
+        "ok": true
+       }
+      }
+     },
+     "body_normals_outward": {
+      "ok": true,
+      "outward_area_share": 0.996,
+      "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+     }
+    },
+    "ok": true,
+    "tris": 36668,
+    "tris_per_node": {
+     "body": 6360,
+     "bonnet": 1538,
+     "bumper_front": 2020,
+     "bumper_rear": 848,
+     "caliper_fl": 92,
+     "caliper_fr": 92,
+     "caliper_rl": 92,
+     "caliper_rr": 92,
+     "chrome": 1780,
+     "glass": 612,
+     "headlight_l": 168,
+     "headlight_r": 168,
+     "interior": 3916,
+     "mirror_l": 132,
+     "mirror_r": 132,
+     "taillights": 108,
+     "trim": 1716,
+     "underside": 6690,
+     "wheel_fl": 2528,
+     "wheel_fr": 2528,
+     "wheel_rl": 2528,
+     "wheel_rr": 2528
+    }
+   },
+   "glug_2017": {
+    "file": "/home/devuser/workspace/.tmp/claude-1000/-home-devuser-workspace-GTLinks/f3d8d8eb-2598-4356-be7f-3c9f0b89f1a6/scratchpad/alt/glug_2017.glb",
+    "bytes": 1273660,
+    "checks": {
+     "required_nodes": {
+      "ok": true,
+      "missing": [],
+      "present": [
+       "body",
+       "bonnet",
+       "bumper_front",
+       "bumper_rear",
+       "caliper_fl",
+       "caliper_fr",
+       "caliper_rl",
+       "caliper_rr",
+       "car",
+       "chrome",
+       "glass",
+       "headlight_l",
+       "headlight_r",
+       "interior",
+       "mirror_l",
+       "mirror_r",
+       "roof_anchor",
+       "taillights",
+       "trim",
+       "underside",
+       "wheel_fl",
+       "wheel_fr",
+       "wheel_rl",
+       "wheel_rr"
+      ]
+     },
+     "flat_hierarchy_under_car": {
+      "ok": true,
+      "roots": [
+       "car"
+      ],
+      "not_direct_children": [],
+      "duplicate_names": []
+     },
+     "materials_standard_pbr_factors": {
+      "ok": true,
+      "offending": [],
+      "extensions": [],
+      "names": [
+       "paint",
+       "trim",
+       "chrome",
+       "plate",
+       "caliper",
+       "steel",
+       "glass",
+       "headlight",
+       "cabin",
+       "headliner",
+       "seat",
+       "seat_trim",
+       "gloss",
+       "taillight",
+       "underplate",
+       "spring",
+       "exhaust",
+       "tyre",
+       "rim",
+       "rimdark"
+      ]
+     },
+     "node_materials": {
+      "ok": true,
+      "body": [
+       "paint"
+      ],
+      "glass": [
+       "glass"
+      ],
+      "headlight_l": [
+       "headlight"
+      ],
+      "glass_alphaMode": "BLEND",
+      "headlight_emissive": [
+       1,
+       0.848088264465332,
+       0.4479884207248688
+      ],
+      "beacons": null
+     },
+     "triangle_budget": {
+      "ok": true,
+      "tris": 34146,
+      "budget": [
+       25000,
+       40000
+      ]
+     },
+     "bbox_within_3pct": {
+      "ok": true,
+      "measured": {
+       "width": 2.0437,
+       "height": 1.7961,
+       "length": 4.941
+      },
+      "expected": {
+       "width": 1.99,
+       "height": 1.78,
+       "length": 4.93
+      },
+      "rel_error_pct": {
+       "width": 2.7,
+       "height": 0.9,
+       "length": 0.22
+      },
+      "min": [
+       -1.0219,
+       0.0,
+       -2.5563
+      ],
+      "max": [
+       1.0219,
+       1.7961,
+       2.3847
+      ],
+      "width_without_mirrors": 2.014,
+      "note": "whole model including mirrors and roof rails"
+     },
+     "ground_at_y0": {
+      "ok": true,
+      "min_y": 0.0
+     },
+     "symmetric_about_x0": {
+      "ok": true,
+      "min_x": -1.0219,
+      "max_x": 1.0219
+     },
+     "wheels_at_formula_1cm_axle_x": {
+      "ok": true,
+      "expected_radius": 0.37,
+      "expected_width": 0.3,
+      "wheels": {
+       "wheel_fl": {
+        "expected": [
+         0.855,
+         0.37,
+         1.48
+        ],
+        "got": [
+         0.855,
+         0.37,
+         1.48
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.37,
+        "tyre_width_along_x": 0.3,
+        "ok": true
+       },
+       "wheel_fr": {
+        "expected": [
+         -0.855,
+         0.37,
+         1.48
+        ],
+        "got": [
+         -0.855,
+         0.37,
+         1.48
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.37,
+        "tyre_width_along_x": 0.3,
+        "ok": true
+       },
+       "wheel_rl": {
+        "expected": [
+         0.855,
+         0.37,
+         -1.48
+        ],
+        "got": [
+         0.855,
+         0.37,
+         -1.48
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.37,
+        "tyre_width_along_x": 0.3,
+        "ok": true
+       },
+       "wheel_rr": {
+        "expected": [
+         -0.855,
+         0.37,
+         -1.48
+        ],
+        "got": [
+         -0.855,
+         0.37,
+         -1.48
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.37,
+        "tyre_width_along_x": 0.3,
+        "ok": true
+       }
+      }
+     },
+     "tyres_inside_body_width": {
+      "ok": true,
+      "tyre_outer_x": 1.005,
+      "body_half_width": 1.007
+     },
+     "forward_plus_z_left_plus_x": {
+      "ok": true,
+      "flags": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "headlight_l": [
+       0.5345270037651062,
+       0.7546438574790955,
+       2.209080696105957
+      ],
+      "roof_anchor": [
+       0,
+       1.7775084972381592,
+       -0.9609941244125366
+      ],
+      "bonnet_hinge": [
+       0,
+       1.0770903825759888,
+       1.0711500644683838
+      ],
+      "bumper_front": [
+       0,
+       0.5291891694068909,
+       2.073742628097534
+      ],
+      "bumper_rear": [
+       0,
+       0.5388107895851135,
+       -2.2562572956085205
+      ]
+     },
+     "headlights_as_eyes": {
+      "ok": true,
+      "lamps": {
+       "headlight_l": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.302,
+        "lens_height": 0.303,
+        "mean_normal_z": 0.83,
+        "pupil_radius_front_end": 0.097,
+        "ok": true
+       },
+       "headlight_r": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.302,
+        "lens_height": 0.303,
+        "mean_normal_z": 0.83,
+        "pupil_radius_front_end": 0.097,
+        "ok": true
+       }
+      }
+     },
+     "mesh_health": {
+      "ok": true,
+      "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+      "nodes": {
+       "body": {
+        "triangles": 5040,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 816,
+        "area_m2": 9.84,
+        "ok": true
+       },
+       "bonnet": {
+        "triangles": 1000,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 106,
+        "area_m2": 3.779,
+        "ok": true
+       },
+       "bumper_front": {
+        "triangles": 1460,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 270,
+        "area_m2": 4.664,
+        "ok": true
+       },
+       "bumper_rear": {
+        "triangles": 676,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 128,
+        "area_m2": 2.121,
+        "ok": true
+       },
+       "caliper_fl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.111,
+        "ok": true
+       },
+       "caliper_fr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.111,
+        "ok": true
+       },
+       "caliper_rl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.111,
+        "ok": true
+       },
+       "caliper_rr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.111,
+        "ok": true
+       },
+       "chrome": {
+        "triangles": 1352,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 132,
+        "area_m2": 1.164,
+        "ok": true
+       },
+       "glass": {
+        "triangles": 540,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 228,
+        "area_m2": 4.173,
+        "ok": true
+       },
+       "headlight_l": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.092,
+        "ok": true
+       },
+       "headlight_r": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.092,
+        "ok": true
+       },
+       "interior": {
+        "triangles": 3762,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 632,
+        "area_m2": 44.847,
+        "ok": true
+       },
+       "mirror_l": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.122,
+        "ok": true
+       },
+       "mirror_r": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.122,
+        "ok": true
+       },
+       "taillights": {
+        "triangles": 84,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 40,
+        "area_m2": 0.202,
+        "ok": true
+       },
+       "trim": {
+        "triangles": 2456,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 1390,
+        "area_m2": 4.343,
+        "ok": true
+       },
+       "underside": {
+        "triangles": 5992,
+        "degenerate": 0,
+        "nonmanifold_edges": 5,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 134,
+        "area_m2": 55.678,
+        "ok": true
+       },
+       "wheel_fl": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.549,
+        "ok": true
+       },
+       "wheel_fr": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.549,
+        "ok": true
+       },
+       "wheel_rl": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.549,
+        "ok": true
+       },
+       "wheel_rr": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.549,
+        "ok": true
+       }
+      }
+     },
+     "body_normals_outward": {
+      "ok": true,
+      "outward_area_share": 0.992,
+      "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+     }
+    },
+    "ok": true,
+    "tris": 34146,
+    "tris_per_node": {
+     "body": 5040,
+     "bonnet": 1000,
+     "bumper_front": 1460,
+     "bumper_rear": 676,
+     "caliper_fl": 92,
+     "caliper_fr": 92,
+     "caliper_rl": 92,
+     "caliper_rr": 92,
+     "chrome": 1352,
+     "glass": 540,
+     "headlight_l": 168,
+     "headlight_r": 168,
+     "interior": 3762,
+     "mirror_l": 132,
+     "mirror_r": 132,
+     "taillights": 84,
+     "trim": 2456,
+     "underside": 5992,
+     "wheel_fl": 2704,
+     "wheel_fr": 2704,
+     "wheel_rl": 2704,
+     "wheel_rr": 2704
+    }
+   },
+   "genesips_2021": {
+    "file": "/home/devuser/workspace/.tmp/claude-1000/-home-devuser-workspace-GTLinks/f3d8d8eb-2598-4356-be7f-3c9f0b89f1a6/scratchpad/alt/genesips_2021.glb",
+    "bytes": 1314292,
+    "checks": {
+     "required_nodes": {
+      "ok": true,
+      "missing": [],
+      "present": [
+       "body",
+       "bonnet",
+       "bumper_front",
+       "bumper_rear",
+       "caliper_fl",
+       "caliper_fr",
+       "caliper_rl",
+       "caliper_rr",
+       "car",
+       "chrome",
+       "glass",
+       "headlight_l",
+       "headlight_r",
+       "interior",
+       "mirror_l",
+       "mirror_r",
+       "roof_anchor",
+       "taillights",
+       "trim",
+       "underside",
+       "wheel_fl",
+       "wheel_fr",
+       "wheel_rl",
+       "wheel_rr"
+      ]
+     },
+     "flat_hierarchy_under_car": {
+      "ok": true,
+      "roots": [
+       "car"
+      ],
+      "not_direct_children": [],
+      "duplicate_names": []
+     },
+     "materials_standard_pbr_factors": {
+      "ok": true,
+      "offending": [],
+      "extensions": [],
+      "names": [
+       "paint",
+       "trim",
+       "chrome",
+       "plate",
+       "caliper",
+       "steel",
+       "glass",
+       "headlight",
+       "cabin",
+       "headliner",
+       "seat",
+       "seat_trim",
+       "gloss",
+       "taillight",
+       "underplate",
+       "spring",
+       "exhaust",
+       "tyre",
+       "rim",
+       "rimdark"
+      ]
+     },
+     "node_materials": {
+      "ok": true,
+      "body": [
+       "paint"
+      ],
+      "glass": [
+       "glass"
+      ],
+      "headlight_l": [
+       "headlight"
+      ],
+      "glass_alphaMode": "BLEND",
+      "headlight_emissive": [
+       1,
+       0.848088264465332,
+       0.4479884207248688
+      ],
+      "beacons": null
+     },
+     "triangle_budget": {
+      "ok": true,
+      "tris": 35240,
+      "budget": [
+       25000,
+       40000
+      ]
+     },
+     "bbox_within_3pct": {
+      "ok": true,
+      "measured": {
+       "width": 2.0745,
+       "height": 1.7956,
+       "length": 5.142
+      },
+      "expected": {
+       "width": 2.02,
+       "height": 1.8,
+       "length": 5.13
+      },
+      "rel_error_pct": {
+       "width": 2.7,
+       "height": 0.25,
+       "length": 0.23
+      },
+      "min": [
+       -1.0373,
+       -0.0,
+       -2.6673
+      ],
+      "max": [
+       1.0373,
+       1.7956,
+       2.4747
+      ],
+      "width_without_mirrors": 2.0198,
+      "note": "whole model including mirrors and roof rails"
+     },
+     "ground_at_y0": {
+      "ok": true,
+      "min_y": -0.0
+     },
+     "symmetric_about_x0": {
+      "ok": true,
+      "min_x": -1.0373,
+      "max_x": 1.0373
+     },
+     "wheels_at_formula_1cm_axle_x": {
+      "ok": true,
+      "expected_radius": 0.405,
+      "expected_width": 0.28,
+      "wheels": {
+       "wheel_fl": {
+        "expected": [
+         0.86,
+         0.405,
+         1.53
+        ],
+        "got": [
+         0.86,
+         0.405,
+         1.53
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.405,
+        "tyre_width_along_x": 0.28,
+        "ok": true
+       },
+       "wheel_fr": {
+        "expected": [
+         -0.86,
+         0.405,
+         1.53
+        ],
+        "got": [
+         -0.86,
+         0.405,
+         1.53
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.405,
+        "tyre_width_along_x": 0.28,
+        "ok": true
+       },
+       "wheel_rl": {
+        "expected": [
+         0.86,
+         0.405,
+         -1.53
+        ],
+        "got": [
+         0.86,
+         0.405,
+         -1.53
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.405,
+        "tyre_width_along_x": 0.28,
+        "ok": true
+       },
+       "wheel_rr": {
+        "expected": [
+         -0.86,
+         0.405,
+         -1.53
+        ],
+        "got": [
+         -0.86,
+         0.405,
+         -1.53
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.405,
+        "tyre_width_along_x": 0.28,
+        "ok": true
+       }
+      }
+     },
+     "tyres_inside_body_width": {
+      "ok": true,
+      "tyre_outer_x": 1.0,
+      "body_half_width": 1.0099
+     },
+     "forward_plus_z_left_plus_x": {
+      "ok": true,
+      "flags": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "headlight_l": [
+       0.5139175653457642,
+       0.8096941709518433,
+       2.311105728149414
+      ],
+      "roof_anchor": [
+       0,
+       1.78774094581604,
+       -0.8569090962409973
+      ],
+      "bonnet_hinge": [
+       0,
+       1.114534854888916,
+       0.9818181991577148
+      ],
+      "bumper_front": [
+       0,
+       0.554651141166687,
+       2.1627273559570312
+      ],
+      "bumper_rear": [
+       0,
+       0.5860465168952942,
+       -2.3672726154327393
+      ]
+     },
+     "headlights_as_eyes": {
+      "ok": true,
+      "lamps": {
+       "headlight_l": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.332,
+        "lens_height": 0.267,
+        "mean_normal_z": 0.827,
+        "pupil_radius_front_end": 0.085,
+        "ok": true
+       },
+       "headlight_r": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.332,
+        "lens_height": 0.267,
+        "mean_normal_z": 0.827,
+        "pupil_radius_front_end": 0.085,
+        "ok": true
+       }
+      }
+     },
+     "mesh_health": {
+      "ok": true,
+      "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+      "nodes": {
+       "body": {
+        "triangles": 4824,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 738,
+        "area_m2": 8.877,
+        "ok": true
+       },
+       "bonnet": {
+        "triangles": 1204,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 124,
+        "area_m2": 4.466,
+        "ok": true
+       },
+       "bumper_front": {
+        "triangles": 1704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 260,
+        "area_m2": 4.592,
+        "ok": true
+       },
+       "bumper_rear": {
+        "triangles": 696,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 136,
+        "area_m2": 2.383,
+        "ok": true
+       },
+       "caliper_fl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.114,
+        "ok": true
+       },
+       "caliper_fr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.114,
+        "ok": true
+       },
+       "caliper_rl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.114,
+        "ok": true
+       },
+       "caliper_rr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.114,
+        "ok": true
+       },
+       "chrome": {
+        "triangles": 568,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 116,
+        "area_m2": 0.707,
+        "ok": true
+       },
+       "glass": {
+        "triangles": 492,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 212,
+        "area_m2": 3.84,
+        "ok": true
+       },
+       "headlight_l": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.093,
+        "ok": true
+       },
+       "headlight_r": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.093,
+        "ok": true
+       },
+       "interior": {
+        "triangles": 3808,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 626,
+        "area_m2": 44.625,
+        "ok": true
+       },
+       "mirror_l": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.136,
+        "ok": true
+       },
+       "mirror_r": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.136,
+        "ok": true
+       },
+       "taillights": {
+        "triangles": 104,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 56,
+        "area_m2": 0.176,
+        "ok": true
+       },
+       "trim": {
+        "triangles": 4044,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 1696,
+        "area_m2": 5.706,
+        "ok": true
+       },
+       "underside": {
+        "triangles": 6012,
+        "degenerate": 0,
+        "nonmanifold_edges": 5,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 138,
+        "area_m2": 57.396,
+        "ok": true
+       },
+       "wheel_fl": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.956,
+        "ok": true
+       },
+       "wheel_fr": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.956,
+        "ok": true
+       },
+       "wheel_rl": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.956,
+        "ok": true
+       },
+       "wheel_rr": {
+        "triangles": 2704,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.956,
+        "ok": true
+       }
+      }
+     },
+     "body_normals_outward": {
+      "ok": true,
+      "outward_area_share": 0.992,
+      "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+     }
+    },
+    "ok": true,
+    "tris": 35240,
+    "tris_per_node": {
+     "body": 4824,
+     "bonnet": 1204,
+     "bumper_front": 1704,
+     "bumper_rear": 696,
+     "caliper_fl": 92,
+     "caliper_fr": 92,
+     "caliper_rl": 92,
+     "caliper_rr": 92,
+     "chrome": 568,
+     "glass": 492,
+     "headlight_l": 168,
+     "headlight_r": 168,
+     "interior": 3808,
+     "mirror_l": 132,
+     "mirror_r": 132,
+     "taillights": 104,
+     "trim": 4044,
+     "underside": 6012,
+     "wheel_fl": 2704,
+     "wheel_fr": 2704,
+     "wheel_rl": 2704,
+     "wheel_rr": 2704
+    }
+   },
+   "rangeroller_2026": {
+    "file": "/home/devuser/workspace/.tmp/claude-1000/-home-devuser-workspace-GTLinks/f3d8d8eb-2598-4356-be7f-3c9f0b89f1a6/scratchpad/alt/rangeroller_2026.glb",
+    "bytes": 1221676,
+    "checks": {
+     "required_nodes": {
+      "ok": true,
+      "missing": [],
+      "present": [
+       "body",
+       "bonnet",
+       "bumper_front",
+       "bumper_rear",
+       "caliper_fl",
+       "caliper_fr",
+       "caliper_rl",
+       "caliper_rr",
+       "car",
+       "glass",
+       "headlight_l",
+       "headlight_r",
+       "interior",
+       "mirror_l",
+       "mirror_r",
+       "roof_anchor",
+       "taillights",
+       "trim",
+       "underside",
+       "wheel_fl",
+       "wheel_fr",
+       "wheel_rl",
+       "wheel_rr"
+      ]
+     },
+     "flat_hierarchy_under_car": {
+      "ok": true,
+      "roots": [
+       "car"
+      ],
+      "not_direct_children": [],
+      "duplicate_names": []
+     },
+     "materials_standard_pbr_factors": {
+      "ok": true,
+      "offending": [],
+      "extensions": [],
+      "names": [
+       "paint",
+       "trim",
+       "gloss",
+       "plate",
+       "caliper",
+       "steel",
+       "glass",
+       "headlight",
+       "cabin",
+       "headliner",
+       "seat",
+       "seat_trim",
+       "chrome",
+       "taillight",
+       "underplate",
+       "spring",
+       "exhaust",
+       "tyre",
+       "rim",
+       "rimdark"
+      ]
+     },
+     "node_materials": {
+      "ok": true,
+      "body": [
+       "paint"
+      ],
+      "glass": [
+       "glass"
+      ],
+      "headlight_l": [
+       "headlight"
+      ],
+      "glass_alphaMode": "BLEND",
+      "headlight_emissive": [
+       1,
+       0.848088264465332,
+       0.4479884207248688
+      ],
+      "beacons": null
+     },
+     "triangle_budget": {
+      "ok": true,
+      "tris": 33902,
+      "budget": [
+       25000,
+       40000
+      ]
+     },
+     "bbox_within_3pct": {
+      "ok": true,
+      "measured": {
+       "width": 2.0437,
+       "height": 1.8328,
+       "length": 4.9184
+      },
+      "expected": {
+       "width": 1.99,
+       "height": 1.82,
+       "length": 4.9
+      },
+      "rel_error_pct": {
+       "width": 2.7,
+       "height": 0.7,
+       "length": 0.38
+      },
+      "min": [
+       -1.0219,
+       0.0,
+       -2.6015
+      ],
+      "max": [
+       1.0219,
+       1.8328,
+       2.3169
+      ],
+      "width_without_mirrors": 1.9899,
+      "note": "whole model including mirrors and roof rails"
+     },
+     "ground_at_y0": {
+      "ok": true,
+      "min_y": 0.0
+     },
+     "symmetric_about_x0": {
+      "ok": true,
+      "min_x": -1.0219,
+      "max_x": 1.0219
+     },
+     "wheels_at_formula_1cm_axle_x": {
+      "ok": true,
+      "expected_radius": 0.385,
+      "expected_width": 0.27,
+      "wheels": {
+       "wheel_fl": {
+        "expected": [
+         0.825,
+         0.385,
+         1.45
+        ],
+        "got": [
+         0.825,
+         0.385,
+         1.45
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.385,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       },
+       "wheel_fr": {
+        "expected": [
+         -0.825,
+         0.385,
+         1.45
+        ],
+        "got": [
+         -0.825,
+         0.385,
+         1.45
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.385,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       },
+       "wheel_rl": {
+        "expected": [
+         0.825,
+         0.385,
+         -1.45
+        ],
+        "got": [
+         0.825,
+         0.385,
+         -1.45
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.385,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       },
+       "wheel_rr": {
+        "expected": [
+         -0.825,
+         0.385,
+         -1.45
+        ],
+        "got": [
+         -0.825,
+         0.385,
+         -1.45
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.385,
+        "tyre_width_along_x": 0.27,
+        "ok": true
+       }
+      }
+     },
+     "tyres_inside_body_width": {
+      "ok": true,
+      "tyre_outer_x": 0.96,
+      "body_half_width": 0.9949
+     },
+     "forward_plus_z_left_plus_x": {
+      "ok": true,
+      "flags": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "headlight_l": [
+       0.6183637380599976,
+       0.9575137495994568,
+       2.1844654083251953
+      ],
+      "roof_anchor": [
+       0,
+       1.8129405975341797,
+       -1.089455485343933
+      ],
+      "bonnet_hinge": [
+       0,
+       1.159011960029602,
+       0.9003960490226746
+      ],
+      "bumper_front": [
+       0,
+       0.5936898589134216,
+       2.003861427307129
+      ],
+      "bumper_rear": [
+       0,
+       0.5839571952819824,
+       -2.2961385250091553
+      ]
+     },
+     "headlights_as_eyes": {
+      "ok": true,
+      "lamps": {
+       "headlight_l": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.251,
+        "lens_height": 0.19,
+        "mean_normal_z": 0.804,
+        "pupil_radius_front_end": 0.061,
+        "ok": true
+       },
+       "headlight_r": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.251,
+        "lens_height": 0.19,
+        "mean_normal_z": 0.804,
+        "pupil_radius_front_end": 0.061,
+        "ok": true
+       }
+      }
+     },
+     "mesh_health": {
+      "ok": true,
+      "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+      "nodes": {
+       "body": {
+        "triangles": 5536,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 742,
+        "area_m2": 10.632,
+        "ok": true
+       },
+       "bonnet": {
+        "triangles": 2104,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 276,
+        "area_m2": 5.874,
+        "ok": true
+       },
+       "bumper_front": {
+        "triangles": 1028,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 240,
+        "area_m2": 3.897,
+        "ok": true
+       },
+       "bumper_rear": {
+        "triangles": 780,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 152,
+        "area_m2": 2.559,
+        "ok": true
+       },
+       "caliper_fl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "caliper_fr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "caliper_rl": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "caliper_rr": {
+        "triangles": 92,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.113,
+        "ok": true
+       },
+       "glass": {
+        "triangles": 552,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 232,
+        "area_m2": 4.224,
+        "ok": true
+       },
+       "headlight_l": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.052,
+        "ok": true
+       },
+       "headlight_r": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.052,
+        "ok": true
+       },
+       "interior": {
+        "triangles": 3792,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 662,
+        "area_m2": 44.386,
+        "ok": true
+       },
+       "mirror_l": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.118,
+        "ok": true
+       },
+       "mirror_r": {
+        "triangles": 132,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.118,
+        "ok": true
+       },
+       "taillights": {
+        "triangles": 48,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 32,
+        "area_m2": 0.075,
+        "ok": true
+       },
+       "trim": {
+        "triangles": 3044,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 1314,
+        "area_m2": 4.522,
+        "ok": true
+       },
+       "underside": {
+        "triangles": 6050,
+        "degenerate": 0,
+        "nonmanifold_edges": 5,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 136,
+        "area_m2": 56.681,
+        "ok": true
+       },
+       "wheel_fl": {
+        "triangles": 2500,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.744,
+        "ok": true
+       },
+       "wheel_fr": {
+        "triangles": 2500,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.744,
+        "ok": true
+       },
+       "wheel_rl": {
+        "triangles": 2500,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.744,
+        "ok": true
+       },
+       "wheel_rr": {
+        "triangles": 2500,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 3.744,
+        "ok": true
+       }
+      }
+     },
+     "body_normals_outward": {
+      "ok": true,
+      "outward_area_share": 1.0,
+      "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+     }
+    },
+    "ok": true,
+    "tris": 33902,
+    "tris_per_node": {
+     "body": 5536,
+     "bonnet": 2104,
+     "bumper_front": 1028,
+     "bumper_rear": 780,
+     "caliper_fl": 92,
+     "caliper_fr": 92,
+     "caliper_rl": 92,
+     "caliper_rr": 92,
+     "glass": 552,
+     "headlight_l": 168,
+     "headlight_r": 168,
+     "interior": 3792,
+     "mirror_l": 132,
+     "mirror_r": 132,
+     "taillights": 48,
+     "trim": 3044,
+     "underside": 6050,
+     "wheel_fl": 2500,
+     "wheel_fr": 2500,
+     "wheel_rl": 2500,
+     "wheel_rr": 2500
+    }
+   },
+   "patrol": {
+    "file": "/home/devuser/workspace/.tmp/claude-1000/-home-devuser-workspace-GTLinks/f3d8d8eb-2598-4356-be7f-3c9f0b89f1a6/scratchpad/alt/patrol.glb",
+    "bytes": 564716,
+    "checks": {
+     "required_nodes": {
+      "ok": true,
+      "missing": [],
+      "present": [
+       "aerial",
+       "beacon_l",
+       "beacon_r",
+       "body",
+       "car",
+       "chrome",
+       "glass",
+       "headlight_l",
+       "headlight_r",
+       "interior",
+       "lightbar",
+       "livery",
+       "roof_anchor",
+       "taillights",
+       "trim",
+       "underside",
+       "wheel_fl",
+       "wheel_fr",
+       "wheel_rl",
+       "wheel_rr"
+      ]
+     },
+     "flat_hierarchy_under_car": {
+      "ok": true,
+      "roots": [
+       "car"
+      ],
+      "not_direct_children": [],
+      "duplicate_names": []
+     },
+     "materials_standard_pbr_factors": {
+      "ok": true,
+      "offending": [],
+      "extensions": [],
+      "names": [
+       "trim",
+       "beacon_blue",
+       "beacon_red",
+       "paint",
+       "livery_blue",
+       "hiviz",
+       "chrome",
+       "glass",
+       "headlight",
+       "cabin",
+       "headliner",
+       "seat",
+       "steel",
+       "livery_red",
+       "taillight",
+       "gloss",
+       "plate",
+       "underplate",
+       "spring",
+       "exhaust",
+       "tyre",
+       "rim",
+       "rimdark"
+      ]
+     },
+     "node_materials": {
+      "ok": true,
+      "body": [
+       "chrome",
+       "hiviz",
+       "livery_blue",
+       "paint",
+       "trim"
+      ],
+      "glass": [
+       "glass"
+      ],
+      "headlight_l": [
+       "headlight"
+      ],
+      "glass_alphaMode": "BLEND",
+      "headlight_emissive": [
+       1,
+       0.848088264465332,
+       0.4479884207248688
+      ],
+      "beacons": [
+       [
+        "beacon_blue"
+       ],
+       [
+        "beacon_red"
+       ]
+      ]
+     },
+     "triangle_budget": {
+      "ok": true,
+      "tris": 15164,
+      "budget": [
+       12000,
+       18000
+      ]
+     },
+     "bbox_within_3pct": {
+      "ok": true,
+      "measured": {
+       "width": 2.0027,
+       "height": 1.75,
+       "length": 4.85
+      },
+      "expected": {
+       "width": 1.95,
+       "height": 1.75,
+       "length": 4.85
+      },
+      "rel_error_pct": {
+       "width": 2.7,
+       "height": 0.0,
+       "length": 0.0
+      },
+      "min": [
+       -1.0013,
+       0.0,
+       -2.5376
+      ],
+      "max": [
+       1.0013,
+       2.2201,
+       2.3124
+      ],
+      "width_without_mirrors": 2.0027,
+      "note": "height excludes the roof lightbar, beacons and aerial; overall top y = 2.220"
+     },
+     "ground_at_y0": {
+      "ok": true,
+      "min_y": 0.0
+     },
+     "symmetric_about_x0": {
+      "ok": true,
+      "min_x": -1.0013,
+      "max_x": 1.0013
+     },
+     "wheels_at_formula_1cm_axle_x": {
+      "ok": true,
+      "expected_radius": 0.375,
+      "expected_width": 0.26,
+      "wheels": {
+       "wheel_fl": {
+        "expected": [
+         0.83,
+         0.375,
+         1.425
+        ],
+        "got": [
+         0.83,
+         0.375,
+         1.425
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.375,
+        "tyre_width_along_x": 0.26,
+        "ok": true
+       },
+       "wheel_fr": {
+        "expected": [
+         -0.83,
+         0.375,
+         1.425
+        ],
+        "got": [
+         -0.83,
+         0.375,
+         1.425
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.375,
+        "tyre_width_along_x": 0.26,
+        "ok": true
+       },
+       "wheel_rl": {
+        "expected": [
+         0.83,
+         0.375,
+         -1.425
+        ],
+        "got": [
+         0.83,
+         0.375,
+         -1.425
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.375,
+        "tyre_width_along_x": 0.26,
+        "ok": true
+       },
+       "wheel_rr": {
+        "expected": [
+         -0.83,
+         0.375,
+         -1.425
+        ],
+        "got": [
+         -0.83,
+         0.375,
+         -1.425
+        ],
+        "max_abs_err_m": 0.0,
+        "identity_rotation": true,
+        "tyre_radius": 0.375,
+        "tyre_width_along_x": 0.26,
+        "ok": true
+       }
+      }
+     },
+     "tyres_inside_body_width": {
+      "ok": true,
+      "tyre_outer_x": 0.96,
+      "body_half_width": 1.0013
+     },
+     "forward_plus_z_left_plus_x": {
+      "ok": true,
+      "flags": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ],
+      "headlight_l": [
+       0.5275161266326904,
+       0.8074605464935303,
+       2.084244728088379
+      ],
+      "roof_anchor": [
+       0,
+       1.7468020915985107,
+       -1.0417553186416626
+      ],
+      "bonnet_hinge": null,
+      "bumper_front": null,
+      "bumper_rear": null
+     },
+     "headlights_as_eyes": {
+      "ok": true,
+      "lamps": {
+       "headlight_l": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.317,
+        "lens_height": 0.258,
+        "mean_normal_z": 0.831,
+        "pupil_radius_front_end": 0.082,
+        "ok": true
+       },
+       "headlight_r": {
+        "centre_offset_xy_m": 0.0,
+        "lens_width": 0.317,
+        "lens_height": 0.258,
+        "mean_normal_z": 0.831,
+        "pupil_radius_front_end": 0.082,
+        "ok": true
+       }
+      }
+     },
+     "mesh_health": {
+      "ok": true,
+      "rule": "all nodes: no degenerate triangles, vertex normals agree with winding; shell nodes (body, bonnet, bumper_front, bumper_rear, glass): no edge shared by more than two triangles, consistent winding across shared edges",
+      "nodes": {
+       "aerial": {
+        "triangles": 44,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.019,
+        "ok": true
+       },
+       "beacon_l": {
+        "triangles": 44,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.308,
+        "ok": true
+       },
+       "beacon_r": {
+        "triangles": 44,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.308,
+        "ok": true
+       },
+       "body": {
+        "triangles": 5076,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 810,
+        "area_m2": 14.807,
+        "ok": true
+       },
+       "chrome": {
+        "triangles": 192,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 0.176,
+        "ok": true
+       },
+       "glass": {
+        "triangles": 288,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 144,
+        "area_m2": 3.579,
+        "ok": true
+       },
+       "headlight_l": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.084,
+        "ok": true
+       },
+       "headlight_r": {
+        "triangles": 168,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 24,
+        "area_m2": 0.084,
+        "ok": true
+       },
+       "interior": {
+        "triangles": 1256,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 430,
+        "area_m2": 32.531,
+        "ok": true
+       },
+       "lightbar": {
+        "triangles": 112,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 1.015,
+        "ok": true
+       },
+       "livery": {
+        "triangles": 440,
+        "degenerate": 0,
+        "nonmanifold_edges": 25,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 1.259,
+        "ok": true
+       },
+       "taillights": {
+        "triangles": 84,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 40,
+        "area_m2": 0.19,
+        "ok": true
+       },
+       "trim": {
+        "triangles": 2620,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 1404,
+        "area_m2": 5.723,
+        "ok": true
+       },
+       "underside": {
+        "triangles": 1060,
+        "degenerate": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 0,
+        "area_m2": 35.476,
+        "ok": true
+       },
+       "wheel_fl": {
+        "triangles": 892,
+        "degenerate": 0,
+        "nonmanifold_edges": 20,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 20,
+        "area_m2": 2.662,
+        "ok": true
+       },
+       "wheel_fr": {
+        "triangles": 892,
+        "degenerate": 0,
+        "nonmanifold_edges": 20,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 20,
+        "area_m2": 2.662,
+        "ok": true
+       },
+       "wheel_rl": {
+        "triangles": 892,
+        "degenerate": 0,
+        "nonmanifold_edges": 20,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 20,
+        "area_m2": 2.662,
+        "ok": true
+       },
+       "wheel_rr": {
+        "triangles": 892,
+        "degenerate": 0,
+        "nonmanifold_edges": 20,
+        "inconsistent_winding_edges": 0,
+        "normal_disagreements": 0,
+        "sliver_disagreements_under_2cm2": 0,
+        "boundary_edges": 20,
+        "area_m2": 2.662,
+        "ok": true
+       }
+      }
+     },
+     "body_normals_outward": {
+      "ok": true,
+      "outward_area_share": 0.991,
+      "note": "the remainder is arch lips, rims and the panel behind the rear bumper, which face inward or along Z by design"
+     }
+    },
+    "ok": true,
+    "tris": 15164,
+    "tris_per_node": {
+     "aerial": 44,
+     "beacon_l": 44,
+     "beacon_r": 44,
+     "body": 5076,
+     "chrome": 192,
+     "glass": 288,
+     "headlight_l": 168,
+     "headlight_r": 168,
+     "interior": 1256,
+     "lightbar": 112,
+     "livery": 440,
+     "taillights": 84,
+     "trim": 2620,
+     "underside": 1060,
+     "wheel_fl": 892,
+     "wheel_fr": 892,
+     "wheel_rl": 892,
+     "wheel_rr": 892
+    }
+   }
+  },
+  "all_ok": true
+ }
+}
