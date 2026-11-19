@@ -1,0 +1,83 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The "have_*" guards let the pipeline deploy while parts of the game are still landing.
+      # They are removed once the simulation and the site are both in the tree.
+      - id: have
+        run: |
+          echo "sim=$([ -f Cargo.toml ] && [ -x scripts/build-wasm.sh ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "web=$([ -f web/package-lock.json ] && [ -f web/index.html ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.have.outputs.sim == 'true'
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        if: steps.have.outputs.sim == 'true'
+
+      - name: Simulation tests (includes the inverted-rest property suite)
+        if: steps.have.outputs.sim == 'true'
+        run: cargo test --release -p gtlinks-sim
+
+      - name: Install wasm-pack
+        if: steps.have.outputs.sim == 'true'
+        run: curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+
+      - name: Build wasm
+        if: steps.have.outputs.sim == 'true'
+        run: ./scripts/build-wasm.sh
+
+      - uses: actions/setup-node@v4
+        if: steps.have.outputs.sim == 'true' && steps.have.outputs.web == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build site
+        if: steps.have.outputs.sim == 'true' && steps.have.outputs.web == 'true'
+        working-directory: web
+        run: |
+          npm ci
+          npm test --if-present
+          npm run build
+
+      - name: Skeleton page (only until the site builds)
+        if: steps.have.outputs.sim != 'true' || steps.have.outputs.web != 'true'
+        run: |
+          mkdir -p web/dist
+          printf '%s' '<!doctype html><meta charset="utf-8"><title>GTLinks</title><body style="font:16px system-ui;background:#111;color:#eee;display:grid;place-items:center;height:100vh;margin:0"><p>GTLinks is being built. Pipeline OK.</p>' > web/dist/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

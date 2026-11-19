@@ -1,0 +1,9 @@
+target/
+node_modules/
+dist/
+web/src/wasm/pkg/
+.claude-flow/
+*.blend1
+.DS_Store
+evidence/tmp/
+.agentic-qe/
