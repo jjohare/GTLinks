@@ -4,8 +4,8 @@
  "cars": {
   "escapade_2009": {
    "file": "cars/escapade_2009.glb",
-   "bytes": 1305756,
-   "triangles": 39316,
+   "bytes": 1319836,
+   "triangles": 36096,
    "roots": [
     "car"
    ],
@@ -20,7 +20,6 @@
     "caliper_rr",
     "chrome",
     "glass",
-    "grille",
     "headlight_l",
     "headlight_r",
     "interior",
@@ -37,21 +36,18 @@
     "car"
    ],
    "materials": [
+    "cabin",
     "caliper",
-    "carpet",
     "chrome",
-    "dash",
-    "disc",
-    "doorcard",
     "exhaust",
     "glass",
+    "gloss",
     "headlight",
     "headliner",
     "paint",
     "plate",
     "rim",
     "rimdark",
-    "rubber",
     "seat",
     "seat_trim",
     "spring",
@@ -59,24 +55,22 @@
     "taillight",
     "trim",
     "tyre",
-    "underbody",
-    "underplate",
-    "wheel_leather"
+    "underplate"
    ],
    "bbox_min": [
-    -1.0358,
+    -1.0321,
     -0.0,
-    -2.745
+    -2.685
    ],
    "bbox_max": [
-    1.0358,
-    1.8734,
-    2.5389
+    1.0321,
+    1.9324,
+    2.459
    ],
    "size": [
-    2.0716,
-    1.8734,
-    5.2839
+    2.0643,
+    1.9324,
+    5.144
    ],
    "origin": "on the ground, centred between the axles; faces +Z, +X is the car left; wheel_* origins at wheel centres",
    "node_positions": {
@@ -87,18 +81,18 @@
     ],
     "bonnet": [
      0.0,
-     1.13189,
-     1.07692
+     1.19101,
+     0.85
     ],
     "bumper_front": [
      0.0,
-     0.49,
-     2.035
+     0.59,
+     2.155
     ],
     "bumper_rear": [
      0.0,
-     0.52,
-     -2.285
+     0.6,
+     -2.385
     ],
     "caliper_fl": [
      0.855,
@@ -130,20 +124,15 @@
      0,
      0
     ],
-    "grille": [
-     0,
-     0,
-     0
-    ],
     "headlight_l": [
-     0.74862,
-     0.9,
-     2.41038
+     0.6862,
+     0.87385,
+     2.29815
     ],
     "headlight_r": [
-     -0.74862,
-     0.9,
-     2.41038
+     -0.6862,
+     0.87385,
+     2.29815
     ],
     "interior": [
      0,
@@ -151,19 +140,19 @@
      0
     ],
     "mirror_l": [
-     0.94258,
-     1.28,
-     0.419
+     0.916,
+     1.16101,
+     0.62
     ],
     "mirror_r": [
-     -0.94258,
-     1.28,
-     0.419
+     -0.916,
+     1.16101,
+     0.62
     ],
     "roof_anchor": [
      0.0,
-     1.86165,
-     -0.87114
+     1.89,
+     -1.1075
     ],
     "taillights": [
      0,
@@ -210,8 +199,8 @@
   },
   "genesips_2021": {
    "file": "cars/genesips_2021.glb",
-   "bytes": 1225680,
-   "triangles": 37710,
+   "bytes": 1314068,
+   "triangles": 35228,
    "roots": [
     "car"
    ],
@@ -226,7 +215,6 @@
     "caliper_rr",
     "chrome",
     "glass",
-    "grille",
     "headlight_l",
     "headlight_r",
     "interior",
@@ -243,21 +231,18 @@
     "car"
    ],
    "materials": [
+    "cabin",
     "caliper",
-    "carpet",
     "chrome",
-    "dash",
-    "disc",
-    "doorcard",
     "exhaust",
     "glass",
+    "gloss",
     "headlight",
     "headliner",
     "paint",
     "plate",
     "rim",
     "rimdark",
-    "rubber",
     "seat",
     "seat_trim",
     "spring",
@@ -265,24 +250,22 @@
     "taillight",
     "trim",
     "tyre",
-    "underbody",
-    "underplate",
-    "wheel_leather"
+    "underplate"
    ],
    "bbox_min": [
-    -0.9927,
+    -1.0167,
     0.0,
-    -2.62
+    -2.57
    ],
    "bbox_max": [
-    0.9927,
-    1.7199,
-    2.4472
+    1.0167,
+    1.7156,
+    2.392
    ],
    "size": [
-    1.9854,
-    1.7199,
-    5.0672
+    2.0335,
+    1.7156,
+    4.962
    ],
    "origin": "on the ground, centred between the axles; faces +Z, +X is the car left; wheel_* origins at wheel centres",
    "node_positions": {
@@ -293,18 +276,18 @@
     ],
     "bonnet": [
      0.0,
-     1.09349,
-     0.9646
+     1.065,
+     0.96
     ],
     "bumper_front": [
      0.0,
-     0.48,
-     2.03
+     0.53,
+     2.08
     ],
     "bumper_rear": [
      0.0,
-     0.54,
-     -2.2
+     0.56,
+     -2.27
     ],
     "caliper_fl": [
      0.84,
@@ -336,20 +319,15 @@
      0,
      0
     ],
-    "grille": [
-     0,
-     0,
-     0
-    ],
     "headlight_l": [
-     0.75636,
-     0.86,
-     2.29229
+     0.50362,
+     0.77366,
+     2.22774
     ],
     "headlight_r": [
-     -0.75636,
-     0.86,
-     2.29229
+     -0.50362,
+     0.77366,
+     2.22774
     ],
     "interior": [
      0,
@@ -357,19 +335,19 @@
      0
     ],
     "mirror_l": [
-     0.92851,
-     1.1,
-     0.1825
+     0.9,
+     1.025,
+     0.6
     ],
     "mirror_r": [
-     -0.92851,
-     1.1,
-     0.1825
+     -0.9,
+     1.025,
+     0.6
     ],
     "roof_anchor": [
      0.0,
-     1.69309,
-     -0.67385
+     1.70839,
+     -0.825
     ],
     "taillights": [
      0,
@@ -416,8 +394,8 @@
   },
   "glug_2017": {
    "file": "cars/glug_2017.glb",
-   "bytes": 1209548,
-   "triangles": 40218,
+   "bytes": 1291212,
+   "triangles": 34890,
    "roots": [
     "car"
    ],
@@ -432,7 +410,6 @@
     "caliper_rr",
     "chrome",
     "glass",
-    "grille",
     "headlight_l",
     "headlight_r",
     "interior",
@@ -449,21 +426,18 @@
     "car"
    ],
    "materials": [
+    "cabin",
     "caliper",
-    "carpet",
     "chrome",
-    "dash",
-    "disc",
-    "doorcard",
     "exhaust",
     "glass",
+    "gloss",
     "headlight",
     "headliner",
     "paint",
     "plate",
     "rim",
     "rimdark",
-    "rubber",
     "seat",
     "seat_trim",
     "spring",
@@ -471,24 +445,22 @@
     "taillight",
     "trim",
     "tyre",
-    "underbody",
-    "underplate",
-    "wheel_leather"
+    "underplate"
    ],
    "bbox_min": [
-    -0.97,
+    -0.9911,
     0.0,
-    -2.69
+    -2.66
    ],
    "bbox_max": [
-    0.97,
-    1.8407,
-    2.5478
+    0.9911,
+    1.8648,
+    2.481
    ],
    "size": [
-    1.94,
-    1.8407,
-    5.2378
+    1.9821,
+    1.8648,
+    5.141
    ],
    "origin": "on the ground, centred between the axles; faces +Z, +X is the car left; wheel_* origins at wheel centres",
    "node_positions": {
@@ -499,18 +471,18 @@
     ],
     "bonnet": [
      0.0,
-     1.13527,
-     0.981
+     1.11945,
+     1.1
     ],
     "bumper_front": [
      0.0,
-     0.52,
-     2.1
+     0.55,
+     2.17
     ],
     "bumper_rear": [
      0.0,
-     0.54,
-     -2.21
+     0.56,
+     -2.36
     ],
     "caliper_fl": [
      0.83,
@@ -542,20 +514,15 @@
      0,
      0
     ],
-    "grille": [
-     0,
-     0,
-     0
-    ],
     "headlight_l": [
-     0.6451,
-     0.9,
-     2.42031
+     0.51912,
+     0.78429,
+     2.3054
     ],
     "headlight_r": [
-     -0.6451,
-     0.9,
-     2.42031
+     -0.51912,
+     0.78429,
+     2.3054
     ],
     "interior": [
      0,
@@ -563,19 +530,19 @@
      0
     ],
     "mirror_l": [
-     0.90506,
-     1.22,
-     0.1602
+     0.897,
+     1.07445,
+     0.74
     ],
     "mirror_r": [
-     -0.90506,
-     1.22,
-     0.1602
+     -0.897,
+     1.07445,
+     0.74
     ],
     "roof_anchor": [
      0.0,
-     1.83595,
-     -0.86067
+     1.84741,
+     -1.0
     ],
     "taillights": [
      0,
@@ -620,10 +587,184 @@
    },
    "extensions_used": []
   },
+  "patrol": {
+   "file": "cars/patrol.glb",
+   "bytes": 569364,
+   "triangles": 15168,
+   "roots": [
+    "car"
+   ],
+   "nodes": [
+    "aerial",
+    "beacon_l",
+    "beacon_r",
+    "body",
+    "chrome",
+    "glass",
+    "headlight_l",
+    "headlight_r",
+    "interior",
+    "lightbar",
+    "livery",
+    "roof_anchor",
+    "taillights",
+    "trim",
+    "underside",
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_rl",
+    "wheel_rr",
+    "car"
+   ],
+   "materials": [
+    "beacon_blue",
+    "beacon_red",
+    "cabin",
+    "chrome",
+    "exhaust",
+    "glass",
+    "gloss",
+    "headlight",
+    "headliner",
+    "hiviz",
+    "livery_blue",
+    "livery_red",
+    "paint",
+    "plate",
+    "rim",
+    "rimdark",
+    "seat",
+    "spring",
+    "steel",
+    "taillight",
+    "trim",
+    "tyre",
+    "underplate"
+   ],
+   "bbox_min": [
+    -0.9757,
+    0.0,
+    -2.465
+   ],
+   "bbox_max": [
+    0.9757,
+    2.1708,
+    2.235
+   ],
+   "size": [
+    1.9513,
+    2.1708,
+    4.7
+   ],
+   "origin": "on the ground, centred between the axles; faces +Z, +X is the car left; wheel_* origins at wheel centres",
+   "node_positions": {
+    "aerial": [
+     0.25,
+     1.65078,
+     -1.91855
+    ],
+    "beacon_l": [
+     0.341,
+     1.75993,
+     -0.16388
+    ],
+    "beacon_r": [
+     -0.341,
+     1.75993,
+     -0.16388
+    ],
+    "body": [
+     0,
+     0,
+     0
+    ],
+    "chrome": [
+     0,
+     0,
+     0
+    ],
+    "glass": [
+     0,
+     0,
+     0
+    ],
+    "headlight_l": [
+     0.51483,
+     0.78449,
+     2.00682
+    ],
+    "headlight_r": [
+     -0.51483,
+     0.78449,
+     2.00682
+    ],
+    "interior": [
+     0,
+     0,
+     0
+    ],
+    "lightbar": [
+     0.0,
+     1.67993,
+     -0.16388
+    ],
+    "livery": [
+     0,
+     0,
+     0
+    ],
+    "roof_anchor": [
+     0.0,
+     1.69685,
+     -1.0125
+    ],
+    "taillights": [
+     0,
+     0,
+     0
+    ],
+    "trim": [
+     0,
+     0,
+     0
+    ],
+    "underside": [
+     0,
+     0,
+     0
+    ],
+    "wheel_fl": [
+     0.81,
+     0.36,
+     1.375
+    ],
+    "wheel_fr": [
+     -0.81,
+     0.36,
+     1.375
+    ],
+    "wheel_rl": [
+     0.81,
+     0.36,
+     -1.375
+    ],
+    "wheel_rr": [
+     -0.81,
+     0.36,
+     -1.375
+    ],
+    "car": [
+     0,
+     0,
+     0
+    ]
+   },
+   "extensions_used": []
+  },
   "rangeroller_2026": {
    "file": "cars/rangeroller_2026.glb",
-   "bytes": 1339760,
-   "triangles": 37170,
+   "bytes": 1222360,
+   "triangles": 34016,
    "roots": [
     "car"
    ],
@@ -636,15 +777,12 @@
     "caliper_fr",
     "caliper_rl",
     "caliper_rr",
-    "chrome",
     "glass",
-    "grille",
     "headlight_l",
     "headlight_r",
     "interior",
     "mirror_l",
     "mirror_r",
-    "pillars",
     "roof_anchor",
     "taillights",
     "trim",
@@ -656,21 +794,18 @@
     "car"
    ],
    "materials": [
+    "cabin",
     "caliper",
-    "carpet",
     "chrome",
-    "dash",
-    "disc",
-    "doorcard",
     "exhaust",
     "glass",
+    "gloss",
     "headlight",
     "headliner",
     "paint",
     "plate",
     "rim",
     "rimdark",
-    "rubber",
     "seat",
     "seat_trim",
     "spring",
@@ -678,24 +813,22 @@
     "taillight",
     "trim",
     "tyre",
-    "underbody",
-    "underplate",
-    "wheel_leather"
+    "underplate"
    ],
    "bbox_min": [
-    -1.025,
+    -1.0527,
     -0.0,
-    -2.68
+    -2.6754
    ],
    "bbox_max": [
-    1.025,
-    1.8622,
-    2.4881
+    1.0527,
+    1.8819,
+    2.393
    ],
    "size": [
-    2.05,
-    1.8622,
-    5.1681
+    2.1054,
+    1.8819,
+    5.0684
    ],
    "origin": "on the ground, centred between the axles; faces +Z, +X is the car left; wheel_* origins at wheel centres",
    "node_positions": {
@@ -706,18 +839,18 @@
     ],
     "bonnet": [
      0.0,
-     1.16257,
-     1.01075
+     1.19085,
+     0.92
     ],
     "bumper_front": [
      0.0,
-     0.56,
-     2.09
+     0.61,
+     2.08
     ],
     "bumper_rear": [
      0.0,
-     0.58,
-     -2.26
+     0.6,
+     -2.37
     ],
     "caliper_fl": [
      0.85,
@@ -739,30 +872,20 @@
      0.4,
      -1.5
     ],
-    "chrome": [
-     0,
-     0,
-     0
-    ],
     "glass": [
      0,
      0,
      0
     ],
-    "grille": [
-     0,
-     0,
-     0
-    ],
     "headlight_l": [
-     0.64606,
-     0.92,
-     2.44119
+     0.6335,
+     0.98378,
+     2.26082
     ],
     "headlight_r": [
-     -0.64606,
-     0.92,
-     2.44119
+     -0.6335,
+     0.98378,
+     2.26082
     ],
     "interior": [
      0,
@@ -770,24 +893,19 @@
      0
     ],
     "mirror_l": [
-     0.96133,
-     1.3,
-     0.329
+     0.963,
+     1.16085,
+     0.66
     ],
     "mirror_r": [
-     -0.96133,
-     1.3,
-     0.329
-    ],
-    "pillars": [
-     0,
-     0,
-     0
+     -0.963,
+     1.16085,
+     0.66
     ],
     "roof_anchor": [
      0.0,
-     1.84195,
-     -0.9234
+     1.86281,
+     -1.12
     ],
     "taillights": [
      0,
@@ -2266,7 +2384,7 @@
   }
  },
  "totals": {
-  "files": 36,
-  "bytes": 10512596
+  "files": 37,
+  "bytes": 11148692
  }
 }

@@ -1,5 +1,5 @@
 import {
-  Group, Vector3, Quaternion, Raycaster, Vector2, Box3, Mesh, CircleGeometry, MeshBasicNodeMaterial, PerspectiveCamera, Object3D, MathUtils, AdditiveBlending,
+  Group, Vector3, Quaternion, Raycaster, Vector2, Box3, Mesh, CircleGeometry, MeshBasicNodeMaterial, BoxGeometry, MeshStandardNodeMaterial, PerspectiveCamera, Object3D, MathUtils, AdditiveBlending,
 } from 'three/webgpu';
 import { instantiate, normaliseHeight, CARS } from '../render/assets';
 import { CarView } from './carView';
@@ -52,6 +52,8 @@ export class Lodge {
   readonly tablePos = new Vector3();
   /** Middle of the parked row (aim point for the lodge camera). */
   readonly rowCentre = new Vector3();
+  readonly introPos = new Vector3();
+  readonly introLook = new Vector3();
 
   private steins: St[] = [];
   private ring: Mesh;
@@ -99,7 +101,10 @@ export class Lodge {
     this.camHome.set(L.x + 3, L.y + 4.6, L.z + 5);
     const d = new Vector3(S.x - this.camHome.x, 0, S.z - this.camHome.z).normalize();
     const right = new Vector3(-d.z, 0, d.x);
-    this.rowCentre.set(S.x - d.x * 6, S.y, S.z - d.z * 6);
+    this.rowCentre.set(S.x - d.x * 8, S.y, S.z - d.z * 8);
+    // opening establishing shot: the whole chalet, terrace and chairlift against the mountain, from the apron side
+    this.introPos.set(L.x + 34, L.y + 11, L.z + 38);
+    this.introLook.set(L.x - 2, L.y + 5, L.z - 4);
 
     this.tableModel = bakeStatic(await instantiate('props/table.glb'));
     this.tablePos.set(this.camHome.x + d.x * 6.5, L.y + 0.05, this.camHome.z + d.z * 6.5);
@@ -128,12 +133,14 @@ export class Lodge {
 
     // four cars on the apron, turned to face the terrace; the row sits just short of the spawn point so the
     // car that drives off never meets its neighbours
+    // a level gravel apron under the row: its top sits at the highest terrain under it, its body runs down into the slope
+    const padY = this.buildApron(game, right, d);
     for (let i = 0; i < CARS.length; i++) {
       const cv = await CarView.create(CARS[i]);
-      const off = (i - 1.5) * 5.4, stag = i % 2 === 0 ? 0 : 1.2;
-      const x = this.rowCentre.x + right.x * off + d.x * stag, z = this.rowCentre.z + right.z * off + d.z * stag;
-      const y = game.height_at(x, z);
-      const yaw = Math.atan2(-d.x, -d.z) + (i % 2 === 0 ? 0.55 : -0.55);
+      const off = (i - 1.5) * 5.4;
+      const x = this.rowCentre.x + right.x * off, z = this.rowCentre.z + right.z * off;
+      const y = padY;
+      const yaw = Math.atan2(-d.x, -d.z) + 0.45;
       cv.root.position.set(x, y, z);
       cv.root.rotation.y = yaw;
       cv.restWheels();
@@ -164,6 +171,35 @@ export class Lodge {
       s.obj.scale.setScalar(s.base * PILE_SCALE);
     }
     this.hooks.onCount(this.load.count, this.load.canGo);
+  }
+
+  private apron: Mesh[] = [];
+
+  /** Build the apron slab and bay lines; returns the level height the cars rest at. */
+  private buildApron(game: Game, right: Vector3, d: Vector3): number {
+    let top = -Infinity;
+    for (let a = -14; a <= 14; a += 4) for (let b = -5.5; b <= 5.5; b += 3.7) top = Math.max(top, game.height_at(this.rowCentre.x + right.x * a + d.x * b, this.rowCentre.z + right.z * a + d.z * b));
+    const padY = top + 0.05;
+    const yaw = Math.atan2(right.x, right.z);
+    const gravel = new MeshStandardNodeMaterial({ color: 0x9a9283, roughness: 0.97 });
+    const slab = new Mesh(new BoxGeometry(30, 6, 12), gravel);
+    slab.position.set(this.rowCentre.x, padY - 3, this.rowCentre.z);
+    slab.rotation.y = yaw;
+    slab.receiveShadow = true;
+    this.group.add(slab);
+    const paint = new MeshStandardNodeMaterial({ color: 0xe9e6dc, roughness: 0.8 });
+    const line = new BoxGeometry(0.12, 0.02, 7.5);
+    const lines: Mesh[] = [];
+    for (let i = 0; i <= 4; i++) {
+      const m = new Mesh(line, paint);
+      const off = (i - 2) * 5.4;
+      m.position.set(this.rowCentre.x + right.x * off, padY + 0.012, this.rowCentre.z + right.z * off);
+      m.rotation.y = Math.atan2(d.x, d.z);
+      m.receiveShadow = true;
+      this.group.add(m); lines.push(m);
+    }
+    this.apron = [slab, ...lines];
+    return padY;
   }
 
   /** The selected car's view. */
@@ -483,6 +519,11 @@ export class Lodge {
     for (const s of this.steins) disposeTree(s.obj);
     disposeTree(this.lodgeModel, true);
     disposeTree(this.tableModel, true);
+    for (const m of this.apron) { m.removeFromParent(); }
+    this.apron[0]?.geometry.dispose();
+    (this.apron[0]?.material as MeshStandardNodeMaterial | undefined)?.dispose();
+    this.apron[1]?.geometry.dispose();
+    (this.apron[1]?.material as MeshStandardNodeMaterial | undefined)?.dispose();
     this.ring.geometry.dispose();
     this.ringMat.dispose();
     this.group.removeFromParent();

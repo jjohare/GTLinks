@@ -8,6 +8,9 @@ export class AudioEngine {
   private _muted = false;
   private surface = 0;
   private engineOn = false;
+  private sirens: { osc: OscillatorNode; gain: GainNode; pan: StereoPannerNode; flip: number; hi: boolean }[] = [];
+  private rotorGain: GainNode | null = null; private rotorPan: StereoPannerNode | null = null; private rotorBp: BiquadFilterNode | null = null; private rotorLfo: OscillatorNode | null = null;
+  private lastListener = { x: 0, y: 0, z: 0, has: false };
 
   constructor() {
     try { this._muted = localStorage.getItem('gtlinks.muted') === '1'; } catch { /* storage may be blocked */ }
@@ -54,6 +57,63 @@ export class AudioEngine {
     n.connect(this.tyreBp).connect(this.tyreGain).connect(this.master);
     n.start();
     this.engineOn = true;
+    // three European-style two-tone sirens (hi-lo), each through its own pan and distance gain
+    for (let i = 0; i < 3; i++) {
+      const osc = c.createOscillator(); osc.type = 'sawtooth'; osc.frequency.value = 700;
+      const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200;
+      const gain = c.createGain(); gain.gain.value = 0;
+      const pan = c.createStereoPanner();
+      osc.connect(lp).connect(gain).connect(pan).connect(this.master);
+      osc.start();
+      this.sirens.push({ osc, gain, pan, flip: 0, hi: false });
+    }
+    // helicopter: filtered noise chopped at the blade-pass rate
+    const rn = c.createBufferSource(); rn.buffer = this.noiseBuf; rn.loop = true;
+    this.rotorBp = c.createBiquadFilter(); this.rotorBp.type = 'bandpass'; this.rotorBp.frequency.value = 170; this.rotorBp.Q.value = 0.9;
+    this.rotorGain = c.createGain(); this.rotorGain.gain.value = 0;
+    const chop = c.createGain(); chop.gain.value = 0.5;
+    this.rotorLfo = c.createOscillator(); this.rotorLfo.frequency.value = 14;
+    const lfoDepth = c.createGain(); lfoDepth.gain.value = 0.5;
+    this.rotorLfo.connect(lfoDepth).connect(chop.gain);
+    this.rotorPan = c.createStereoPanner();
+    rn.connect(this.rotorBp).connect(chop).connect(this.rotorGain).connect(this.rotorPan).connect(this.master);
+    rn.start(); this.rotorLfo.start();
+  }
+
+  /**
+   * Spatialise the sirens and rotor against the camera: distance attenuation, left/right pan from the camera's right
+   * vector, and a Doppler shift from the radial velocity. `units` carry world position and velocity (m/s).
+   */
+  spatial(listener: { x: number; y: number; z: number; rx: number; rz: number }, dt: number, units: { x: number; y: number; z: number; vx: number; vy: number; vz: number; on: boolean }[], heli: { x: number; y: number; z: number; vx: number; vy: number; vz: number; on: boolean }): void {
+    const c = this.ctx; if (!c || !this.engineOn) return;
+    const t = c.currentTime;
+    const lv = this.lastListener.has && dt > 0 ? { x: (listener.x - this.lastListener.x) / dt, y: (listener.y - this.lastListener.y) / dt, z: (listener.z - this.lastListener.z) / dt } : { x: 0, y: 0, z: 0 };
+    this.lastListener = { x: listener.x, y: listener.y, z: listener.z, has: true };
+    const place = (u: { x: number; y: number; z: number; vx: number; vy: number; vz: number }) => {
+      const dx = u.x - listener.x, dy = u.y - listener.y, dz = u.z - listener.z;
+      const d = Math.hypot(dx, dy, dz) || 1;
+      const radial = ((u.vx - lv.x) * dx + (u.vy - lv.y) * dy + (u.vz - lv.z) * dz) / d; // + = receding
+      const doppler = 343 / (343 + Math.max(-120, Math.min(120, radial)));
+      const pan = Math.max(-1, Math.min(1, (dx * listener.rx + dz * listener.rz) / d));
+      return { d, doppler, pan };
+    };
+    this.sirens.forEach((s, i) => {
+      const u = units[i];
+      if (!u || !u.on) { s.gain.gain.setTargetAtTime(0, t, 0.08); return; }
+      const p = place(u);
+      s.flip -= dt; if (s.flip <= 0) { s.flip = 0.42; s.hi = !s.hi; }
+      s.osc.frequency.setTargetAtTime((s.hi ? 960 : 720) * p.doppler, t, 0.025);
+      s.gain.gain.setTargetAtTime(this._muted ? 0 : Math.min(0.09, 5 / (1 + p.d * 0.09)), t, 0.1);
+      s.pan.pan.setTargetAtTime(p.pan, t, 0.05);
+    });
+    if (this.rotorGain && this.rotorPan && this.rotorBp && this.rotorLfo) {
+      if (!heli.on) { this.rotorGain.gain.setTargetAtTime(0, t, 0.15); return; }
+      const p = place(heli);
+      this.rotorGain.gain.setTargetAtTime(Math.min(0.5, 14 / (1 + p.d * 0.07)), t, 0.1);
+      this.rotorPan.pan.setTargetAtTime(p.pan, t, 0.08);
+      this.rotorBp.frequency.setTargetAtTime(170 * p.doppler, t, 0.1);
+      this.rotorLfo.frequency.setTargetAtTime(14 * p.doppler, t, 0.1);
+    }
   }
 
   toggleMute(): boolean {
@@ -120,5 +180,6 @@ export class AudioEngine {
   chime(): void { this.tone(660, 660, 0.25, 0.1, 'triangle'); this.tone(880, 880, 0.3, 0.1, 'triangle', 0.1); }
   /** Low rumble for the car getting away. */
   alarm(): void { this.tone(220, 330, 0.25, 0.12, 'square'); this.tone(220, 330, 0.25, 0.12, 'square', 0.3); }
+  silencePursuit(): void { const c = this.ctx; if (!c) return; for (const s of this.sirens) s.gain.gain.setTargetAtTime(0, c.currentTime, 0.1); this.rotorGain?.gain.setTargetAtTime(0, c.currentTime, 0.1); }
   silence(): void { if (this.ctx && this.engineOn) { this.engineGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.1); this.tyreGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.1); } }
 }

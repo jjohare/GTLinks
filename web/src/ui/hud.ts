@@ -43,14 +43,15 @@ export class Hud {
   <div id="holeinfo" class="panel"><strong>Hole 1 / 9</strong><small>Par 4</small></div>
   <div id="steinhud" class="panel">&#127866; <b>0</b> steins</div>
   <div id="callouts"></div><div id="notice"></div>
-  <div id="speed"><strong>0</strong><span>MPH</span></div>
+  <div id="speed"><strong>0</strong><span>KM/H</span></div>
   <div id="wheel" class="panel"><small>applied vs input</small><div class="track"><span class="in"></span><span class="out"></span></div></div>
 </section>
 <section id="wreck" class="hidden"><div id="cam">Drone cam</div>
   <div id="lower"><div class="tag">REPLAY</div><div class="body"><div class="name"></div><div class="meta"></div></div></div></section>
 <div id="touch" class="hidden"><div id="stick"><i></i></div><button class="pedal" id="gas">GAS</button><button class="pedal" id="brk">BRAKE</button><button id="hbk">HAND<br>BRAKE</button></div>
+<div id="pursuit"></div>
 <div id="fade" class="on"></div>`;
-    const ids = ['loading', 'fail', 'failmsg', 'loadmsg', 'backend', 'mute', 'lodge', 'drive', 'wreck', 'prev', 'next', 'cname', 'cchar', 's1', 's2', 's3', 'dots', 'help', 'count', 'add', 'rem', 'sever', 'go', 'toast', 'holeinfo', 'steinhud', 'callouts', 'notice', 'speed', 'wheel', 'lower', 'fade', 'touch', 'stick', 'gas', 'brk', 'hbk'];
+    const ids = ['loading', 'fail', 'failmsg', 'loadmsg', 'backend', 'mute', 'lodge', 'drive', 'wreck', 'prev', 'next', 'cname', 'cchar', 's1', 's2', 's3', 'dots', 'help', 'count', 'add', 'rem', 'sever', 'go', 'toast', 'holeinfo', 'steinhud', 'callouts', 'notice', 'speed', 'wheel', 'lower', 'pursuit', 'fade', 'touch', 'stick', 'gas', 'brk', 'hbk'];
     for (const id of ids) this.el[id] = $(root, `#${id}`);
     this.touch = this.el.touch;
     this.isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || new URLSearchParams(location.search).has('touch');
@@ -110,8 +111,11 @@ export class Hud {
   }
 
   // -------- driving
-  drive(o: { mph: number; hole: number; par: number; steins: number; applied: number; input: number }): void {
-    this.el.speed.firstElementChild!.textContent = String(Math.max(0, Math.round(o.mph)));
+  /** Blue and red glow at the screen edges while patrol cars are pursuing; 0 hides it. */
+  pursuit(strength: number): void { const e = this.el.pursuit; e.style.opacity = String(strength); e.classList.toggle('on', strength > 0.01); }
+
+  drive(o: { kph: number; hole: number; par: number; steins: number; applied: number; input: number }): void {
+    this.el.speed.firstElementChild!.textContent = String(Math.max(0, Math.round(o.kph)));
     this.el.holeinfo.innerHTML = `<strong>Hole ${o.hole + 1} / 9</strong><small>Par ${o.par}</small>`;
     this.el.steinhud.innerHTML = `&#127866; <b>${o.steins}</b> steins`;
     const pos = (v: number) => `${50 + Math.max(-1, Math.min(1, -v)) * 46}%`; // left (+1) is shown on the left

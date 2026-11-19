@@ -22,6 +22,13 @@ export class CameraRig {
   private snap = true;
   private droneAngle = 0;
   private droneBase = new Vector3();
+  /** Opening establishing shot (set by the lodge); eased out over `introLen` seconds. */
+  intro: { pos: Vector3; look: Vector3 } | null = null;
+  private introT = 0;
+  private readonly introLen = 5.5;
+
+  startIntro(pos: Vector3, look: Vector3): void { this.intro = { pos: pos.clone(), look: look.clone() }; this.introT = 0; }
+
   /** Test hook: pins the camera to a fixed pose (null releases it). */
   pinned: { pos: Vector3; look: Vector3; fov: number } | null = null;
 
@@ -78,7 +85,19 @@ export class CameraRig {
     goalPos.y += Math.sin(this.t * 0.5) * 0.03;
     this.roll = 0;
     this.shake = 0;
-    this.apply(dt, goalPos, goalLook, this.camera.aspect < 1 ? 62 : 47, 2.4, 3.2, game.height_at(home.x, home.z) + 1.0);
+    let fov = this.camera.aspect < 1 ? 62 : 47;
+    if (this.intro && this.introT < this.introLen) {
+      this.introT += dt;
+      const u = Math.min(1, this.introT / this.introLen), e = u * u * u * (u * (u * 6 - 15) + 10);
+      goalPos.lerpVectors(this.intro.pos, goalPos, e);
+      goalLook.lerpVectors(this.intro.look, goalLook, e);
+      fov += (1 - e) * 10;
+      this.snap = this.snap || u === 0;
+      this.apply(dt, goalPos, goalLook, fov, 30, 30, null);
+      return;
+    }
+    // keep a little of the lodge and the valley in frame while framing the car
+    this.apply(dt, goalPos, goalLook, fov, 2.4, 3.2, game.height_at(home.x, home.z) + 1.0);
   }
 
   /** Chase camera behind the direction of travel; robust through jumps, flips and tumbles. */
@@ -125,7 +144,7 @@ export class CameraRig {
    * Wreck-cam drone: a slow panoramic orbit, then a pull-up and away.
    * `t` is the contract's time-since-Wrecked; `orbit` and `pull` are durations in seconds.
    */
-  updateDrone(dt: number, t: number, car: Vector3, game: Game, orbit: number, pull: number, solids: { x: number; z: number; r: number; h: number }[] = []): void {
+  updateDrone(dt: number, t: number, car: Vector3, game: Game, orbit: number, pull: number, solids: { x: number; z: number; r: number; h: number }[] = [], wide = false): void {
     this.t += dt;
     if (this.snap) {
       // start the arc from the side the car faces away from the previous chase heading
@@ -136,8 +155,9 @@ export class CameraRig {
     const pu = MathUtils.clamp((t - orbit) / pull, 0, 1);
     const e = pu * pu * (3 - 2 * pu);
     const ang = this.droneAngle + t * 0.3;
-    const radius = MathUtils.lerp(MathUtils.lerp(18, 12, Math.sin(o * Math.PI * 0.5)), 150, e);
-    const alt = MathUtils.lerp(2.0 + Math.sin(o * Math.PI) * 2.4 + Math.sin(t * 0.9) * 0.25, 95, e);
+    const wr = wide ? 2.1 : 1;
+    const radius = MathUtils.lerp(MathUtils.lerp(18 * wr, 12 * wr, Math.sin(o * Math.PI * 0.5)), 150, e);
+    const alt = MathUtils.lerp((2.0 + Math.sin(o * Math.PI) * 2.4 + Math.sin(t * 0.9) * 0.25) * (wide ? 2.6 : 1), 95, e);
     const centre = this.tmp.copy(car).add(this.tmp2.set(0, 0.8, 0));
     const goalPos = new Vector3(centre.x + Math.sin(ang) * radius, centre.y + alt, centre.z + Math.cos(ang) * radius);
     const gy = game.height_at(goalPos.x, goalPos.z) + 2.0;
@@ -146,7 +166,7 @@ export class CameraRig {
     for (const o of solids) if (Math.hypot(goalPos.x - o.x, goalPos.z - o.z) < o.r + 4.5 && goalPos.y < o.h + 1.5) goalPos.y = o.h + 1.5;
     // during the pull-out the aim eases from the car to a point further down the mountain
     const aim = new Vector3(centre.x, centre.y - e * 6, centre.z + e * 30);
-    const fov = MathUtils.lerp(38, 48, e);
+    const fov = MathUtils.lerp(wide ? 46 : 38, 50, e);
     this.roll = Math.sin(t * 0.6) * 0.012;
     this.shake = 0;
     this.apply(dt, goalPos, aim, fov, this.snap ? 100 : 5, 6, null);

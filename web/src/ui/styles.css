@@ -122,3 +122,10 @@ body.touch #speed { bottom: calc(300px + env(safe-area-inset-bottom)); }
   #help { font-size: 11.5px; } .arrow { width: 42px; height: 58px; top: 40%; } #sever { display: none; } #count { min-width: 100px; } #count strong { font-size: 28px; }
   #go { min-width: 110px; height: 46px; font-size: 22px; padding: 0 12px; } .step { width: 40px; height: 40px; } #brand small { display: none; }
 }
+
+#pursuit { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s; z-index: 5; }
+#pursuit.on { animation: flash 0.5s steps(1, end) infinite; }
+@keyframes flash {
+  0% { box-shadow: inset 90px 0 120px -40px rgba(40, 90, 255, .75), inset -90px 0 120px -40px rgba(255, 40, 40, .05); }
+  50% { box-shadow: inset 90px 0 120px -40px rgba(40, 90, 255, .05), inset -90px 0 120px -40px rgba(255, 40, 40, .75); }
+}

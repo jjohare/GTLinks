@@ -42,19 +42,19 @@ function buildMaterial(): MeshStandardNodeMaterial {
     const n3 = mx_noise_float(vec3(p.x.mul(9.0), p.z.mul(9.0), 3.1)).mul(0.5).add(0.5);
 
     // rough: darker, tufted
-    const roughCol = mix(vec3(0.18, 0.30, 0.10), vec3(0.28, 0.40, 0.14), n1).mul(mix(0.78, 1.12, n3));
+    const roughCol = mix(vec3(0.10, 0.21, 0.08), vec3(0.19, 0.31, 0.10), n1).mul(mix(0.70, 1.15, n3));
     // fairway: mown stripes, skewed a little so they read as cut across the fall line
     const stripeCoord = p.z.mul(0.19).add(p.x.mul(0.035));
     const stripe = step(0.5, fract(stripeCoord));
-    const fairCol = mix(vec3(0.30, 0.50, 0.16), vec3(0.37, 0.58, 0.20), stripe).mul(mix(0.94, 1.06, n2));
+    const fairCol = mix(vec3(0.36, 0.62, 0.17), vec3(0.52, 0.78, 0.25), stripe).mul(mix(0.95, 1.05, n2));
     // green: finer, lighter cut
     const gStripe = step(0.5, fract(p.z.mul(0.9).add(p.x.mul(0.2))));
-    const greenCol = mix(vec3(0.40, 0.66, 0.26), vec3(0.46, 0.73, 0.30), gStripe).mul(mix(0.96, 1.04, n3));
+    const greenCol = mix(vec3(0.50, 0.84, 0.33), vec3(0.62, 0.95, 0.42), gStripe).mul(mix(0.97, 1.03, n3));
     // bunker: pale sand with grain, darker lip where the weight rolls off
-    const sand = mix(vec3(0.86, 0.78, 0.58), vec3(0.93, 0.87, 0.69), n3);
+    const sand = mix(vec3(0.93, 0.85, 0.60), vec3(0.99, 0.94, 0.74), n3);
     const lip = smoothstep(0.08, 0.35, wA.w).mul(float(1).sub(smoothstep(0.45, 0.85, wA.w)));
     const sandCol = mix(sand, vec3(0.62, 0.52, 0.34), lip.mul(0.6));
-    const teeCol = mix(vec3(0.42, 0.66, 0.24), vec3(0.50, 0.74, 0.28), step(0.5, fract(p.x.mul(0.8).add(p.z.mul(0.8))))).mul(mix(0.97, 1.03, n3));
+    const teeCol = mix(vec3(0.46, 0.76, 0.26), vec3(0.58, 0.86, 0.32), step(0.5, fract(p.x.mul(0.8).add(p.z.mul(0.8))))).mul(mix(0.97, 1.03, n3));
     const pathCol = mix(vec3(0.62, 0.58, 0.50), vec3(0.70, 0.66, 0.58), n2);
     const rockCol = mix(vec3(0.42, 0.40, 0.38), vec3(0.58, 0.56, 0.52), n2.mul(0.6).add(n3.mul(0.4)));
     const waterCol = vec3(0.16, 0.36, 0.5);

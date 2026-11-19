@@ -34,3 +34,24 @@ python3 assets/src/validate.py              # -> docs/evidence/assets/validation
 * Exports are plain GLB: no Draco, no meshopt, no images (so no KTX/WebP), no animations, factor-only PBR materials.
 * No real marque names, badges or logos anywhere; the designs are original generic SUVs.
 * Extra car nodes beyond the contract (all children of `car`): `trim`, `chrome`, `grille`, `taillights`.
+
+## Cars
+
+| file | role |
+|---|---|
+| `cars.py` | style tables and the body builder for the four player SUVs and the patrol car (`build_car`, `bake_ao`) |
+| `carkit.py` | surface kit: tagged quad grids, panels with shut-line gaps and rims, Coons patches, convex chamfered boxes |
+| `carparts.py` | lamps, grille, trim, mirrors, wheels and calipers, underside, interior, patrol kit |
+| `cars_job.py`, `cars_run.sh` | car-only build entry and runner (own folder in the sidecar share; also builds `patrol` and takes an alternative `cars.json`) |
+| `cars_render.py` | car previews: front34, side, rear34, drone, under (car on its roof from 6 m), line-up |
+| `cars_validate.py` | car validation from the GLB vertex data; `validate.py` delegates its car checks to it |
+
+```
+assets/src/cars_run.sh build all                      # 4 player cars + patrol -> web/public/assets/cars/
+assets/src/cars_run.sh render escapade_2009,lineup    # -> docs/evidence/assets/
+python3 assets/src/cars_validate.py                   # merges cars + patrol into docs/evidence/assets/validation.json
+```
+
+Extra car nodes beyond the contract, all direct children of `car`: `trim`, `chrome`, `taillights`, `caliper_fl|fr|rl|rr`
+(origin at the wheel centre; they should follow the wheel's height and steer but not its spin). Patrol only: `lightbar`,
+`beacon_l`, `beacon_r`, `aerial`, `livery`.

@@ -17,16 +17,22 @@ export class Sky {
   private peaks: Mesh;
   private sunTarget = new Group();
   private time = uniform(0);
+  private sunU = uniform(SUN_DIR.clone());
+  private zenithU = uniform(new Color(0.16, 0.38, 0.76));
+  private horizonU = uniform(HAZE.clone());
+  private scene: Scene;
+  private sunDir = SUN_DIR.clone();
 
   constructor(scene: Scene) {
-    const sd = vec3(SUN_DIR.x, SUN_DIR.y, SUN_DIR.z);
+    this.scene = scene;
+    const sd = this.sunU;
     const time = this.time;
     const dome = new MeshBasicNodeMaterial({ side: BackSide, depthWrite: false, fog: false });
     dome.colorNode = Fn(() => {
       const d = normalize(positionLocal);
       const h = clamp(d.y, 0, 1);
-      const zenith = vec3(0.16, 0.38, 0.76);
-      const horizon = vec3(HAZE.r, HAZE.g, HAZE.b);
+      const zenith = this.zenithU;
+      const horizon = this.horizonU;
       let col = mix(horizon, zenith, pow(h, 0.55));
       const s = max(dot(d, sd), 0);
       col = col.add(vec3(1.0, 0.86, 0.6).mul(pow(s, 24).mul(0.25)));
@@ -93,12 +99,31 @@ export class Sky {
     return mesh;
   }
 
+  /**
+   * Time of day, 0 = late afternoon at the lodge, 1 = dusk at the finale (contract 6c): sun elevation about 28 degrees
+   * falling to about 4, with sky, fog, light colour and intensity following. Returns the tone-mapping exposure to use.
+   */
+  setTimeOfDay(u: number): number {
+    u = Math.max(0, Math.min(1, u));
+    const el = (28 + (4 - 28) * u) * Math.PI / 180, az = 0.78;
+    this.sunDir.set(Math.cos(el) * Math.sin(az), Math.sin(el), Math.cos(el) * Math.cos(az));
+    this.sunU.value.copy(this.sunDir);
+    this.zenithU.value.setRGB(0.16 - 0.07 * u, 0.38 - 0.24 * u, 0.76 - 0.4 * u);
+    this.horizonU.value.setRGB(HAZE.r + (0.9 - HAZE.r) * u, HAZE.g + (0.55 - HAZE.g) * u, HAZE.b + (0.45 - HAZE.b) * u);
+    (this.scene.fog as FogExp2).color.copy(this.horizonU.value);
+    (this.scene.background as Color).copy(this.horizonU.value);
+    this.sun.color.setRGB(1, 0.94 - 0.42 * u, 0.85 - 0.62 * u);
+    this.sun.intensity = 3.2 - 1.9 * u;
+    this.hemi.intensity = 1 - 0.55 * u;
+    return 0.95 - 0.12 * u;
+  }
+
   /** Keep dome and shadow frustum attached to the action. */
   update(camera: Camera, focus: Vector3, dt: number): void {
     this.time.value += dt;
     this.dome.position.copy(camera.position);
     this.peaks.position.set(camera.position.x, camera.position.y - 330, camera.position.z);
     this.sunTarget.position.copy(focus);
-    this.sun.position.copy(focus).addScaledVector(SUN_DIR, 120);
+    this.sun.position.copy(focus).addScaledVector(this.sunDir, 120);
   }
 }

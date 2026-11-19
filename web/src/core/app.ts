@@ -7,6 +7,8 @@ import { Particles } from '../render/particles';
 import { preloadAll, CARS } from '../render/assets';
 import { Terrain } from '../world/terrain';
 import { Props } from '../world/props';
+import { PursuitView } from '../world/pursuit';
+import type { PursuitInfo } from '../world/pursuit';
 import { Lodge, derivedStats } from '../world/lodge';
 import { Hud } from '../ui/hud';
 import { AudioEngine } from '../audio/audio';
@@ -16,10 +18,8 @@ import { loadSim } from '../sim';
 import type { SimBackend } from '../sim';
 import { decodeEvents, decodeState, EventKind, Phase, TRICK_NAMES, NX, NZ, CELL, X0, STATE_LEN } from '../sim/types';
 import type { Course, Game, RenderState, SimEvent } from '../sim/types';
-import { nextScreen, WRECK, WRECK_TOTAL } from './flow';
+import { nextScreen, WRECK } from './flow';
 import type { Screen } from './flow';
-
-const MPH = 2.236936;
 
 /** One lodge-to-wreck cycle's worth of world objects. Everything here is disposed on restart. */
 interface Run {
@@ -30,7 +30,10 @@ interface Run {
   surf: Uint8Array;
   terrain: Terrain;
   props: Props;
+  pursuit: PursuitView;
   lodge: Lodge;
+  parkedAt: number | null;
+  shedCount: number;
   blend: number;
   blendFrom: { p: Vector3; q: Quaternion };
   lastPhase: Phase;
@@ -75,6 +78,9 @@ export class App {
   private tmpQ = new Quaternion();
   private t = 0;
   private resizeObs: ResizeObserver | null = null;
+  private rawDt = 0.016;
+  private tod = 0;
+  private pursuitInfo: PursuitInfo | null = null;
 
   async start(): Promise<void> {
     const ui = document.getElementById('ui') as HTMLElement;
@@ -140,6 +146,8 @@ export class App {
       this.scene.add(terrain.group);
       const props = await Props.create(course, preview);
       this.scene.add(props.group);
+      const pursuit = await PursuitView.create();
+      this.scene.add(pursuit.group);
       const lodge = await Lodge.create(course, preview, this.rig.camera, this.canvas, this.fx, {
         onCount: (n, can) => this.hud.setCount(n, can, this.run?.lodge.load.severity ?? 0),
         onSelect: (i) => this.hud.setCar(CARS[i], derivedStats(CARS[i], CARS), i, CARS.length),
@@ -149,7 +157,7 @@ export class App {
       });
       this.scene.add(lodge.group);
       this.run = {
-        seed, preview, game: null, course, surf, terrain, props, lodge, blend: 1,
+        seed, preview, game: null, course, surf, terrain, props, pursuit, lodge, parkedAt: null, shedCount: 0, blend: 1,
         blendFrom: { p: new Vector3(), q: new Quaternion() }, lastPhase: Phase.Driving, state: null, raw: null,
         hiccupAt: 0, wreckHandled: false, fadeStarted: false, restartAt: 0, steam: 0, surface: 1, solids: [],
       };
@@ -157,6 +165,7 @@ export class App {
       this.hud.setCount(0, false, 0);
       this.hud.setCar(CARS[lodge.selected], derivedStats(CARS[lodge.selected], CARS), lodge.selected, CARS.length);
       this.rig.cut('lodge');
+      this.rig.startIntro(lodge.introPos, lodge.introLook);
       this.fx.clear();
     } finally {
       this.building = false;
@@ -168,6 +177,7 @@ export class App {
     if (!r) return;
     r.lodge.dispose();
     r.props.dispose();
+    r.pursuit.dispose();
     r.terrain.dispose();
     this.scene.remove(r.terrain.group, r.props.group, r.lodge.group);
     r.game?.free?.();
@@ -180,6 +190,8 @@ export class App {
     this.hud.screen('lodge');
     if (this.run) this.run.lodge.enabled = true;
     this.audio.silence();
+    this.audio.silencePursuit();
+    this.hud.pursuit(0);
   }
 
   /** Restart from the lodge with a new seed; `quick` shortens the fade (the R key). */
@@ -235,7 +247,9 @@ export class App {
   private frame(time: number): void {
     if (this.paused || !this.run) return;
     const now = time / 1000;
-    const dt = this.last ? Math.min(0.1, Math.max(0, now - this.last)) : 0.016;
+    const raw = this.last ? Math.max(0, now - this.last) : 0.016;
+    const dt = Math.min(0.1, raw);
+    this.rawDt = Math.min(0.3, raw);
     this.last = now;
     this.t += dt;
     this.recordFrame(dt);
@@ -253,6 +267,7 @@ export class App {
     r.props.update(dt);
     this.fx.update(dt);
     const focus = this.screen === 'lodge' ? r.lodge.slotPos[r.lodge.selected] : this.tmpV.set(r.state?.pos[0] ?? 0, r.state?.pos[1] ?? 0, r.state?.pos[2] ?? 0);
+    if (this.screen === 'lodge') this.timeOfDay(dt, 0);
     this.sky.update(this.rig.camera, focus, dt);
     this.rig.applyPin();
     this.gpu.renderer.render(this.scene, this.rig.camera);
@@ -274,6 +289,26 @@ export class App {
     }
   }
 
+  /** Advance the simulation by the real frame time in slices of at most 0.05 s, so a slow frame does not slow the game. */
+  private stepSim(game: Game, steer: number, throttle: number, brake: number, handbrake: boolean): void {
+    let rem = this.rawDt;
+    for (let i = 0; i < 6 && rem > 1e-4; i++) { const h = Math.min(0.05, rem); game.step(h, steer, throttle, brake, handbrake); rem -= h; }
+  }
+
+  /** Pose the patrol cars and helicopter, drive their audio and the chase glow. */
+  private tickPursuit(r: Run, dt: number, game: Game): void {
+    const info = r.pursuit.update(dt, game, this.fx);
+    this.pursuitInfo = info;
+    const cam = this.rig.camera;
+    const right = this.tmpV2.set(1, 0, 0).applyQuaternion(cam.quaternion);
+    this.audio.spatial(
+      { x: cam.position.x, y: cam.position.y, z: cam.position.z, rx: right.x, rz: right.z }, dt,
+      info.units.map((u) => ({ x: u.pos.x, y: u.pos.y, z: u.pos.z, vx: u.vel.x, vy: u.vel.y, vz: u.vel.z, on: u.on })),
+      { x: info.heli.pos.x, y: info.heli.pos.y, z: info.heli.pos.z, vx: info.heli.vel.x, vy: info.heli.vel.y, vz: info.heli.vel.z, on: info.heli.on },
+    );
+    this.hud.pursuit(info.pursuing > 0 && this.screen === 'descent' ? Math.max(0.3, Math.min(1, 1 - info.nearest / 70)) : 0);
+  }
+
   private tickLodge(r: Run, dt: number): void {
     r.lodge.update(dt, 0, false);
     const car = r.lodge.car;
@@ -286,9 +321,9 @@ export class App {
     const game = r.game!;
     const intent = this.overrideIntent ?? this.input.intent();
     this.lastIntent = intent;
-    game.step(dt, intent.steer, intent.throttle, intent.brake, intent.handbrake);
+    this.stepSim(game, intent.steer, intent.throttle, intent.brake, intent.handbrake);
     const raw = game.state();
-    if (raw.length !== STATE_LEN) throw new Error('state() length mismatch');
+    if (raw.length < STATE_LEN) throw new Error('state() length mismatch');
     r.raw = raw;
     const st = decodeState(raw);
     r.state = st;
@@ -316,8 +351,10 @@ export class App {
       r.lastPhase = st.phase;
     }
     this.groundFx(r, st, car, dt);
+    this.tickPursuit(r, dt, game);
+    this.timeOfDay(dt, st.hole / 8);
     this.hud.drive({
-      mph: st.speed * MPH, hole: Math.min(8, Math.max(0, Math.round(st.hole))),
+      kph: st.speed * 3.6, hole: Math.min(8, Math.max(0, Math.round(st.hole))),
       par: r.course.holes[Math.min(8, Math.max(0, Math.round(st.hole)))]?.par ?? 4, steins: n,
       applied: st.appliedSteer, input: st.phase === Phase.Driving ? intent.steer : 0,
     });
@@ -360,7 +397,7 @@ export class App {
 
   private tickWreck(r: Run, dt: number): void {
     const game = r.game!;
-    game.step(dt, 0, 0, 0, false);
+    this.stepSim(game, 0, 0, 0, false);
     r.raw = game.state();
     const st = decodeState(r.raw);
     r.state = st;
@@ -375,8 +412,13 @@ export class App {
     r.lodge.update(dt, 0, true);
     for (const e of events) this.onEvent(r, e, pos, this.tmpV2.set(0, 0, 0));
     const t = st.wreckedFor;
-    if (t > 1.2 && t < WRECK.orbit) this.hud.lowerThird(CARS[r.lodge.selected].name, r.lodge.load.count, st.trick);
-    else if (t >= WRECK.orbit) this.hud.hideLower();
+    // the pull-out waits for PoliceParked (or 16 s after Wrecked, whichever comes first)
+    const orbit = r.parkedAt !== null ? Math.min(16, Math.max(6, r.parkedAt + 0.8)) : 16;
+    const total = orbit + WRECK.pull;
+    this.tickPursuit(r, dt, game);
+    this.timeOfDay(dt, 1);
+    if (t > 1.2 && t < orbit) this.hud.lowerThird(CARS[r.lodge.selected].name, r.lodge.load.count, st.trick);
+    else if (t >= orbit) this.hud.hideLower();
     this.audio.drive(true, 0, 0, 4, 0);
     this.audio.silence();
     // wisp of steam from the bonnet area
@@ -387,8 +429,8 @@ export class App {
       const sp = b ? b.getWorldPosition(this.tmpV2) : this.tmpV2.copy(pos);
       this.fx.emit('steam', sp, 1, new Vector3(0, 0.6, 0), 0.5, 1);
     }
-    this.rig.updateDrone(dt, t, pos, game, WRECK.orbit, WRECK.pull, r.solids);
-    if (t >= WRECK_TOTAL - 0.4 && !r.fadeStarted) { r.fadeStarted = true; this.hud.fade(true); r.restartAt = this.t + WRECK.fade + WRECK.hold; }
+    this.rig.updateDrone(dt, t, pos, game, orbit, WRECK.pull, r.solids, (this.pursuitInfo?.units.some((u) => u.on) ?? false));
+    if (t >= total - 0.4 && !r.fadeStarted) { r.fadeStarted = true; this.hud.fade(true); r.restartAt = this.t + WRECK.fade + WRECK.hold; }
     if (r.fadeStarted && this.t >= r.restartAt) {
       void this.finishWreck();
     }
@@ -421,7 +463,7 @@ export class App {
         this.rig.kick(0.25 + s * 0.6);
         this.fx.emit(r.surface === 3 ? 'sand' : 'dust', at, 12 + Math.round(s * 20), new Vector3(0, 1.5, 0), 3);
         if (r.surface !== 3) this.fx.emit('grass', at, 6 + Math.round(s * 10), new Vector3(0, 2, 0), 3);
-        r.lodge.shed(e.a > 8 ? Math.min(4, 1 + Math.floor(e.a / 9)) : 0, vel, 1);
+        this.shedSome(r, e.a > 14 ? 1 : 0, vel, 1);
         this.fx.emit('foam', at.clone().setY(at.y + 2), 6, new Vector3(0, 1, 0), 2);
         break;
       }
@@ -430,7 +472,7 @@ export class App {
         this.rig.kick(0.3 + e.a * 0.8);
         this.fx.emit('dust', at, 10 + Math.round(e.a * 14), new Vector3(0, 1, 0), 3);
         this.fx.emit('spark', at, 4, new Vector3(0, 1, 0), 3);
-        r.lodge.shed(e.a > 0.25 ? Math.ceil(e.a * 5) : 0, vel, 1 + e.a);
+        this.shedSome(r, e.a > 0.4 || e.b >= 100 ? Math.ceil(e.a * 2) : 0, vel, 1 + e.a);
         break;
       }
       case EventKind.PropHit:
@@ -459,6 +501,16 @@ export class App {
         break;
       case EventKind.Wrecked:
         break;
+      case EventKind.PoliceJoined:
+        this.hud.callout(`Patrol ${Math.round(e.a) + 1} is on your tail`, 0);
+        this.audio.alarm();
+        break;
+      case EventKind.HeliJoined:
+        this.hud.callout('Air unit overhead', 0);
+        break;
+      case EventKind.PoliceParked:
+        r.parkedAt = r.state?.wreckedFor ?? 0;
+        break;
       case EventKind.PartDetached:
         car.detach(Math.round(e.a), this.scene, vel);
         this.audio.thump(0.3);
@@ -473,6 +525,20 @@ export class App {
       }
       default: break;
     }
+  }
+
+  /** Shed a few steins, but keep at least half on the roof until the finale so the pile stays visible all the way down. */
+  private shedSome(r: Run, n: number, vel: Vector3, power: number): void {
+    const keep = Math.ceil(r.lodge.load.count / 2);
+    const allowed = Math.max(0, r.lodge.pileCount - keep);
+    const k = Math.min(n, allowed);
+    if (k > 0) { r.lodge.shed(k, vel, power); r.shedCount += k; }
+  }
+
+  /** Late afternoon at the lodge to dusk at the finale (contract 6c), eased so it never jumps. */
+  private timeOfDay(dt: number, target: number): void {
+    this.tod += (Math.max(0, Math.min(1, target)) - this.tod) * Math.min(1, dt * 0.6);
+    this.gpu.renderer.toneMappingExposure = this.sky.setTimeOfDay(this.tod);
   }
 
   private surfaceAt(surf: Uint8Array, x: number, z: number): number {
