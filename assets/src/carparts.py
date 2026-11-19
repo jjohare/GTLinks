@@ -94,7 +94,7 @@ def grille(c, sh):
     tub, S = c.tub, c.S
     g = S['grille']
     i0, i1, j0, j1 = c.grille_cells
-    mb = sh.mb('bumper_front')
+    mb = sh.mb('trim' if S.get('lite') else 'bumper_front')
     kind, m = g['kind'], g['mat']
     up = Vector((0, 1, 0))
 
@@ -181,7 +181,7 @@ def exterior_details(c, sh):
     v0, v1 = int(nv * 0.14), int(nv * 0.88)
     node, m = ('chrome', S['rails']) if S['rails'] in ('chrome', 'steel') else ('trim', S['rails'])
     lift = 0.012 if S['rails'] == 'gloss' else 0.034
-    for sx in (1, -1):
+    for sx in ((1, -1) if S['rails'] else ()):
         pts, nrm, ups = [], [], []
         for iv in range(v0, v1 + 1):
             p, n = R.P[iu][iv], R.N[iu][iv]
@@ -193,7 +193,8 @@ def exterior_details(c, sh):
             sh.mb(node).box(pts[k] + nrm[k] * (lift / 2), (0.03, lift + 0.012, 0.09), m, bevel=0.006)
     # aerial fin
     pf = R.P[0][int(nv * 0.9)]
-    sh.mb('trim').box((0, pf.y + 0.03, pf.z), (0.035, 0.07, 0.16), 'gloss', bevel=0.014)
+    if not S.get('lite'):
+        sh.mb('trim').box((0, pf.y + 0.03, pf.z), (0.035, 0.07, 0.16), 'gloss', bevel=0.014)
     # rear number-plate blank
     M = c.M
     p = tub.P[M][6].lerp(tub.P[M][7], 0.4)
@@ -230,13 +231,14 @@ def mirrors(c, sh):
     x_in = p.x - 0.045
     wx = max(0.10, xlim - x_in)
     for name, sx in (('mirror_l', 1), ('mirror_r', -1)):
-        mb = sh.mb(name)
+        mb = sh.mb('body' if c.S.get('lite') else name)
         o = Vector((sx * p.x, p.y, p.z))
         ctr = Vector((sx * (x_in + wx / 2), p.y + 0.085, p.z - 0.01))
         mb.box(o + Vector((0, 0.012, -0.01)), (0.07, 0.03, 0.09), 'trim', bevel=0.01)
         mb.box(ctr, (wx, 0.125, 0.085), 'paint', bevel=0.035)
         mb.box(ctr + Vector((0, -0.003, -0.043)), (wx - 0.035, 0.09, 0.008), 'chrome', bevel=0.003)
-        c.origins[name] = tuple(o)
+        if not c.S.get('lite'):
+            c.origins[name] = tuple(o)
 
 
 # ----------------------------------------------------------------------------- wheels
@@ -317,6 +319,10 @@ def build_caliper(c, mb, sx, sz, style):
 
 def wheels(c, sh):
     st = c.S['wheel']
+    if c.S.get('lite'):
+        for name, sx, sz in (("fl", 1, 1), ("fr", -1, 1), ("rl", 1, -1), ("rr", -1, -1)):
+            c.origins['wheel_' + name] = build_wheel_lite(c, sh.mb('wheel_' + name), sx, sz, st)
+        return
     for name, sx, sz in (("fl", 1, 1), ("fr", -1, 1), ("rl", 1, -1), ("rr", -1, -1)):
         c.origins['wheel_' + name] = build_wheel(c, sh.mb('wheel_' + name), sx, sz, st)
         c.origins['caliper_' + name] = build_caliper(c, sh.mb('caliper_' + name), sx, sz, st)
@@ -535,3 +541,155 @@ def interior(c, sh):
     # rear-view mirror at the windscreen header
     ph = c.G.P[0][4]
     mb.box((0, ph.y - 0.04, ph.z - 0.07), (0.22, 0.06, 0.03), "trim", bevel=0.01)
+
+
+# ----------------------------------------------------------------------------- lighter parts (patrol car)
+def build_wheel_lite(c, mb, sx, sz, style):
+    R, ww = c.r, c.ww
+    hw = ww / 2
+    O = (sx * c.tr / 2, R, sz * c.wb / 2)
+    rr = R * style.get("rim_frac", 0.62)
+    ax = (sx, 0, 0)
+    span = R - rr
+    SEG = 20
+    prof = [(rr, -0.80 * hw), (rr + 0.6 * span, -hw), (R - 0.03, -0.92 * hw), (R, -0.72 * hw), (R, -0.2 * hw), (R - 0.012, -0.12 * hw),
+            (R - 0.012, 0.12 * hw), (R, 0.2 * hw), (R, 0.72 * hw), (R - 0.03, 0.92 * hw), (rr + 0.6 * span, hw), (rr, 0.80 * hw)]
+    mb.lathe(O, ax, prof, SEG, "tyre", closed=True)
+    mb.lathe(O, ax, [(rr, -0.8 * hw), (rr - 0.02, -0.5 * hw), (rr - 0.02, 0.62 * hw), (rr + 0.014, 0.82 * hw), (rr - 0.03, 0.82 * hw),
+                     (rr - 0.045, 0.3 * hw)], SEG, "rim", solid=False)
+    mb.lathe(O, ax, [(0, 0.08 * hw), (rr - 0.04, 0.08 * hw), (rr - 0.04, 0.0), (0, 0.0)], 14, "rimdark")
+    Ov = Vector(O)
+    for i in range(style["spokes"]):
+        a = i * 2 * math.pi / style["spokes"]
+        rad = Vector((0, math.sin(a), math.cos(a)))
+        mb.box(Ov + Vector((sx * hw * 0.50, 0, 0)) + rad * rr * 0.54, (0.05, 0.06, rr * 0.92), "rim", rot=Matrix.Rotation(-a, 3, 'X'))
+    mb.lathe(O, ax, [(0, 0.76 * hw), (0.075, 0.72 * hw), (0.09, 0.5 * hw), (0, 0.5 * hw)], 10, "rim")
+    mb.lathe(O, ax, [(0, -0.36 * hw), (rr * 0.8, -0.36 * hw), (rr * 0.8, -0.5 * hw), (0, -0.5 * hw)], 14, "steel")
+    return O
+
+
+def underside_lite(c, sh):
+    mb = sh.mb('underside')
+    zf, zr, yb, w, Ra = c.zcF, c.zcR, c.yfloor, c.w, c.Ra
+    xin = c.tr / 2 - c.ww / 2 - 0.13
+    za, zb = zf - Ra - 0.02, zr + Ra + 0.02
+    mb.box((0, yb + 0.012, (za + zb) / 2), (2 * (w - 0.075), 0.024, za - zb), 'underplate')
+    mb.box((0, yb + 0.012, (c.zF - 0.30 + za) / 2), (2 * xin, 0.024, c.zF - 0.30 - za), 'underplate')
+    mb.box((0, yb + 0.012, (c.zR + 0.25 + zb) / 2), (2 * xin, 0.024, zb - c.zR - 0.25), 'underplate')
+    zq = zr - Ra - 0.03
+    mb.box((0, yb + 0.014, (zq + c.zR + 0.25) / 2), (2 * (w - 0.09), 0.024, zq - c.zR - 0.25), 'underplate')
+    mb.box((0, yb - 0.02, (c.zF - 0.55 + c.zR + 0.35) / 2), (0.32, 0.07, c.zF - c.zR - 0.9), "underplate")
+    for x in (-0.5, 0.5):
+        mb.box((x * w, yb - 0.002, (za + zb) / 2), (0.05, 0.03, za - zb - 0.12), "underplate")
+    for z in (za - 0.12, (za + zb) / 2, zb + 0.12):
+        mb.box((0, yb - 0.004, z), (2 * (w - 0.12), 0.034, 0.07), "underplate")
+    mb.box((0, yb - 0.085, zf - 0.30), (0.46, 0.11, 0.52), "steel")
+    mb.box((0, yb - 0.10, c.zF - 0.70), (0.86, 0.02, 0.55), "steel")
+    mb.cyl((0, yb + 0.02, zf - 1.0), (0, 0, 1), 0.16, 0.7, 10, "underplate")
+    mb.pipe((0, yb - 0.045, zf - 1.4), (0, yb - 0.045, zr + 0.2), 0.04, 6, "steel")
+    ay = c.r - 0.03
+    for z in (zf, zr):
+        mb.lathe((0, ay - 0.04, z), (1, 0, 0), [(0.0, -0.14), (0.13, -0.10), (0.13, 0.10), (0.0, 0.14)], 10, "underplate")
+        for sx in (1, -1):
+            hub = Vector((sx * (c.tr / 2 - c.ww / 2 - 0.045), c.r, z))
+            mb.pipe((sx * 0.12, ay - 0.04, z), (hub.x, c.r, z), 0.03, 6, "steel")
+            mb.box((sx * 0.38, yb - 0.03, z), (0.06, 0.06, 0.8), "underplate")
+            for dz in (-0.28, 0.28):
+                mb.pipe(Vector((sx * 0.36, yb - 0.04, z + dz)), hub + Vector((0, -0.09, dz * 0.12)), 0.02, 4, "steel")
+            mb.pipe(Vector((sx * 0.50, yb, z)), Vector((sx * 0.52, yb + 0.40, z)), 0.045, 6, "spring")
+    x = 0.27
+    mb.pipe((0.18, yb + 0.02, zf - 0.75), (x, yb - 0.06, zf - 1.3), 0.03, 6, "exhaust")
+    mb.pipe((x, yb - 0.06, zf - 1.3), (x, yb - 0.06, zr + 0.45), 0.03, 6, "exhaust")
+    mb.cyl((x, yb - 0.06, zf - 1.7), (0, 0, 1), 0.065, 0.36, 8, "exhaust")
+    mb.pipe((x, yb - 0.06, zr + 0.45), (0.40, yb - 0.02, zr - 0.30), 0.03, 6, "exhaust")
+    zs = (zr - 0.30 + c.zR + 0.30) / 2
+    mb.cyl((0.0, yb - 0.06, zs), (1, 0, 0), 0.085, 0.70, 10, "exhaust")
+    mb.pipe((0.36, yb - 0.06, zs), (0.36, yb - 0.04, c.zR + 0.2), 0.027, 6, "exhaust")
+    mb.box((-0.05, yb - 0.075, zr + 0.95), (0.70, 0.15, 0.5), "trim")
+    rl = Ra * 1.09 + 0.012
+    x_out, x_inb = w - 0.03, c.tr / 2 - c.ww / 2 - 0.10
+    for z in (zf, zr):
+        for sx in (1, -1):
+            xa, xb = sorted((sx * x_inb, sx * x_out))
+            mb.sector((0, c.yc, z), rl, rl + 0.014, math.radians(-8), math.radians(188), xa, xb, 8, "trim")
+            mb.box((sx * (x_inb - 0.008), (yb + c.yc + rl) / 2, z), (0.016, c.yc + rl - yb, 2 * rl), "trim")
+
+
+def interior_lite(c, sh):
+    mb = sh.mb('interior')
+    yfl = c.yfloor + 0.04
+    zA = c.cowl[0].z
+    x_in = c.w - 0.11
+    zb = c.zcR + c.Ra
+    mb.box((0, yfl, (zA - 0.1 + c.zR + 0.4) / 2), (2 * x_in, 0.03, zA - 0.1 - c.zR - 0.4), "cabin")
+    ys = yfl + 0.20
+    rot = Matrix.Rotation(math.radians(-13), 3, 'X')
+    for x, z, wd in ((0.40, c.zn['B1'] - 0.02, 0.50), (-0.40, c.zn['B1'] - 0.02, 0.50), (0, c.zn['C1'] + 0.16, 1.5)):
+        mb.box((x, ys + 0.07, z), (wd, 0.14, 0.5), "seat", bevel=0.03)
+        mb.box((x, ys + 0.45, z - 0.23), (wd, 0.62, 0.13), "seat", bevel=0.03, rot=rot)
+        if wd < 1:
+            mb.box((x, ys + 0.86, z - 0.33), (0.26, 0.16, 0.10), "seat", rot=rot)
+    # partition behind the front seats (a patrol car fitting)
+    mb.box((0, ys + 0.50, c.zn['B2'] - 0.12), (2 * x_in - 0.1, 0.75, 0.02), "trim")
+    zd = zA - 0.32
+    yd = c.beltc(c.zA) - 0.03
+    mb.box((0, yd - 0.07, zd), (2 * x_in - 0.06, 0.24, 0.42), "cabin", bevel=0.05)
+    ctr = Vector((0.40, yd + 0.085, zd - 0.39))
+    mb.lathe(ctr, (0, 0.35, -1), [(0.185, -0.015), (0.185, 0.015), (0.155, 0.015), (0.155, -0.015)], 12, "trim", closed=True)
+    mb.pipe((0.40, yd - 0.04, zd - 0.12), ctr, 0.03, 5, "cabin")
+
+
+def patrol_kit(c, sh):
+    """Roof lightbar with separate flashing beacons, push bar on the nose, aerial, rear chevrons."""
+    R, tub = c.R, c.tub
+    nv = R.nj - 1
+    pr = R.P[0][int(nv * 0.30)]
+    y0 = pr.y
+    lb = sh.mb('lightbar')
+    half = c.w * 0.60
+    lb.box((0, y0 + 0.02, pr.z), (2 * half + 0.06, 0.035, 0.26), 'trim', bevel=0.01)
+    for sx in (1, -1):
+        lb.box((sx * half * 0.86, y0 - 0.01, pr.z), (0.06, 0.06, 0.20), 'trim')
+    lb.box((0, y0 + 0.075, pr.z), (0.22, 0.085, 0.24), 'steel', bevel=0.02)
+    for name, sx, m in (('beacon_l', 1, 'beacon_blue'), ('beacon_r', -1, 'beacon_red')):
+        ctr = Vector((sx * (0.13 + half) / 2, y0 + 0.08, pr.z))
+        sh.mb(name).box(ctr, (half - 0.13, 0.09, 0.22), m, bevel=0.03)
+        c.origins[name] = tuple(ctr)
+    c.origins['lightbar'] = (0, y0, pr.z)
+    # aerial on the rear of the roof
+    pa = R.P[0][int(nv * 0.88)]
+    ae = sh.mb('aerial')
+    ae.lathe((0.25, pa.y - 0.03, pa.z), (0, 1, 0), [(0.02, 0.0), (0.02, 0.04), (0.004, 0.06), (0.004, 0.55)], 6, 'trim')
+    c.origins['aerial'] = (0.25, pa.y, pa.z)
+    # push bar: two uprights and two hoops ahead of the fascia
+    tr = sh.mb('trim')
+    zn = c.zF - 0.03
+    ybm = c.S['front']['yb'] * c.hs
+    ytop = tub.P[0][8].y + 0.03
+    for sx in (1, -1):
+        tr.box((sx * 0.30, (ybm + 0.12 + ytop) / 2, zn), (0.05, ytop - ybm - 0.12, 0.06), 'trim', bevel=0.012)
+        tr.box((sx * 0.30, ybm + 0.30, zn - 0.06), (0.04, 0.05, 0.10), 'trim')
+    for y in (ytop - 0.03, (ybm + ytop) / 2 + 0.03):
+        tr.pipe((-0.47, y, zn - 0.01), (0.47, y, zn - 0.01), 0.022, 8, 'trim')
+    for sx in (1, -1):
+        tr.pipe((sx * 0.47, ytop - 0.03, zn - 0.01), (sx * 0.47, (ybm + ytop) / 2 + 0.03, zn - 0.01), 0.022, 8, 'trim')
+    # rear chevrons: slanted bands on the tailgate, rising to the centre (mirrored halves make the V)
+    M = c.M
+    i0 = c.i_rc0 + 6
+    n = M - i0
+    bd = sh.mb('body')
+    up = Vector((0, 1, 0))
+    for k, m in enumerate(('livery_red', 'hiviz', 'livery_red', 'hiviz', 'livery_red')):
+        for sx in (1, -1):
+            pts, nrm = [], []
+            for q, i in enumerate(range(i0, M + 1)):
+                f = 5.05 + 0.5 * k + 1.9 * q / n            # row coordinate climbing toward the centre
+                if f > 9.9:
+                    break
+                j = int(f)
+                p = tub.P[i][j].lerp(tub.P[i][j + 1], f - j)
+                nn = tub.N[i][j]
+                pts.append(Vector((sx * p.x, p.y, p.z)))
+                nrm.append(Vector((sx * nn.x, nn.y, nn.z)))
+            if len(pts) > 1:
+                K.bar_along(bd, pts, nrm, [up] * len(pts), 0.085, 0.001, 0.005, m)

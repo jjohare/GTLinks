@@ -277,6 +277,8 @@ class Shell:
                             continue
                         po = panels[o] if o is not None else None
                         depth = 0.0
+                        if po is not None and po.group is not None and po.group == pa.group and po.node == pa.node:
+                            continue
                         if po is None:
                             depth = pa.hole_rim
                         elif po.frame > 0:

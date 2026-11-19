@@ -123,9 +123,32 @@ STYLES = {
         bumper_chrome=False, tail='blade', wheel=dict(wheel='aero', spokes=10, rim_frac=0.72),
         seat='#d8d2c4', seat_trim='#8a8478', tips=0, boards=False, third_row=False,
     ),
+    # patrol: compact, purposeful pursuit SUV; fixed panels, lighter geometry (three are on screen at once)
+    "patrol": dict(
+        lite=True, step=0.19, arch_n=8,
+        fo=0.86, nose_extra=0.09, flare=0.03, arch_p=2.3, arch_gap=0.06, flare_w=0.12,
+        waist=0.56, tuck=0.055, sh_drop=0.10, sh_in=0.02, sh_e=1.6, roll=0.7, belt_in=0.055, wing_in=0.11,
+        belt=[(-9, 1.07), (-1.5, 1.06), (0.3, 1.02), (1.2, 0.99), (9, 0.94)], sharp_rows=[], crease=(0.47, 0.014),
+        front=dict(ax=0.26, az=0.26, bow=0.08, p=2.3, yb=0.30, sh_drop=0.07, nose_in=0.16,
+                   rows=[(0, .10), (.10, .04), (.22, .006), (.36, .0), (.50, .006), (.60, .02), (.74, .04), (.88, .065), (1, .09)],
+                   xbreaks=[0.34, 0.38]),
+        rear=dict(ax=0.24, az=0.22, bow=0.06, p=2.3, yb=0.36, sh_drop=0.10, tail_in=0.06,
+                  rows=[(0, .09), (.10, .035), (.2, .006), (.32, 0), (.44, .006), (.5, .026), (.68, .026), (.86, .036), (1, .05)],
+                  xbreaks=[0.30, 0.52]),
+        gh=dict(zA=0.56, cowl=(0.24, 0.20, 0.10), cowl_rise=0.035, zh=0.08, hdr=(0.22, 0.18, 0.08), tum=0.16, tum_r=0.03,
+                rear_run=0.36, rhdr=(0.22, 0.18, 0.06), shear_r='D', crown=0.04, rc=0.065,
+                roof=[(0.08, 1.645), (-0.4, 1.70), (-1.3, 1.69), (-2.2, 1.63)]),
+        zB=(-0.26, -0.36), zC=(-0.96, -1.06), zD=0.84, door_gap=0.10,
+        bonnet_arc=0.02, bonnet_dome=0.0, clamshell=False,
+        pillars='gloss', dpillar='paint', belt_trim='gloss', sill='trim', cladding=True, roofpanel=None, rails=None, handles='flush',
+        grille=dict(x=0.34, rows=(5, 8), kind='slot', mat='gloss'),
+        lamp=dict(x0=0.38, x1=0.635, rows=(5, 8), p=3.4), intake=dict(x=0.50, rows=(1, 3)),
+        bumper_chrome=False, tail='wrap', wheel=dict(wheel='spoke6', spokes=5, rim_frac=0.64),
+        seat='#2a2c30', seat_trim='#2a2c30', tips=1, boards=False, third_row=False,
+    ),
 }
 # envelopes the tables were drawn against: (length, roof height)
-REF = {"escapade_2009": (5.14, 1.89), "glug_2017": (5.13, 1.85), "genesips_2021": (4.95, 1.72), "rangeroller_2026": (5.05, 1.87)}
+REF = {"escapade_2009": (5.14, 1.89), "glug_2017": (5.13, 1.85), "genesips_2021": (4.95, 1.72), "rangeroller_2026": (5.05, 1.87), "patrol": (4.7, 1.7)}
 
 
 # ------------------------------------------------------------------ materials
@@ -150,6 +173,11 @@ def car_materials(spec, S):
     make_mat("seat_trim", S["seat_trim"], rough=0.8)
     make_mat("cabin", (0.08, 0.082, 0.09), rough=0.85)
     make_mat("headliner", (0.55, 0.54, 0.51), rough=0.95)
+    make_mat("hiviz", (0.80, 0.86, 0.10), rough=0.5)
+    make_mat("livery_blue", (0.06, 0.20, 0.55), rough=0.45)
+    make_mat("livery_red", (0.75, 0.08, 0.06), rough=0.45)
+    make_mat("beacon_blue", (0.10, 0.25, 1.0), rough=0.2, emit=(0.1, 0.3, 1.0), emit_strength=2.0)
+    make_mat("beacon_red", (1.0, 0.08, 0.06), rough=0.2, emit=(1.0, 0.1, 0.05), emit_strength=2.0)
     make_mat("amber", (0.95, 0.45, 0.05), rough=0.3, emit=(0.6, 0.2, 0.0), emit_strength=0.25)
 
 
@@ -188,6 +216,17 @@ def panels(S):
         'br_trim': Panel('bumper_rear', 'trim', group='br'),
         'bonnet': Panel('bonnet', 'paint', group='bonnet', **det),
     }
+    P['hv_y'] = Panel('body', 'hiviz', group='shell', **body)
+    P['hv_b'] = Panel('body', 'livery_blue', group='shell', **body)
+    P['hv_yd'] = Panel('body', 'hiviz', group='door_f', **body)
+    P['hv_bd'] = Panel('body', 'livery_blue', group='door_f', **body)
+    P['hv_yr'] = Panel('body', 'hiviz', group='door_r', **body)
+    P['hv_br'] = Panel('body', 'livery_blue', group='door_r', **body)
+    if S.get('lite'):                      # fixed panels: bumpers and bonnet are part of the body node
+        for p in P.values():
+            if p.node in ('bumper_front', 'bumper_rear', 'bonnet'):
+                p.node = 'body'
+                p.rim_node, p.rim_mat = 'trim', 'trim'
     return P
 
 
@@ -282,10 +321,11 @@ def build_path(c):
     f, r = S['front'], S['rear']
     c.prot_f = max(0.0, -min(i for _, i in f['rows']))
     c.prot_r = max(0.0, -min(i for _, i in r['rows']))
-    zf, zr = c.zF - c.prot_f, c.zR + c.prot_r
+    zf, zr = c.zF - c.prot_f - S.get('nose_extra', 0.0), c.zR + c.prot_r
     xe_f, xe_r = w - f['ax'], w - r['ax']
-    xa = subdiv(sorted(set([0.0] + [x for x in f['xbreaks'] if x < xe_f - 0.03] + [xe_f])), 0.11)
-    xr = subdiv(sorted(set([0.0] + [x for x in r['xbreaks'] if x < xe_r - 0.03] + [xe_r])), 0.11)
+    step = S.get('step', 0.11)
+    xa = subdiv(sorted(set([0.0] + [x for x in f['xbreaks'] if x < xe_f - 0.03] + [xe_f])), step)
+    xr = subdiv(sorted(set([0.0] + [x for x in r['xbreaks'] if x < xe_r - 0.03] + [xe_r])), step)
     n = max(len(xa), len(xr))
     xa, xr = pad_to(xa, n), pad_to(xr, n)
     c.Na = n - 1
@@ -310,7 +350,7 @@ def build_path(c):
     zn['D'] = c.zR + S['zD'] * c.ls
     zn['flap0'] = c.zcR - c.Ra - 0.09
     zn['flap1'] = c.zcR - c.Ra - 0.27
-    aF, aR = arch_stations(c, c.zcF), arch_stations(c, c.zcR)
+    aF, aR = arch_stations(c, c.zcF, S.get('arch_n', 12)), arch_stations(c, c.zcR, S.get('arch_n', 12))
     st = set(aF + aR)
     for name, z in zn.items():
         if not any(a[-1] - 0.03 < z < a[0] + 0.03 for a in (aF, aR)):
@@ -321,8 +361,8 @@ def build_path(c):
     for z in full[1:]:
         if out[-1] - z < 0.012:
             continue
-        if out[-1] - z > 0.115:
-            k = int(math.ceil((out[-1] - z) / 0.11))
+        if out[-1] - z > step + 0.005:
+            k = int(math.ceil((out[-1] - z) / step))
             a = out[-1]
             for q in range(1, k):
                 out.append(a + (z - a) * q / k)
@@ -654,6 +694,19 @@ def tag_tub(c, tub):
                 tub.tag[i][0] = 'clad'
         tub.set('bf_trim', 0, i_s, 0, 2, only='bf')
         tub.set('br_trim', i_b, M, 0, 2)
+    if S.get('lite'):                # patrol livery: alternating high-visibility blocks along the flanks
+        z0, z1 = c.zcF - c.Ra - 0.02, c.zcR + c.Ra + 0.02
+        blk = (z0 - z1) / 6
+        for i in range(i_s, i_b):
+            zc_ = (c.pts[i][1] + c.pts[i + 1][1]) / 2
+            if not (z1 < zc_ < z0):
+                continue
+            k = int((z0 - zc_) / blk)
+            for j in range(3, 7):
+                t = tub.tag[i][j]
+                suf = {'shell': '', 'door_f': 'd', 'door_r': 'r'}.get(t)
+                if suf is not None:
+                    tub.tag[i][j] = ('hv_y' if k % 2 == 0 else 'hv_b') + suf
     tub.border['j0'] = (0.03, 0, 10 ** 6)
     if not S['clamshell']:
         tub.border['j1'] = (0.02, 0, ix['J'])
@@ -723,21 +776,27 @@ def build_car(key, spec, root):
     # inner skins: cabin lining behind every non-glass cell, dark backs for the detachable panels
     K.emit_liner(sh, G, lambda t: t is not None and not t.startswith('glass'), 0.045, 'interior', 'cabin', jbreaks=[0, 1, 4, G.nj - 1])
     K.emit_liner(sh, R, lambda t: True, 0.045, 'interior', 'headliner', step=(3, 3))
-    body_tags = ('shell', 'door_f', 'door_r', 'flap', 'sill', 'clad', 'tail', 'tailgate', 'tailbar')
+    body_tags = ('shell', 'door_f', 'door_r', 'flap', 'sill', 'clad', 'tail', 'tailgate', 'tailbar', 'hv_y', 'hv_b', 'hv_yd', 'hv_bd', 'hv_yr', 'hv_br')
     K.emit_liner(sh, tub, lambda t: t in body_tags, 0.05, 'interior', 'cabin', jbreaks=[0, 3, 8, TOP], step=(2, 1), irange=(c.i_s, c.M))
-    K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('bf'), 0.006, 'bumper_front', 'trim', step=(2, 2))
-    K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('br'), 0.006, 'bumper_rear', 'trim', step=(2, 1))
-    K.emit_liner(sh, Bn, lambda t: True, 0.02, 'bonnet', 'trim', step=(3, 3))
-    if S['clamshell']:
-        K.emit_liner(sh, tub, lambda t: t == 'bonnet', 0.006, 'bonnet', 'trim')
-
-    carparts.structure(c, sh)
+    lite = S.get('lite', False)
+    if not lite:
+        K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('bf'), 0.006, 'bumper_front', 'trim', step=(2, 2))
+        K.emit_liner(sh, tub, lambda t: t is not None and t.startswith('br'), 0.006, 'bumper_rear', 'trim', step=(2, 1))
+        K.emit_liner(sh, Bn, lambda t: True, 0.02, 'bonnet', 'trim', step=(3, 3))
+        if S['clamshell']:
+            K.emit_liner(sh, tub, lambda t: t == 'bonnet', 0.006, 'bonnet', 'trim')
+        carparts.structure(c, sh)
     carparts.lamps(c, sh)
     carparts.grille(c, sh)
     carparts.exterior_details(c, sh)
     carparts.mirrors(c, sh)
-    carparts.underside(c, sh)
-    carparts.interior(c, sh)
+    if lite:
+        carparts.underside_lite(c, sh)
+        carparts.interior_lite(c, sh)
+        carparts.patrol_kit(c, sh)
+    else:
+        carparts.underside(c, sh)
+        carparts.interior(c, sh)
     carparts.wheels(c, sh)
 
     f = S['front']

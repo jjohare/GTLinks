@@ -50,6 +50,8 @@ export class Lodge {
   enabled = true;
   readonly camHome = new Vector3();
   readonly tablePos = new Vector3();
+  /** Middle of the parked row (aim point for the lodge camera). */
+  readonly rowCentre = new Vector3();
 
   private steins: St[] = [];
   private ring: Mesh;
@@ -86,41 +88,52 @@ export class Lodge {
     const { course, game } = this;
     const L = new Vector3(...course.lodge.pos);
     this.lodgeModel = bakeStatic(await instantiate('props/lodge.glb'));
-    this.lodgeModel.position.copy(L);
+    // lifted a hair so the deck never z-fights with the flattened terrain beneath it
+    this.lodgeModel.position.copy(L).add(new Vector3(0, 0.05, 0));
     this.lodgeModel.rotation.y = course.lodge.yaw;
     this.group.add(this.lodgeModel);
 
+    // View frame: the camera stands on the terrace and looks across it towards the apron (where the
+    // car spawns). `d` is that horizontal direction and `right` the screen-right vector.
+    const S = new Vector3(...course.start.pos);
+    this.camHome.set(L.x + 3, L.y + 4.6, L.z + 5);
+    const d = new Vector3(S.x - this.camHome.x, 0, S.z - this.camHome.z).normalize();
+    const right = new Vector3(-d.z, 0, d.x);
+    this.rowCentre.set(S.x - d.x * 6, S.y, S.z - d.z * 6);
+
     this.tableModel = bakeStatic(await instantiate('props/table.glb'));
-    this.tablePos.set(L.x, L.y, L.z + 6.4);
+    this.tablePos.set(this.camHome.x + d.x * 6.5, L.y + 0.05, this.camHome.z + d.z * 6.5);
     this.tableModel.position.copy(this.tablePos);
+    this.tableModel.rotation.y = Math.atan2(-d.x, -d.z); // long side square to the view
     this.group.add(this.tableModel);
     this.tableModel.updateMatrixWorld(true);
     const tb = new Box3().setFromObject(this.tableModel);
     const topY = tb.max.y;
-    const tw = tb.max.x - tb.min.x, td = tb.max.z - tb.min.z;
-
-    this.camHome.set(L.x, L.y + 3.1, L.z + 2.2);
+    const tw = Math.abs(right.x) * (tb.max.x - tb.min.x) + Math.abs(right.z) * (tb.max.z - tb.min.z);
+    const td = Math.abs(d.x) * (tb.max.x - tb.min.x) + Math.abs(d.z) * (tb.max.z - tb.min.z);
 
     // steins on the table in three rows of five
     for (let i = 0; i < MAX_STEINS; i++) {
       const obj = await instantiate('props/stein.glb');
       normaliseHeight(obj, STEIN_H);
       const col = i % 5, row = Math.floor(i / 5);
-      const home = new Vector3(L.x + (col - 2) * Math.min(0.6, tw / 6), topY, this.tablePos.z + (row - 1) * Math.min(0.42, td / 4));
+      const home = new Vector3(this.tablePos.x, topY, this.tablePos.z)
+        .addScaledVector(right, (col - 2) * Math.min(0.6, tw / 6))
+        .addScaledVector(d, (row - 1) * Math.min(0.42, td / 4));
       obj.position.copy(home);
       obj.rotation.y = (i * 1.7) % 6.28;
       this.group.add(obj);
       this.steins.push({ id: i, obj, mode: 'table', t: 0, home, from: new Vector3(), fromQ: new Quaternion(), vel: new Vector3(), spin: new Vector3(), side: 1, seed: i * 12.9898, bounced: false, life: 0, base: obj.scale.x });
     }
 
-    // four cars on the apron, turned to face the terrace
-    const S = new Vector3(...course.start.pos);
+    // four cars on the apron, turned to face the terrace; the row sits just short of the spawn point so the
+    // car that drives off never meets its neighbours
     for (let i = 0; i < CARS.length; i++) {
       const cv = await CarView.create(CARS[i]);
-      // the row sits just uphill of the spawn point so the car that drives off never meets its neighbours
-      const x = S.x - (i - 1.5) * 5.4, z = S.z - 6 + (i % 2 === 0 ? 0 : 1.2);
+      const off = (i - 1.5) * 5.4, stag = i % 2 === 0 ? 0 : 1.2;
+      const x = this.rowCentre.x + right.x * off + d.x * stag, z = this.rowCentre.z + right.z * off + d.z * stag;
       const y = game.height_at(x, z);
-      const yaw = Math.atan2(this.camHome.x - x, this.camHome.z - z) + (i % 2 === 0 ? 0.55 : -0.55);
+      const yaw = Math.atan2(-d.x, -d.z) + (i % 2 === 0 ? 0.55 : -0.55);
       cv.root.position.set(x, y, z);
       cv.root.rotation.y = yaw;
       cv.restWheels();

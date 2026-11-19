@@ -51,7 +51,8 @@ cd web && npm ci && npm run dev       # local development server
 cd web && npm run build               # static site in web/dist
 ```
 
-Pushing to `main` builds and deploys to GitHub Pages.
+There is no CI. `./scripts/publish.sh` builds the wasm and the site on your machine and
+force-pushes `web/dist` to the `gh-pages` branch, which GitHub Pages serves directly.
 
 ## Notes
 

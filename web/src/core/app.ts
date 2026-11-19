@@ -276,7 +276,7 @@ export class App {
   private tickLodge(r: Run, dt: number): void {
     r.lodge.update(dt, 0, false);
     const car = r.lodge.car;
-    this.rig.updateLodge(dt, r.lodge.camHome, r.lodge.slotPos[r.lodge.selected], r.lodge.tablePos, this.tmpV.set(r.course.start.pos[0], r.course.start.pos[1], r.course.start.pos[2] - 6), r.preview);
+    this.rig.updateLodge(dt, r.lodge.camHome, r.lodge.slotPos[r.lodge.selected], r.lodge.tablePos, r.lodge.rowCentre, r.preview);
     car.setEyes(r.lodge.load.count, this.t, false);
     for (const c of r.lodge.cars) if (c !== car) c.setEyes(0, this.t + 3, false);
   }
